@@ -87,9 +87,9 @@
         <section class="patient-info">
             <div><strong>Patient's Name</strong>: <span id="patient-name"></span></div>
             <div><strong>Age</strong>: <span id="patient-age"></span></div>
+            <div><strong>Sex</strong>: <span id="receipt-patient-sex"></span></div>
             <div><strong>Diagnostic</strong>: <span id="patient-diagnostic"></span></div>
             <div><strong>Bill Date</strong>: <span id="bill-date"></span></div>
-            <div><strong>Sex</strong>: <span id="patient-sex"></span></div>
         </section>
 
         <table class="items-table">
@@ -130,7 +130,7 @@ window.onload = function() {
     document.getElementById('patient-name').textContent = invoiceData.patientName;
     document.getElementById('footer-customer-name').textContent = invoiceData.patientName;
     document.getElementById('patient-age').textContent = invoiceData.patientAge;
-    document.getElementById('patient-sex').textContent = invoiceData.patientSex;
+    document.getElementById('receipt-patient-sex').textContent = invoiceData.patientSex || 'N/A';
     document.getElementById('bill-date').textContent = invoiceData.billDate;
     document.getElementById('patient-diagnostic').textContent = 'As per consultation'; // or pass this data
 

@@ -57,6 +57,14 @@
                     <div class="form-grid">
                         <div class="form-group span-2"><label for="patient-name">Full Name</label><input type="text" id="patient-name" name="full_name" required></div>
                         <div class="form-group"><label for="patient-dob">Date of Birth</label><input type="date" id="patient-dob" name="date_of_birth" required></div>
+                        <div class="form-group">
+                            <label for="patient-gender">Sex</label>
+                            <select id="patient-gender" name="gender" required>
+                                <option value="">-- Select --</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
                         <div class="form-group"><label for="assigned-therapist">Assigned Therapist</label><select id="assigned-therapist" name="assigned_therapist_id" required><option value="">Loading...</option></select></div>
                         <div class="form-group"><label for="patient-phone">Phone Number</label><input type="tel" id="patient-phone" name="phone_number" required></div>
                         <div class="form-group"><label for="patient-email">Email Address</label><input type="email" id="patient-email" name="email"></div>

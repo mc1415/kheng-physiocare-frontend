@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const patientData = result.data;
             patientForm.querySelector('[name="full_name"]').value = patientData.full_name;
             patientForm.querySelector('[name="date_of_birth"]').value = patientData.date_of_birth;
+            patientForm.querySelector('[name="gender"]').value = patientData.gender || '';
             patientForm.querySelector('[name="phone_number"]').value = patientData.phone_number;
             patientForm.querySelector('[name="email"]').value = patientData.email;
             patientForm.querySelector('[name="address"]').value = patientData.address;

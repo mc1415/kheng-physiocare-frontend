@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             <p class="patient-id-large">#PT-${patient.id.toString().padStart(3, '0')}</p>
             <ul class="patient-meta-list">
                 <li><strong>DOB:</strong> ${patient.date_of_birth || 'N/A'}</li>
-                <li><strong>Gender:</strong> ${patient.gender || 'N/A'}</li>
+                <li><strong>Sex:</strong> ${patient.gender || 'N/A'}</li>
                 <li><strong>Therapist:</strong> ${patient.assigned_therapist_name || 'Unassigned'}</li>
             </ul>
         `;
