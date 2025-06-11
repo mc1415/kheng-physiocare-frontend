@@ -118,7 +118,6 @@
     </div>
 
 <script>
-// This script will receive data and populate the fields
 window.onload = function() {
     const invoiceData = JSON.parse(localStorage.getItem('currentInvoiceData'));
     if (!invoiceData) {
@@ -132,7 +131,10 @@ window.onload = function() {
     document.getElementById('patient-age').textContent = invoiceData.patientAge;
     document.getElementById('receipt-patient-sex').textContent = invoiceData.patientSex || 'N/A';
     document.getElementById('bill-date').textContent = invoiceData.billDate;
-    document.getElementById('patient-diagnostic').textContent = 'As per consultation'; // or pass this data
+    
+    // --- THIS LINE IS NOW FIXED ---
+    // It now gets the diagnostic data from the object we created in billing.js
+    document.getElementById('patient-diagnostic').textContent = invoiceData.diagnostic || 'As per consultation';
 
     // Populate Table Items
     const tableBody = document.getElementById('invoice-items-body');
@@ -162,6 +164,8 @@ window.onload = function() {
     // Auto-print and clean up
     setTimeout(() => {
         window.print();
+        // Optional: you might want to close the window after printing
+        // window.onafterprint = function() { window.close(); };
         localStorage.removeItem('currentInvoiceData');
     }, 500); // Delay to ensure content is rendered
 };
