@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- To be safe, let's paste the full, final code again ---
     async function populateTherapistDropdown() {
         if (!therapistSelect) return;
-        const result = await fetchApi('/api/staff');
+        const result = await fetchApi(\${API_BASE_URL}/api/``staff');
         if (result && result.success) {
             const staffList = result.data;
             therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>';
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     async function populateTherapistDropdown() {
         if (!therapistSelect) return;
-        const result = await fetchApi('/api/staff');
+        const result = await fetchApi(\${API_BASE_URL}/api/``staff');
         if (result && result.success) {
             therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>';
             result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); });
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         slotMaxTime: '20:00:00', // Set max time globally (8 PM)
         
         events: async function(fetchInfo, successCallback, failureCallback) {
-            const result = await fetchApi('/api/appointments');
+            const result = await fetchApi(\${API_BASE_URL}/api/``appointments');
             if (result && result.success) {
                 const formattedEvents = result.data.map(e => ({...e, backgroundColor: getEventColor(e.extendedProps.status), borderColor: getEventColor(e.extendedProps.status)}));
                 successCallback(formattedEvents);

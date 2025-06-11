@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let allPatients = [];
 
     async function fetchApi(url, options = {}) { try { const response = await fetch(url, options); if (!response.ok) { let e = 'API error.'; try { const t = await response.json(); e = t.message || e } catch (n) { e = response.statusText } throw new Error(e) } return response.status === 204 || options.method === 'DELETE' ? { success: !0 } : response.json(); } catch (t) { console.error(`API Error on ${url}:`, t); Toastify({ ...toastConfig, text: `Error: ${t.message}`, style: { background: "var(--red-accent)" } }).showToast(); return null } }
-    async function fetchAndRenderPatients() { if (!patientTableBody) return; patientTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Loading...</td></tr>`; const result = await fetchApi('/api/patients'); if (result && result.success) { allPatients = result.data; renderPatientTable(allPatients); } else { patientTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--red-accent);">Failed to fetch patient history.</td></tr>`; } }
+    async function fetchAndRenderPatients() { if (!patientTableBody) return; patientTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Loading...</td></tr>`; const result = await fetchApi(`${API_BASE_URL}/api/patients`); if (result && result.success) { allPatients = result.data; renderPatientTable(allPatients); } else { patientTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--red-accent);">Failed to fetch patient history.</td></tr>`; } }
     function renderPatientTable(patients) { if (!patientTableBody) return; patientTableBody.innerHTML = ''; if (patients.length === 0) { patientTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No patients found.</td></tr>`; return; } patients.forEach(patient => { const row = document.createElement('tr'); row.dataset.patientId = patient.raw_id; row.innerHTML = `<td>${patient.display_id}</td><td><div class="table-user-cell"><img src="${patient.avatarUrl}" alt="Avatar"><span>${patient.fullName}</span></div></td><td>${patient.phoneNumber || 'N/A'}</td><td>${patient.lastVisit}</td><td>${patient.assignedTherapist}</td><td><div class="action-buttons"><button class="btn-action view" title="View Details"><i class="fa-solid fa-eye"></i></button><button class="btn-action edit" title="Edit Patient"><i class="fa-solid fa-pencil"></i></button></div></td>`; patientTableBody.appendChild(row); }); }
-    async function populateTherapistDropdown() { if (!therapistSelect) return; const result = await fetchApi('/api/staff'); if (result && result.success) { therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>'; result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); }); } else { therapistSelect.innerHTML = '<option value="">Could not load therapists</option>'; } }
+    async function populateTherapistDropdown() { if (!therapistSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/staff`);; if (result && result.success) { therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>'; result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); }); } else { therapistSelect.innerHTML = '<option value="">Could not load therapists</option>'; } }
 
     async function openModalForEdit(patientId) {
         modalTitle.textContent = 'Edit Patient';
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         patientIdField.value = patientId;
         patientModal.style.display = 'flex';
         await populateTherapistDropdown();
-        const result = await fetchApi(`/api/patients/${patientId}`);
+        const result = await fetchApi(`${API_BASE_URL}/api/patients/${patientId}`);
         if (result && result.success) {
             const patientData = result.data;
             patientForm.querySelector('[name="full_name"]').value = patientData.full_name;
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(patientForm);
             const patientData = Object.fromEntries(formData.entries());
             delete patientData.patientId;
-            const url = isEditing ? `/api/patients/${patientId}` : '/api/patients';
+            const url = isEditing ? `${API_BASE_URL}/api/patients/${patientId}` : `${API_BASE_URL}/api/patients`;
             const method = isEditing ? 'PATCH' : 'POST';
             const result = await fetchApi(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patientData) });
             if (result) {
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
             toastEl.appendChild(buttonContainer);
             yesButton.onclick = async function() {
                 toast.hideToast();
-                const result = await fetchApi(`/api/patients/${patientId}`, { method: 'DELETE' });
+                const result = await fetchApi(`${API_BASE_URL}/api/patients/${patientId}`, { method: 'DELETE' });
                 if (result) {
                     Toastify({...toastConfig, text: "Patient deleted.", style: { background: "var(--red-accent)" }}).showToast();
                     patientModal.style.display = 'none';

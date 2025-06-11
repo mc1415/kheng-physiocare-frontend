@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // --- API Call to Fetch Patient Details ---
     async function fetchPatientDetails(id) {
         try {
-            const response = await fetch(`/api/patients/${id}`);
+            const response = await fetch(`${API_BASE_URL}/api/patients/${id}`);
             if (!response.ok) {
                 const errorResult = await response.json().catch(() => ({ message: 'Patient data not found.' }));
                 throw new Error(errorResult.message);

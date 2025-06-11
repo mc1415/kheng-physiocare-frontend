@@ -32,29 +32,25 @@
             <p id="login-error-message" class="error-message">Invalid credentials. Please try again.</p>
         </form>
     </div>
-
+<script src="js/global.js"></script>
 <script>
-    // --- REAL LOGIN SCRIPT WITH FETCH API ---
-
     const loginForm = document.getElementById('admin-login-form');
     const loginBtn = document.getElementById('login-btn');
     const errorMessage = document.getElementById('login-error-message');
 
-    // This function makes a REAL API call to our Node.js server
     async function realApiLogin(username, password) {
-        const response = await fetch('/api/admin/login', {
+        // THIS IS THE CORRECTED FETCH CALL
+        const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password }) // 'username' here is the email
+            body: JSON.stringify({ username, password })
         });
         
         const result = await response.json();
 
         if (!response.ok) {
-            // If the server responded with an error (e.g., 401 Unauthorized),
-            // throw an error to be caught by the catch block.
             throw new Error(result.message || 'Login failed');
         }
 
@@ -63,37 +59,28 @@
 
     loginForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-
-        // 1. Show loading state and hide previous errors
         loginBtn.classList.add('loading');
         errorMessage.style.display = 'none';
-
         const username = document.getElementById('admin-username').value;
         const password = document.getElementById('admin-password').value;
 
         try {
-            // 2. "await" the result of our real API call
             const result = await realApiLogin(username, password);
-
-            // 3. Handle success
             if (result.success) {
                 console.log('Successfully logged in user:', result.user.fullName);
                 localStorage.setItem('currentUser', JSON.stringify(result.user));
-
-                // Redirect to dashboard
                 window.location.href = 'dashboard.html';
             }
         } catch (error) {
-            // 4. Handle failure from the API
             console.error('Login error:', error.message);
-            errorMessage.textContent = error.message; // Show the server's actual error message
+            errorMessage.textContent = error.message;
             errorMessage.style.display = 'block';
         } finally {
-            // 5. Always remove loading state, whether success or failure
             loginBtn.classList.remove('loading');
         }
     });
 </script>
+
 
 </body>
 </html>

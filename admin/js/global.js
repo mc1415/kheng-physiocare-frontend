@@ -1,3 +1,5 @@
+const API_BASE_URL = 'https://kheng-physiocare-api.onrender.com';
+
 // admin/js/global.js
 document.addEventListener('DOMContentLoaded', function() {
     const userProfile = document.getElementById('user-profile-container');

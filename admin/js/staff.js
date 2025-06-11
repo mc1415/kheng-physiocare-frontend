@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchAndRenderStaff() {
         if (!staffTableBody) return;
         staffTableBody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
-        const result = await fetchApi('/api/staff');
+        const result = await fetchApi(`${API_BASE_URL}/api/staff`);
         if (result && result.success) {
             renderStaffTable(result.data);
         } else {
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            const result = await fetchApi('/api/staff', {
+            const result = await fetchApi(`${API_BASE_URL}/api/staff`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(staffData)

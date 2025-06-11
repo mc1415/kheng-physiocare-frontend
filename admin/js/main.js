@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
             initialView: 'timeGridWeek',
             headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' },
             events: async function(fetchInfo, successCallback, failureCallback) {
-                const result = await fetchApi('/api/appointments');
+                const result = await fetchApi(\${API_BASE_URL}/api/``appointments');
                 if (result && result.success) {
                     const formattedEvents = result.data.map(e => ({...e, backgroundColor: getEventColor(e.extendedProps.status), borderColor: getEventColor(e.extendedProps.status)}));
                     successCallback(formattedEvents);
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             const formData = new FormData(productForm);
             const productData = Object.fromEntries(formData.entries());
-            const result = await fetchApi('/api/products', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(productData)});
+            const result = await fetchApi(\${API_BASE_URL}/api/``products', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(productData)});
             if(result) {
                 Toastify({...toastConfig, text: "Product added successfully!", style: { background: "var(--green-accent)" } }).showToast();
                 addProductModal.style.display = 'none';

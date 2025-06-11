@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Main function to fetch all data and update the page ---
     async function loadDashboard() {
         try {
-            const response = await fetch('/api/dashboard/advanced-stats');
+            const response = await fetch(`${API_BASE_URL}/api/dashboard/advanced-stats`);
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({ message: 'Failed to load dashboard data' }));
                 throw new Error(errData.message);
