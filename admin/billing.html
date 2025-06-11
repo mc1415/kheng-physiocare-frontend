@@ -84,6 +84,10 @@
                     <div class="form-grid">
                         <div class="form-group"><label for="invoice-patient">Select Patient</label><select id="invoice-patient" name="patientId" required><option value="">-- Loading Patients --</option></select></div>
                         <div class="form-group"><label for="invoice-status">Status</label><select id="invoice-status" name="status" required><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select></div>
+                        <div class="form-group span-2">
+                            <label for="invoice-diagnostic">Diagnostic</label>
+                            <textarea id="invoice-diagnostic" name="diagnostic" rows="2" placeholder="e.g., Left Shoulder Impingement, Sciatica..."></textarea>
+                        </div>
                     </div>
                     <hr class="form-divider"><h4>Invoice Items</h4>
                     <div id="invoice-items-container"></div>
