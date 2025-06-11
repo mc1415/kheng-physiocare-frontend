@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
             toastEl.appendChild(buttonContainer);
             yesButton.onclick = async function() {
                 toast.hideToast();
-                const result = await fetchApi(`/api/appointments/${eventId}`, { method: 'DELETE' });
+                const result = await fetchApi(`${API_BASE_URL}/api/appointments/${eventId}`, { method: 'DELETE' });
                 if(result) {
                     Toastify({...toastConfig, text: "Appointment deleted.", style: { background: "var(--red-accent)" }}).showToast();
                     if(appointmentModal) appointmentModal.style.display = 'none';
