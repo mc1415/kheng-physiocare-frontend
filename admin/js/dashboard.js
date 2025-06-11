@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.success && result.data) {
                 const stats = result.data;
                 updateStatCard('stat-total-revenue', stats.todaysRevenue, stats.trends.revenue, true, true); // isCurrency=true, isPercentage=true
-                updateStatCard('stat-appointments-today', `${stats.appointmentsToday} / 20`, stats.trends.appointments);
+                updateStatCard('stat-appointments-today', `${stats.appointmentsToday}`, stats.trends.appointments);
                 updateStatCard('stat-new-patients', stats.newPatientsToday, stats.trends.newPatients);
                 updateStatCard('stat-cancellations', stats.cancellationsToday, 0); // No trend for cancellations
                 renderTodaysSchedule(stats.todaysSchedule);
