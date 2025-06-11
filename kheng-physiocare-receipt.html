@@ -131,9 +131,6 @@ window.onload = function() {
     document.getElementById('patient-age').textContent = invoiceData.patientAge;
     document.getElementById('receipt-patient-sex').textContent = invoiceData.patientSex || 'N/A';
     document.getElementById('bill-date').textContent = invoiceData.billDate;
-    
-    // --- THIS LINE IS NOW FIXED ---
-    // It now gets the diagnostic data from the object we created in billing.js
     document.getElementById('patient-diagnostic').textContent = invoiceData.diagnostic || 'As per consultation';
 
     // Populate Table Items
