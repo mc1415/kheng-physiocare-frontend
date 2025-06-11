@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Kheng PhysioCare</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Simple styles for the FAQ accordion */
+        .faq-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
+        }
+        .faq-item[open] {
+            background-color: var(--bg-light-gray);
+        }
+        .faq-question {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary-blue);
+            cursor: pointer;
+            padding: 20px;
+            position: relative;
+            display: block; /* Makes the entire area clickable */
+        }
+        /* Style the default arrow/marker */
+        .faq-question::-webkit-details-marker {
+            float: right;
+            margin-top: 5px;
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+        .faq-item[open] .faq-question::-webkit-details-marker {
+            transform: rotate(90deg);
+        }
+        .faq-answer {
+            padding: 0 20px 20px 20px;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Services</a>
+                <a href="new-patients.html">New Patients</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="header-buttons">
+                <a href="patient-portal.html" class="btn btn-secondary">Patient Portal</a>
+                <a href="#" class="btn btn-primary">Book Now</a>
+            </div>
+            <button class="mobile-nav-toggle" aria-label="Open navigation">☰</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="section" style="background-color: var(--bg-light-gray);">
+            <div class="container content-section">
+                <h1 class="section-title">Frequently Asked Questions</h1>
+                
+                <details class="faq-item">
+                    <summary class="faq-question">Do I need a doctor's referral?</summary>
+                    <div class="faq-answer">
+                        <p>No, you do not need a referral to see a physiotherapist in Cambodia. We are primary healthcare practitioners. However, if you have a referral from your doctor, please bring it with you as it can provide valuable information for your assessment.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">What is your cancellation policy?</summary>
+                    <div class="faq-answer">
+                        <p>We require at least 24 hours' notice for any cancellations or rescheduling of appointments. This allows us to offer the time slot to another patient in need. A cancellation fee may be applied for late cancellations or no-shows.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">How many sessions will I need?</summary>
+                    <div class="faq-answer">
+                        <p>The number of sessions varies greatly depending on your specific condition, its severity, and your personal goals. After your initial assessment, your physiotherapist will discuss a proposed treatment plan with you, including an estimated number of visits.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-question">Do you accept insurance?</summary>
+                    <div class="faq-answer">
+                        <p>We work with several major insurance providers. Please contact our reception with your insurance details, and we can verify your coverage for physiotherapy services. For other providers, we will provide you with a detailed receipt that you can use to submit a claim yourself.</p>
+                    </div>
+                </details>
+                
+                <details class="faq-item">
+                    <summary class="faq-question">What forms of payment do you accept?</summary>
+                    <div class="faq-answer">
+                        <p>We accept cash, ABA Pay, and most major credit cards.</p>
+                    </div>
+                </details>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <img src="images/logo.jpg" alt="Kheng PhysioCare Logo" style="max-width: 200px; background: white; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                <p id="battambang">សុខភាពរបស់អ្នក, ភារកិច្ចរបស់យើង</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Services</a>
+                <a href="new-patients.html">New Patients</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="faq.html">FAQ</a>
+                <a href="blog.html">Blog</a>
+                <a href="admin/index.html">Admin Portal</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <p>#33B, Veng Sreng St.</p>
+                <p>Chom Chao 1, Pou Senchey</p>
+                <p>Phnom Penh, Cambodia</p>
+                <p>Phone: +855 89 877 276</p>
+                <p>Email: info@khengphysio.com</p>
+            </div>
+            <div class="footer-col">
+                <h4>Opening Hours</h4>
+                <p>Mon - Fri: 8:00 AM - 7:00 PM</p>
+                <p>Saturday: 9:00 AM - 3:00 PM</p>
+                <p>Sunday: Closed</p>
+            </div>
+        </div>
+        <div class="container copyright">
+            <p>© 2024 Kheng PhysioCare. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

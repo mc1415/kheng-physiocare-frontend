@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - KHENG PHYSIOCARE</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Koulen&family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        @page { size: A5; margin: 10mm; }
+
+        body { font-family: 'Times New Roman', Times, serif; background-color: #f0f0f0; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-koulen { font-family: 'Koulen', cursive; }
+        .font-battambang { font-family: 'Battambang', cursive; }
+
+        .invoice-box { 
+            width: 148mm; 
+            padding: 25px; 
+            background: #fff; 
+            border: 1px solid #ddd; 
+            font-size: 11pt; 
+            margin: 20px auto; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 15px; margin-top: 15px; }
+        .header .logo { max-width: 150px; height: auto; }
+        .header .clinic-info { text-align: center; max-width: 70%; }
+        .clinic-info .khmer-title { font-size: 1.4em; line-height: 1.1; margin: 0; }
+        .clinic-info .english-title { margin: 3px 0 6px 0; font-size: 1.15em; font-weight: bold; }
+        .clinic-info .clinic-contact p { font-size: 0.7em; margin: 0; line-height: 1.3; }
+        
+        .patient-info { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 20px; font-size: 10pt; line-height: 1.4; }
+        .patient-info div { padding-right: 10px; }
+        .patient-info strong { display: inline-block; width: 90px; }
+
+        .items-table { width: 100%; border-collapse: collapse; }
+        .items-table th, .items-table td { border: 1px solid #000; padding: 5px; text-align: center; font-size: 0.9em; }
+        .items-table thead th { font-weight: bold; background-color: #f2f2f2; }
+        .items-table td:nth-child(2) { text-align: left; }
+
+        .totals-section { width: 50%; margin-left: auto; margin-top: 15px; }
+        .totals-table { width: 100%; border-collapse: collapse; }
+        .totals-table td { border: 1px solid #000; padding: 5px; font-size: 0.9em; font-weight: bold; }
+        .totals-table td:first-child { width: 60%; }
+
+        .footer { 
+            margin-top: 40px;
+            padding-top: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            font-size: 0.9em; 
+        }
+        .footer .prepared-by { text-align: center; }
+        .footer .signature { width: 100px; height: auto; margin: 15px 0; }
+
+        @media print {
+            body { margin: 0; background: #fff; }
+            .invoice-box {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-box" id="invoice">
+        <header class="header">
+            <img src="images/logo.jpg" alt="PhysioCare Logo" class="logo">
+            <div class="clinic-info">
+                <p class="khmer-title font-koulen">បន្ទប់ព្យាបាលដោយចលនា ស្រ៊ិន លាងខេង</p>
+                <h1 class="english-title font-poppins">KHENG PHYSIOCARE</h1>
+                <div class="clinic-contact">
+                    <p class="khmer-text font-battambang">ផ្ទះលេខ ៣៣ខ ផ្លូវ វេងស្រេង សង្កាត់ចោមចៅ១ ខណ្ឌ ពោធិ៍សែនជ័យ រាជធានីភ្នំពេញ</p>
+                    <p class="khmer-text font-battambang">លេខទូរស័ព្ទ: 089 877 276 / 070 301 655</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="patient-info">
+            <div><strong>Patient's Name</strong>: <span id="patient-name"></span></div>
+            <div><strong>Age</strong>: <span id="patient-age"></span></div>
+            <div><strong>Diagnostic</strong>: <span id="patient-diagnostic"></span></div>
+            <div><strong>Bill Date</strong>: <span id="bill-date"></span></div>
+            <div><strong>Sex</strong>: <span id="patient-sex"></span></div>
+        </section>
+
+        <table class="items-table">
+            <thead>
+                <tr><th>N°</th><th>SERVICE</th><th>QTY</th><th>PRICE($)</th><th>DISC($)</th><th>TOTAL PRICE($)</th></tr>
+            </thead>
+            <tbody id="invoice-items-body"></tbody>
+        </table>
+
+        <div class="totals-section">
+            <table class="totals-table">
+                <tbody>
+                    <tr><td>Total Discount</td><td id="total-discount"></td></tr>
+                    <tr><td>Total Amount</td><td id="total-amount"></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="footer">
+            <div><strong>Customer Name:</strong> <span id="footer-customer-name"></span></div>
+            <div class="prepared-by">
+                <strong>Prepared By: Srin LeangKheng</strong><br>
+                <img src="images/signature.png" alt="Signature" class="signature"><br>
+            </div>
+        </footer>
+    </div>
+
+<script>
+// This script will receive data and populate the fields
+window.onload = function() {
+    const invoiceData = JSON.parse(localStorage.getItem('currentInvoiceData'));
+    if (!invoiceData) {
+        document.body.innerHTML = '<h1>No invoice data found. Please generate an invoice from the admin panel.</h1>';
+        return;
+    }
+
+    // Populate Patient Info
+    document.getElementById('patient-name').textContent = invoiceData.patientName;
+    document.getElementById('footer-customer-name').textContent = invoiceData.patientName;
+    document.getElementById('patient-age').textContent = invoiceData.patientAge;
+    document.getElementById('patient-sex').textContent = invoiceData.patientSex;
+    document.getElementById('bill-date').textContent = invoiceData.billDate;
+    document.getElementById('patient-diagnostic').textContent = 'As per consultation'; // or pass this data
+
+    // Populate Table Items
+    const tableBody = document.getElementById('invoice-items-body');
+    let grandTotal = 0;
+    let grandDiscount = 0;
+    
+    invoiceData.items.forEach((item, index) => {
+        const row = tableBody.insertRow();
+        const itemTotal = (item.qty * item.price) - item.disc;
+        grandTotal += itemTotal;
+        grandDiscount += parseFloat(item.disc);
+        
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.service}</td>
+            <td>${item.qty}</td>
+            <td>${parseFloat(item.price).toFixed(2)}</td>
+            <td>${parseFloat(item.disc).toFixed(2)}</td>
+            <td>${itemTotal.toFixed(2)}</td>
+        `;
+    });
+
+    // Populate Totals
+    document.getElementById('total-discount').textContent = `${grandDiscount.toFixed(2)} $`;
+    document.getElementById('total-amount').textContent = `${grandTotal.toFixed(2)} $`;
+    
+    // Auto-print and clean up
+    setTimeout(() => {
+        window.print();
+        localStorage.removeItem('currentInvoiceData');
+    }, 500); // Delay to ensure content is rendered
+};
+</script>
+
+</body>
+</html>

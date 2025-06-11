@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Kheng PhysioCare Admin</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <!-- =========== SIDEBAR =========== -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="../images/logo.jpg" alt="Logo" class="sidebar-logo">
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="inventory.html"><i class="fa-solid fa-pills"></i><span>Inventory</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span>Staff</span></a>
+                </li>
+                <hr class="sidebar-divider">
+                <li class="menu-item">
+                    <a href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- =========== MAIN CONTENT =========== -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <button class="icon-button"><i class="fa-regular fa-bell"></i></button>
+                    <div class="user-profile" id="user-profile-container">
+                        <!-- Content will be loaded by JS -->
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- General Report Card -->
+                <div class="card card-span-2">
+                    <div class="card-header">
+                        <h3>General Report</h3>
+                        <div class="time-filter">
+                            <button class="active">Daily</button>
+                            <button>Weekly</button>
+                        </div>
+                    </div>
+                    <div class="report-grid">
+                        <div class="report-item">
+                            <p class="report-title">TODAY'S REVENUE</p>
+                            <p class="report-value" id="stat-total-revenue">Loading...</p>
+                            <p class="report-trend positive">+5%</p> <!-- Trend is static for now -->
+                        </div>
+                        <div class="report-item">
+                            <p class="report-title">APPOINTMENTS TODAY</p>
+                            <p class="report-value" id="stat-appointments-today">Loading...</p>
+                            <p class="report-trend negative">-2</p> <!-- Trend is static for now -->
+                        </div>
+                        <div class="report-item">
+                            <p class="report-title">NEW PATIENTS TODAY</p>
+                            <p class="report-value" id="stat-new-patients">Loading...</p>
+                            <p class="report-trend positive">+1</p> <!-- Trend is static for now -->
+                        </div>
+                        <div class="report-item">
+                            <p class="report-title">CANCELLATIONS TODAY</p>
+                            <p class="report-value" id="stat-cancellations">Loading...</p>
+                            <p class="report-trend neutral">-</p> <!-- Trend is static for now -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consultations Chart Card -->
+                <div class="card card-span-2">
+                     <div class="card-header">
+                        <h3>Consultations</h3>
+                        <span>Last 30 Days</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="consultationsChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Patients by Age Card -->
+                <div class="card">
+                     <div class="card-header">
+                        <h3>Patients by Age</h3>
+                    </div>
+                    <div class="card-body">
+                         <canvas id="ageChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Today's Schedule Card -->
+                <div class="card card-span-3">
+                    <div class="card-header">
+                        <h3>Today's Schedule</h3>
+                        <a href="#" class="view-all-link">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Therapist</th>
+                                    <th>Service</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <!-- The table body is now empty and has an ID for our script to target -->
+                            <tbody>
+                                <!-- Real data will be loaded here by dashboard.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script src="js/global.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>

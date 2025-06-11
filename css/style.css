@@ -1,0 +1,342 @@
+/* Kheng PhysioCare Stylesheet */
+/* ------------------------- */
+
+/* --- Variables and Fonts --- */
+
+@import url('https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+  --primary-blue: #0033a0;  /* Darker blue for text, titles */
+  --accent-cyan: #00a9e0;   /* Lighter blue from the icon */
+  --accent-green: #8CC63F; /* Green from the icon dots */
+  --dark-text: #333333;
+  --light-text: #ffffff;
+  --bg-light-gray: #f8f9fa;
+  --border-color: #dee2e6;
+  --font-family: 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif, Battambang, Poppins;
+}
+
+body {
+  font-family: Poppins;
+  color: var(--dark-text);
+  background-color: #fff;
+}
+
+#battambang {
+  font-family: 'Battambang', cursive;
+}
+
+/* --- General & Utility Classes --- */
+.container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section {
+  padding: 80px 0;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 2.5rem;
+  color: var(--primary-blue);
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--accent-green);
+  color: var(--light-text);
+  border: 2px solid var(--accent-green);
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  color: var(--accent-green);
+}
+
+.btn-secondary {
+  background-color: var(--accent-cyan);
+  color: var(--light-text);
+  border: 2px solid var(--accent-cyan);
+}
+
+.btn-secondary:hover {
+  background-color: transparent;
+  color: var(--accent-cyan);
+}
+
+/* --- Header & Navigation --- */
+.header {
+  background: var(--light-text);
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  max-width: 120px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  font-weight: bold;
+  color: var(--primary-blue);
+  padding-bottom: 5px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  border-bottom-color: var(--accent-green);
+}
+
+.header-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.mobile-nav-toggle {
+    display: none; /* Hidden on desktop */
+}
+
+/* --- Footer --- */
+.footer {
+  background-color: var(--primary-blue);
+  color: var(--light-text);
+  padding: 50px 0;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+.footer-col h4 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--accent-green);
+}
+
+.footer-col p, .footer-col a {
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.footer-col a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.copyright {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  opacity: 0.8;
+}
+
+/* --- Homepage Specific --- */
+.hero {
+  position: relative; /* Needed for the overlay */
+  padding: 120px 0; /* Increased padding for better visual effect */
+  text-align: center;
+  color: var(--light-text); /* Change text color to white for contrast */
+  height: 450px;
+  
+  /* --- Background Image Setup --- */
+  background-image: linear-gradient(rgba(0, 40, 85, 0.6), rgba(0, 40, 85, 0.6)), url('../images/hero.png');
+  background-size: cover; /* Ensures the image covers the entire area */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat;
+ 
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.hero.loaded {
+  opacity: 1;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  color: var(--primary-blue);
+  line-height: 1.2;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 20px auto 40px;
+}
+
+.services-overview-grid, .team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  font-family: Battambang;
+}
+
+.service-card, .team-member-card, .testimonial-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 25px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover, .team-member-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.service-card i, .team-member-card img {
+    margin-bottom: 20px;
+}
+.service-card i { /* Placeholder for icons */
+    font-size: 3rem;
+    color: var(--accent-cyan);
+}
+
+.team-member-card img {
+    width: 150px;
+    height: 150px;
+    border-radius: 20%;
+    object-fit: cover;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .team-member-card {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .team-member-card img {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .team-member-info {
+    text-align: left;
+  }
+}
+
+.testimonials {
+    background-color: var(--bg-light-gray);
+}
+.testimonial-card {
+    background: white;
+}
+.testimonial-card p.quote {
+    font-style: italic;
+    margin-bottom: 20px;
+}
+.testimonial-card p.author {
+    font-weight: bold;
+    color: var(--primary-blue);
+}
+
+/* --- Generic Page Content --- */
+.content-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.content-section h2, .content-section h3 {
+    color: var(--primary-blue);
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+/* --- Contact Page --- */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: flex-start;
+}
+.contact-form .form-group {
+    margin-bottom: 20px;
+}
+.contact-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.contact-form input, .contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+.map-container iframe {
+    width: 100%;
+    height: 450px;
+    border: 0;
+    border-radius: 8px;
+}
+
+/* --- Responsive Design for Mobile --- */
+@media (max-width: 992px) {
+  .nav-links, .header-buttons {
+    display: none;
+  }
+  .mobile-nav-toggle {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--primary-blue);
+  }
+  .header.nav-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 75px; /* Height of header */
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .header.nav-open .header-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 0 20px 20px;
+      position: absolute;
+      top: 250px; /* Adjust based on nav-links height */
+      width: 100%;
+      left:0;
+      background: white;
+  }
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}

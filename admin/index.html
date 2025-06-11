@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Kheng PhysioCare</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        <div class="login-header">
+            <img src="../images/logo.jpg" alt="Kheng PhysioCare Logo" class="login-logo">
+            <h2>Admin Portal</h2>
+            <p>Please sign in to continue</p>
+        </div>
+
+        <form id="admin-login-form" class="login-form">
+            <div class="form-group">
+                <label for="admin-username">Email Address</label>
+                <input type="email" id="admin-username" name="username" placeholder="e.g., admin@khengphysio.com" required>
+            </div>
+            <div class="form-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" name="password" placeholder="Your Password" required>
+            </div>
+            <button type="submit" id="login-btn" class="btn-login">
+                <span class="btn-text">Sign In</span>
+                <div class="spinner"></div>
+            </button>
+            <p id="login-error-message" class="error-message">Invalid credentials. Please try again.</p>
+        </form>
+    </div>
+
+<script>
+    // --- REAL LOGIN SCRIPT WITH FETCH API ---
+
+    const loginForm = document.getElementById('admin-login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const errorMessage = document.getElementById('login-error-message');
+
+    // This function makes a REAL API call to our Node.js server
+    async function realApiLogin(username, password) {
+        const response = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password }) // 'username' here is the email
+        });
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            // If the server responded with an error (e.g., 401 Unauthorized),
+            // throw an error to be caught by the catch block.
+            throw new Error(result.message || 'Login failed');
+        }
+
+        return result;
+    }
+
+    loginForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        // 1. Show loading state and hide previous errors
+        loginBtn.classList.add('loading');
+        errorMessage.style.display = 'none';
+
+        const username = document.getElementById('admin-username').value;
+        const password = document.getElementById('admin-password').value;
+
+        try {
+            // 2. "await" the result of our real API call
+            const result = await realApiLogin(username, password);
+
+            // 3. Handle success
+            if (result.success) {
+                console.log('Successfully logged in user:', result.user.fullName);
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        } catch (error) {
+            // 4. Handle failure from the API
+            console.error('Login error:', error.message);
+            errorMessage.textContent = error.message; // Show the server's actual error message
+            errorMessage.style.display = 'block';
+        } finally {
+            // 5. Always remove loading state, whether success or failure
+            loginBtn.classList.remove('loading');
+        }
+    });
+</script>
+
+</body>
+</html>

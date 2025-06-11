@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Kheng PhysioCare</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Services</a>
+                <a href="new-patients.html">New Patients</a>
+                <a href="contact.html" class="active">Contact</a>
+            </nav>
+            <div class="header-buttons">
+                <a href="patient-portal.html" class="btn btn-secondary">Patient Portal</a>
+                <a href="#" class="btn btn-primary">Book Now</a>
+            </div>
+            <button class="mobile-nav-toggle" aria-label="Open navigation">☰</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="section">
+            <div class="container">
+                <h1 class="section-title">Get In Touch</h1>
+                <p style="text-align:center; margin-top:-30px; margin-bottom: 50px;">We're here to help. Contact us to ask a question or to book an appointment.</p>
+                
+                <div class="contact-grid">
+                    <div class="contact-details">
+                        <h3>Our Clinic</h3>
+                        <p><strong>Address:</strong><br>#33B, Veng Sreng St, Chom Chao 1, Pou Senchey<br>Phnom Penh, Cambodia</p>
+                        <p><strong>Phone:</strong><br><a href="tel:+85512345678">+855 89 877 276</a></p>
+                        <p><strong>Email:</strong><br><a href="mailto:info@khengphysio.com">info@khengphysio.com</a></p>
+                        
+                        <h3 style="margin-top:30px;">Opening Hours</h3>
+                        <p><strong>Monday - Friday:</strong> 8:00 AM - 7:00 PM</p>
+                        <p><strong>Saturday:</strong> 9:00 AM - 3:00 PM</p>
+                        <p><strong>Sunday:</strong> Closed</p>
+
+                        <div class="map-container" style="margin-top:30px;">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d345.53409968797575!2d104.85472049356218!3d11.532329740255214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310951b2216f0d77%3A0x53addcda32c3051a!2z4Z6U4Z6T4Z-S4Z6R4Z6U4Z-L4Z6W4Z-S4Z6Z4Z624Z6U4Z624Z6b4Z6K4Z-E4Z6Z4Z6F4Z6b4Z6T4Z62IFNSSU4gTEVBTkdLSEVORw!5e0!3m2!1sen!2skh!4v1749398617517!5m2!1sen!2skh" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form">
+                        <h3>Send Us a Message</h3>
+                        <p>For general inquiries only. Please do not send sensitive medical information through this form. To book an appointment, use the "Book Now" button.</p>
+                        <form action="#" method="POST"> <!-- Replace # with your Formspree URL -->
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" rows="6" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <img src="images/logo.jpg" alt="Kheng PhysioCare Logo" style="max-width: 200px; background: white; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                <p id="battambang">សុខភាពរបស់អ្នក, ភារកិច្ចរបស់យើង</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Services</a>
+                <a href="new-patients.html">New Patients</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="faq.html">FAQ</a>
+                <a href="blog.html">Blog</a>
+                <a href="admin/index.html">Admin Portal</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <p>#33B, Veng Sreng St.</p>
+                <p>Chom Chao 1, Pou Senchey</p>
+                <p>Phnom Penh, Cambodia</p>
+                <p>Phone: +855 89 877 276</p>
+                <p>Email: info@khengphysio.com</p>
+            </div>
+            <div class="footer-col">
+                <h4>Opening Hours</h4>
+                <p>Mon - Fri: 8:00 AM - 7:00 PM</p>
+                <p>Saturday: 9:00 AM - 3:00 PM</p>
+                <p>Sunday: Closed</p>
+            </div>
+        </div>
+        <div class="container copyright">
+            <p>© 2024 Kheng PhysioCare. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

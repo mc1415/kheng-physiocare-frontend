@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog & Resources - Kheng PhysioCare</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .blog-post {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 40px;
+            overflow: hidden; /* To contain the border-radius on the image */
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-post-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .blog-post-content {
+            padding: 30px;
+        }
+        .blog-post-content h3 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+        .blog-post-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .blog-post-excerpt {
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .read-more-link {
+            font-weight: bold;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .read-more-link:hover {
+            color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Services</a>
+                <a href="new-patients.html">New Patients</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blog</a>
+            </nav>
+            <div class="header-buttons">
+                <a href="patient-portal.html" class="btn btn-secondary">Patient Portal</a>
+                <a href="#" class="btn btn-primary">Book Now</a>
+            </div>
+            <button class="mobile-nav-toggle" aria-label="Open navigation">☰</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="section" style="background-color: var(--bg-light-gray);">
+            <div class="container content-section">
+                <h1 class="section-title">Patient Resources & Blog</h1>
+                <p style="text-align:center; margin-top:-30px; margin-bottom: 50px;">Information and advice from our experts to help you stay healthy and informed.</p>
+
+                <!-- Blog Post 1 -->
+                <article class="blog-post">
+                    <img src="images/blog-back-pain.jpg" alt="Person stretching at a desk" class="blog-post-image">
+                    <div class="blog-post-content">
+                        <h3>5 Stretches to Relieve Desk-Related Back Pain</h3>
+                        <p class="blog-post-meta">Posted on: October 26, 2023</p>
+                        <p class="blog-post-excerpt">If you spend hours at a desk, you're no stranger to back pain. The prolonged sitting posture can put immense strain on your lumbar spine. Here are five simple yet effective stretches you can do right at your desk...</p>
+                        <a href="#" class="read-more-link">Read More »</a>
+                    </div>
+                </article>
+
+                <!-- Blog Post 2 -->
+                <article class="blog-post">
+                    <img src="images/blog-heel-pain.jpg" alt="Close up of a person's heel" class="blog-post-image">
+                    <div class="blog-post-content">
+                        <h3>Understanding Plantar Fasciitis: Causes and Treatments</h3>
+                        <p class="blog-post-meta">Posted on: September 15, 2023</p>
+                        <p class="blog-post-excerpt">Plantar fasciitis, the most common cause of heel pain, can be a frustrating condition. In this article, we explore the common causes and the most effective physiotherapy treatments, including shockwave therapy...</p>
+                        <a href="#" class="read-more-link">Read More »</a>
+                    </div>
+                </article>
+                
+                <!-- Blog Post 3 -->
+                <article class="blog-post">
+                    <img src="images/blog-ice-heat.jpg" alt="Ice pack and heat pack" class="blog-post-image">
+                     <div class="blog-post-content">
+                        <h3>Should You Use Ice or Heat for an Injury?</h3>
+                        <p class="blog-post-meta">Posted on: August 02, 2023</p>
+                        <p class="blog-post-excerpt">It's one of the most common questions: ice or heat? The answer depends on the type and timing of the injury. Using the wrong one can delay healing. We break down the science so you know exactly what to do...</p>
+                        <a href="#" class="read-more-link">Read More »</a>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <img src="images/logo.jpg" alt="Kheng PhysioCare Logo" style="max-width: 200px; background: white; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                <p>សុខភាពរបស់អ្នក, ការព្យាបាលរបស់យើង</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Services</a>
+                <a href="new-patients.html">New Patients</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="blog.html">Blog</a>
+                <a href="faq.html">FAQ</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <p>#123, St 456, Toul Tom Poung</p>
+                <p>Phnom Penh, Cambodia</p>
+                <p>Phone: +855 12 345 678</p>
+                <p>Email: info@khengphysio.com</p>
+            </div>
+            <div class="footer-col">
+                <h4>Opening Hours</h4>
+                <p>Mon - Fri: 8:00 AM - 7:00 PM</p>
+                <p>Saturday: 9:00 AM - 3:00 PM</p>
+                <p>Sunday: Closed</p>
+            </div>
+        </div>
+        <div class="container copyright">
+            <p>© 2024 Kheng PhysioCare. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
