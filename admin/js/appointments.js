@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- To be safe, let's paste the full, final code again ---
     async function populateTherapistDropdown() {
         if (!therapistSelect) return;
-        const result = await fetchApi(\${API_BASE_URL}/api/``staff');
+        const result = await fetchApi(`${API_BASE_URL}/api/staff`);
         if (result && result.success) {
             const staffList = result.data;
             therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>';
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     async function populateTherapistDropdown() {
         if (!therapistSelect) return;
-        const result = await fetchApi(\${API_BASE_URL}/api/``staff');
+        const result = await fetchApi(`${API_BASE_URL}/api/staff`);
         if (result && result.success) {
             therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>';
             result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); });
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         slotMaxTime: '20:00:00', // Set max time globally (8 PM)
         
         events: async function(fetchInfo, successCallback, failureCallback) {
-            const result = await fetchApi(\${API_BASE_URL}/api/``appointments');
+            const result = await fetchApi(`${API_BASE_URL}/api/appointments`);
             if (result && result.success) {
                 const formattedEvents = result.data.map(e => ({...e, backgroundColor: getEventColor(e.extendedProps.status), borderColor: getEventColor(e.extendedProps.status)}));
                 successCallback(formattedEvents);
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
         eventDrop: async function(info) {
             const event = info.event;
             const updatedEvent = { title: event.title, start: event.start.toISOString(), end: event.end ? event.end.toISOString() : null, therapist_id: event.extendedProps.therapist_id, status: event.extendedProps.status };
-            const result = await fetchApi(`/api/appointments/${event.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedEvent) });
+            const result = await fetchApi(`${API_BASE_URL}/api/appointments/${event.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedEvent) });
             if (!result) info.revert();
             else Toastify({...toastConfig, text: "Appointment rescheduled!", style: { background: "var(--primary-accent)" }}).showToast();
         },
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const eventId = document.getElementById('eventId').value;
             const isEditing = !!eventId;
             const appointmentData = { title: document.getElementById('appointment-title').value, start: document.getElementById('start-time').value, end: document.getElementById('end-time').value, therapist_id: document.getElementById('therapist').value, status: document.getElementById('status').value };
-            const url = isEditing ? `/api/appointments/${eventId}` : '/api/appointments';
+            const url = isEditing ? `${API_BASE_URL}/api/appointments/${eventId}` : `${API_BASE_URL}/api/appointments`;
             const method = isEditing ? 'PATCH' : 'POST';
             const result = await fetchApi(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appointmentData) });
             if (result) {

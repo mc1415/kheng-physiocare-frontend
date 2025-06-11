@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         staffList.forEach(staff => {
             const row = document.createElement('tr');
+            row.dataset.staffId = staff.id;
             const roleClass = (staff.role || 'default').toLowerCase().replace(/\s+/g, '-');
             const avatarSrc = staff.avatar_url || '../images/avatar-generic.png';
             row.innerHTML = `
@@ -53,6 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
             staffTableBody.appendChild(row);
         });
     }
+
+        function openModalForEdit(staffId) {
+            console.log("Attempting to edit staff with ID:", staffId);
+            Toastify({...toastConfig, text: "Edit functionality not yet implemented."}).showToast();
+            // Later, you will fetch staff data here and populate the same modal used for adding.
+        }
+
 
     // --- MODAL EVENT LISTENERS ---
     if (addStaffBtn) {
@@ -71,6 +79,17 @@ document.addEventListener('DOMContentLoaded', function() {
             addStaffModal.style.display = 'none';
         }
     });
+
+        if (staffTableBody) {
+        staffTableBody.addEventListener('click', (event) => {
+            const editButton = event.target.closest('.btn-action.edit');
+            if (editButton) {
+                // Find the parent table row and get the staff ID from its dataset
+                const staffId = editButton.closest('tr').dataset.staffId;
+                openModalForEdit(staffId);
+            }
+        });
+    }
 
     // --- FORM SUBMISSION ---
     if (staffForm) {

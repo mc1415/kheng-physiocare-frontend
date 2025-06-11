@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Load Initial Settings ---
     async function loadSettings() {
-        const result = await fetchApi(\${API_BASE_URL}/api/``settings');
+        const result = await fetchApi(`${API_BASE_URL}/api/settings`);
         if (result && result.success) {
             const settings = result.data;
             document.getElementById('clinic-name').value = settings.clinic_name;
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 phone_number: formData.get('phone_number')
             };
             
-            const result = await fetchApi(\${API_BASE_URL}/api/``settings', {
+            const result = await fetchApi(`${API_BASE_URL}/api/settings`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(settingsData)
