@@ -169,7 +169,7 @@ body {
   
   /* --- Background Image Setup --- */
   background-image: linear-gradient(rgba(0, 40, 85, 0.6), rgba(0, 40, 85, 0.6)), url('../images/KPT2.png');
-  background-size: cover; /* Ensures the image covers the entire area */
+  background-size: auto 200px; /* Ensures the image covers the entire area */
   background-position: center; /* Centers the image */
   background-repeat: no-repeat;
  
