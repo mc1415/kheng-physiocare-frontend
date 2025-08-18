@@ -1,13 +1,21 @@
 // Handles Supabase Auth sign-in and patient data retrieval for the portal
-// Default to the actual Supabase project URL instead of the placeholder API
-const SUPABASE_URL = window.SUPABASE_URL || 'https://trdndjmgcfdflxmrwjwnf.supabase.co';
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydndqbWdjZmRmbHhtcndqd25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MjQ1MTEsImV4cCI6MjA2NTEwMDUxMX0.wN261h6_DmYTEskxsk5RoNkMeecFWuGRpo6BI7rdbCc';
+// Use deployed Supabase credentials, falling back to defaults when globals
+// contain placeholders or are undefined
+const DEFAULT_SUPABASE_URL = 'https://trdndjmgcfdflxmrwjwnf.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydndqbWdjZmRmbHhtcndqd25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MjQ1MTEsImV4cCI6MjA2NTEwMDUxMX0.wN261h6_DmYTEskxsk5RoNkMeecFWuGRpo6BI7rdbCc';
+
+function resolveSupabaseValue(value, placeholder, fallback) {
+  return (typeof value === 'string' && value.trim() && !value.includes(placeholder))
+    ? value
+    : fallback;
+}
+
+const SUPABASE_URL = resolveSupabaseValue(window.SUPABASE_URL, 'YOUR_SUPABASE_PROJECT_URL', DEFAULT_SUPABASE_URL);
+const SUPABASE_ANON_KEY = resolveSupabaseValue(window.SUPABASE_ANON_KEY, 'YOUR_SUPABASE_ANON_KEY', DEFAULT_SUPABASE_ANON_KEY);
 const { createClient } = supabase;
 
-// Guard against placeholder credentials which cause JSON parsing errors
-if (SUPABASE_URL.includes('YOUR_SUPABASE_PROJECT_URL') ||
-    SUPABASE_ANON_KEY.includes('YOUR_SUPABASE_ANON_KEY')) {
-  console.error('Supabase credentials are not configured.');
+if (SUPABASE_URL === DEFAULT_SUPABASE_URL && SUPABASE_ANON_KEY === DEFAULT_SUPABASE_ANON_KEY) {
+  console.warn('Using default Supabase credentials.');
 }
 
 const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
