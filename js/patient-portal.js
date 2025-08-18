@@ -52,9 +52,14 @@ async function handleLogin(event) {
     loginError.style.display = 'none';
     await loadDashboard();
   } catch (err) {
-    const message = err instanceof SyntaxError
-      ? 'Received invalid response from authentication service.'
-      : err.message || 'Unexpected error occurred.';
+    let message;
+    if (err instanceof SyntaxError) {
+      message = 'Received invalid response from authentication service.';
+    } else if (err instanceof TypeError) {
+      message = 'Unable to reach authentication service. Check network or CORS settings.';
+    } else {
+      message = err.message || 'Unexpected error occurred.';
+    }
     loginError.textContent = message;
     loginError.style.display = 'block';
   }
