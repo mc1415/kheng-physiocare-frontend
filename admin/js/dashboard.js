@@ -136,9 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateStatCard('stat-appointments-today', 'Error', 0);
             updateStatCard('stat-new-patients', 'Error', 0);
             updateStatCard('stat-cancellations', 'Error', 0);
-            // Show empty schedule and placeholder charts when API fails
-            renderTodaysSchedule([]);
-            initializeCharts();
         }
     }
 
