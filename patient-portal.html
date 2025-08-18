@@ -87,15 +87,15 @@
             <p>Please enter your credentials to access your file.</p>
             <form id="login-form" class="contact-form" style="max-width: 400px; margin: 30px auto;">
                 <div class="form-group">
-                    <label for="username">Username (try: patient)</label>
-                    <input type="text" id="username" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password (try: 1234)</label>
+                    <label for="password">Password</label>
                     <input type="password" id="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
-                <p id="login-error" style="display: none;">Invalid username or password.</p>
+                <p id="login-error" style="display: none;"></p>
             </form>
         </div>
 
@@ -112,6 +112,13 @@
                     <div class="portal-card">
                         <h3>Your Next Appointment</h3>
                         <div id="next-appointment">
+                            <!-- JS will populate this -->
+                        </div>
+                    </div>
+
+                    <div class="portal-card">
+                        <h3>Appointment History</h3>
+                        <div id="appointment-history">
                             <!-- JS will populate this -->
                         </div>
                     </div>
@@ -147,144 +154,8 @@
         </div>
     </div>
 
-<script>
-// --- THIS IS A SIMULATION ---
-// In a real system, this data would come from a secure server and database.
-
-const fakeDatabase = {
-    patient: {
-        name: "Eung Meng Chhorng",
-        username: "patient",
-        password: "1234"
-    },
-    appointments: [
-        { id: 1, service: "Physiotherapy Follow-Up", therapist: "PT. Srin Leangkheng", date: "2024-12-05T10:00:00", status: "Upcoming" },
-        { id: 2, service: "Initial Assessment", therapist: "Dr. Lay Mouyly", date: "2024-11-15T14:30:00", status: "Completed" }
-    ],
-    invoices: [
-        { id: "R-00124", date: "2024-10-18", amount: "45.00", status: "Paid" },
-        { id: "R-00135", date: "2024-11-15", amount: "60.00", status: "Unpaid" }
-    ],
-    exercises: [
-        { name: "Cat-Cow Stretch", instructions: "Perform 2 sets of 15 repetitions, twice daily.", videoUrl: "https://www.youtube.com/embed/tS2P_s2ga_c" },
-        { name: "Glute Bridge", instructions: "Hold for 5 seconds, perform 3 sets of 12 repetitions.", videoUrl: "https://www.youtube.com/embed/8bbE64NuDTU" }
-    ],
-    todos: [
-        { text: "Complete Pre-Visit Health Survey", new: true },
-        { text: "Confirm your insurance details", new: false }
-    ]
-};
-
-// --- DOM ELEMENT REFERENCES ---
-const loginScreen = document.getElementById('login-screen');
-const dashboardScreen = document.getElementById('dashboard-screen');
-const loginForm = document.getElementById('login-form');
-const loginError = document.getElementById('login-error');
-const patientNameSpan = document.getElementById('patient-name-display');
-
-// Dashboard Elements
-const nextAppointmentContainer = document.getElementById('next-appointment');
-const unpaidInvoicesContainer = document.getElementById('unpaid-invoices-list');
-const exerciseList = document.getElementById('exercise-list');
-const todoListContainer = document.getElementById('todo-list');
-
-
-// --- LOGIN LOGIC ---
-loginForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const usernameInput = document.getElementById('username').value;
-    const passwordInput = document.getElementById('password').value;
-
-    if (usernameInput === fakeDatabase.patient.username && passwordInput === fakeDatabase.patient.password) {
-        loginScreen.style.display = 'none';
-        dashboardScreen.style.display = 'block';
-        loginError.style.display = 'none';
-        renderDashboard();
-    } else {
-        loginError.style.display = 'block';
-    }
-});
-
-// --- RENDER DASHBOARD DATA ---
-function renderDashboard() {
-    patientNameSpan.textContent = fakeDatabase.patient.name;
-
-    // 1. Populate Next Appointment
-    const upcomingAppointments = fakeDatabase.appointments
-        .filter(a => new Date(a.date) > new Date())
-        .sort((a,b) => new Date(a.date) - new Date(b.date));
-    
-    if (upcomingAppointments.length > 0) {
-        const nextApp = upcomingAppointments[0];
-        nextAppointmentContainer.innerHTML = `
-            <div class="appointment-item-detailed">
-                <p><strong>Service:</strong> ${nextApp.service}</p>
-                <p><strong>With:</strong> ${nextApp.therapist}</p>
-                <p><strong>On:</strong> ${new Date(nextApp.date).toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
-            </div>
-            <div style="margin-top: 20px;">
-                <a href="#" class="btn btn-primary" style="margin-right: 10px;">Reschedule or Cancel</a>
-                <a href="contact.html" class="btn btn-secondary">Get Directions</a>
-            </div>
-        `;
-    } else {
-        nextAppointmentContainer.innerHTML = `<p>You have no upcoming appointments.</p> <a href="#" class="btn btn-primary" style="margin-top:15px;">Book an Appointment</a>`;
-    }
-
-    // 2. Populate Unpaid Invoices
-    unpaidInvoicesContainer.innerHTML = '';
-    const unpaid = fakeDatabase.invoices.filter(inv => inv.status === 'Unpaid');
-    if (unpaid.length > 0) {
-        unpaid.forEach(inv => {
-            const item = document.createElement('div');
-            item.className = 'invoice-item';
-            item.innerHTML = `
-                <div>
-                    <strong>Invoice #${inv.id}</strong>
-                    <p style="font-size:0.9em; opacity: 0.8;">Date: ${inv.date}</p>
-                </div>
-                <strong>$${inv.amount}</strong>
-                <a href="#" class="btn btn-primary" style="padding: 5px 15px; font-size: 0.9em;">Pay Now</a>
-            `;
-            unpaidInvoicesContainer.appendChild(item);
-        });
-    } else {
-        unpaidInvoicesContainer.innerHTML = `<p>No outstanding balance. Thank you!</p>`;
-    }
-    
-    // 3. Populate Exercises
-    exerciseList.innerHTML = '';
-    fakeDatabase.exercises.forEach(ex => {
-        const item = document.createElement('div');
-        item.className = 'exercise-card';
-        item.innerHTML = `
-            <h4>${ex.name}</h4>
-            <p>${ex.instructions}</p>
-        `;
-        exerciseList.appendChild(item);
-    });
-    
-    // 4. Populate To-Do List
-    todoListContainer.innerHTML = '';
-    fakeDatabase.todos.forEach(todo => {
-        const item = document.createElement('li');
-        item.innerHTML = `
-            <a href="#">${todo.text}</a>
-            ${todo.new ? '<span class="status-new">New</span>' : ''}
-        `;
-        todoListContainer.appendChild(item);
-    });
-}
-
-
-function logout() {
-    dashboardScreen.style.display = 'none';
-    loginScreen.style.display = 'block';
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-}
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.0/dist/umd/supabase.min.js"></script>
+<script src="js/patient-portal.js"></script>
 
 </body>
 </html>
