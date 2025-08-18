@@ -5,7 +5,6 @@ const DEFAULT_SUPABASE_URL = 'https://trdndjmgcfdflxmrwjwnf.supabase.co';
 const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydndqbWdjZmRmbHhtcndqd25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MjQ1MTEsImV4cCI6MjA2NTEwMDUxMX0.wN261h6_DmYTEskxsk5RoNkMeecFWuGRpo6BI7rdbCc';
 
 const AUTH_NETWORK_ERROR_MESSAGE = 'Unable to contact authentication service. Please try again later.';
-
 function resolveSupabaseValue(value, placeholder, fallback) {
   return (typeof value === 'string' && value.trim() && !value.includes(placeholder))
     ? value
