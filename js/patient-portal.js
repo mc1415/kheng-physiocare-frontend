@@ -1,5 +1,6 @@
 // Handles Supabase Auth sign-in and patient data retrieval for the portal
-const SUPABASE_URL = window.SUPABASE_URL || 'https://kheng-physiocare-api.onrender.com';
+// Default to the actual Supabase project URL instead of the placeholder API
+const SUPABASE_URL = window.SUPABASE_URL || 'https://trdndjmgcfdflxmrwjwnf.supabase.co';
 const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydndqbWdjZmRmbHhtcndqd25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MjQ1MTEsImV4cCI6MjA2NTEwMDUxMX0.wN261h6_DmYTEskxsk5RoNkMeecFWuGRpo6BI7rdbCc';
 const { createClient } = supabase;
 
@@ -51,7 +52,15 @@ async function handleLogin(event) {
     loginError.style.display = 'none';
     await loadDashboard();
   } catch (err) {
-    loginError.textContent = err.message || 'Unexpected error occurred.';
+    let message;
+    if (err instanceof SyntaxError) {
+      message = 'Received invalid response from authentication service.';
+    } else if (err instanceof TypeError) {
+      message = 'Unable to reach authentication service. Check network or CORS settings.';
+    } else {
+      message = err.message || 'Unexpected error occurred.';
+    }
+    loginError.textContent = message;
     loginError.style.display = 'block';
   }
 }
