@@ -1,16 +1,29 @@
 // Handles Supabase Auth sign-in and patient data retrieval for the portal
-// Default to the actual Supabase project URL instead of the placeholder API
-const SUPABASE_URL = window.SUPABASE_URL || 'https://trdndjmgcfdflxmrwjwnf.supabase.co';
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydndqbWdjZmRmbHhtcndqd25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MjQ1MTEsImV4cCI6MjA2NTEwMDUxMX0.wN261h6_DmYTEskxsk5RoNkMeecFWuGRpo6BI7rdbCc';
-const { createClient } = supabase;
+// Use deployed Supabase credentials, falling back to defaults when globals
+// contain placeholders or are undefined
+const DEFAULT_SUPABASE_URL = 'https://trdndjmgcfdflxmrwjwnf.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydndqbWdjZmRmbHhtcndqd25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MjQ1MTEsImV4cCI6MjA2NTEwMDUxMX0.wN261h6_DmYTEskxsk5RoNkMeecFWuGRpo6BI7rdbCc';
 
-// Guard against placeholder credentials which cause JSON parsing errors
-if (SUPABASE_URL.includes('YOUR_SUPABASE_PROJECT_URL') ||
-    SUPABASE_ANON_KEY.includes('YOUR_SUPABASE_ANON_KEY')) {
-  console.error('Supabase credentials are not configured.');
+const AUTH_NETWORK_ERROR_MESSAGE = 'Unable to contact authentication service. Please try again later.';
+
+function resolveSupabaseValue(value, placeholder, fallback) {
+  return (typeof value === 'string' && value.trim() && !value.includes(placeholder))
+    ? value
+    : fallback;
 }
 
-const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = resolveSupabaseValue(window.SUPABASE_URL, 'YOUR_SUPABASE_PROJECT_URL', DEFAULT_SUPABASE_URL);
+const SUPABASE_ANON_KEY = resolveSupabaseValue(window.SUPABASE_ANON_KEY, 'YOUR_SUPABASE_ANON_KEY', DEFAULT_SUPABASE_ANON_KEY);
+const { createClient } = supabase;
+
+if (SUPABASE_URL === DEFAULT_SUPABASE_URL && SUPABASE_ANON_KEY === DEFAULT_SUPABASE_ANON_KEY) {
+  console.warn('Using default Supabase credentials.');
+}
+
+// Disable session persistence to avoid localStorage requirement in some browsers
+const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false }
+});
 
 const loginScreen = document.getElementById('login-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
@@ -37,7 +50,7 @@ loginForm.addEventListener('submit', handleLogin);
   } catch (err) {
     console.error('Session check failed:', err);
     loginScreen.style.display = 'block';
-    loginError.textContent = 'Unable to contact authentication service.';
+    loginError.textContent = AUTH_NETWORK_ERROR_MESSAGE;
     loginError.style.display = 'block';
   }
 })();
@@ -52,9 +65,12 @@ async function handleLogin(event) {
     loginError.style.display = 'none';
     await loadDashboard();
   } catch (err) {
+    const isNetworkError = err.message && err.message.toLowerCase().includes('network');
     const message = err instanceof SyntaxError
       ? 'Received invalid response from authentication service.'
-      : err.message || 'Unexpected error occurred.';
+      : isNetworkError
+        ? AUTH_NETWORK_ERROR_MESSAGE
+        : err.message || 'Unexpected error occurred.';
     loginError.textContent = message;
     loginError.style.display = 'block';
   }
@@ -65,22 +81,30 @@ async function loadDashboard() {
   dashboardScreen.style.display = 'block';
 
   try {
-    const { data: patient, error } = await client.from('patients').select('id, full_name').single();
+    const { data: { user } } = await client.auth.getUser();
+    const { data: patient, error } = await client
+      .from('patients')
+      .select('id, full_name')
+      .eq('auth_user_id', user.id)
+      .single();
     if (error) throw error;
     patientNameSpan.textContent = patient?.full_name || 'Patient';
+    await loadAppointments(patient.id);
+    await loadExercises(patient.id);
   } catch (err) {
     console.error('Failed to load patient profile:', err);
     patientNameSpan.textContent = 'Patient';
+    await loadAppointments();
+    await loadExercises();
   }
-
-  await loadAppointments();
-  await loadExercises();
 }
 
-async function loadAppointments() {
-  const { data: appointments, error } = await client.from('appointments')
+async function loadAppointments(patientId) {
+  const query = client.from('appointments')
     .select('id, service, therapist, date, status')
     .order('date');
+  if (patientId) query.eq('patient_id', patientId);
+  const { data: appointments, error } = await query;
   if (error) return;
 
   const now = new Date();
@@ -118,10 +142,11 @@ async function loadAppointments() {
   });
 }
 
-async function loadExercises() {
-  const { data: assigned, error } = await client
-    .from('assigned_exercises')
+async function loadExercises(patientId) {
+  const query = client.from('assigned_exercises')
     .select('id, exercises(name, instructions, video_url)');
+  if (patientId) query.eq('patient_id', patientId);
+  const { data: assigned, error } = await query;
   if (error) return;
 
   exerciseList.innerHTML = '';
