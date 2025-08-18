@@ -15,6 +15,22 @@ const exerciseList = document.getElementById('exercise-list');
 
 loginForm.addEventListener('submit', handleLogin);
 
+// Safely parse JSON responses. Returns `null` when response is not valid JSON.
+async function safeJsonParse(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    console.warn('Non-JSON response received from', response.url);
+    return null;
+  }
+
+  try {
+    return await response.json();
+  } catch (err) {
+    console.warn('Failed to parse JSON from', response.url, err);
+    return null;
+  }
+}
+
 // If a patient is already stored, go straight to the dashboard
 const storedPatient = localStorage.getItem('currentPatient');
 if (storedPatient) {
@@ -46,9 +62,13 @@ async function handleLogin(event) {
       body: JSON.stringify({ email, password })
     });
 
-    const result = await response.json();
-    if (!response.ok || !result.success) {
-      throw new Error(result.message || 'Login failed');
+    const result = await safeJsonParse(response);
+    if (!response.ok || !result || !result.success) {
+      const message =
+        result && (result.message || result.error)
+          ? result.message || result.error
+          : 'Login failed';
+      throw new Error(message);
     }
 
     const patient = result.patient || result.user || result.data;
@@ -67,9 +87,9 @@ async function loadDashboard(patient) {
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/patients/${patient.id}`);
-    const result = await response.json();
+    const result = await safeJsonParse(response);
     if (response.ok && result && result.success) {
-      const data = result.data;
+      const data = result.data || {};
       renderAppointments(data.appointments || []);
       renderExercises(data.exercises || data.assigned_exercises || []);
     } else {
