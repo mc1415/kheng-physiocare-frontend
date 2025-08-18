@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - Kheng PhysioCare Admin</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header"><img src="../images/LOGOWHITE.png" alt="Logo" class="sidebar-logo"></div>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a></li>
+                <li class="menu-item active"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a></li>
+                <li class="menu-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a></li>
+                <li class="menu-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a></li>
+                <li class="menu-item"><a href="inventory.html"><i class="fa-solid fa-pills"></i><span>Inventory</span></a></li>
+                <li class="menu-item"><a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span>Staff</span></a></li>
+                <hr class="sidebar-divider">
+                <li class="menu-item"><a href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+                <li class="menu-item"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
+            </ul>
+        </nav>
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left"><h1 class="page-title">Appointments</h1></div>
+                <div class="top-bar-right"><button id="newAppointmentBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> New Appointment</button></div>
+            </header>
+            <div class="card">
+                <div class="card-body">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="modalTitle">New Appointment</h2><button id="closeAppointmentModalBtn" class="close-button">×</button></div>
+            <div class="modal-body">
+                <form id="appointment-form">
+                    <input type="hidden" id="eventId" name="eventId">
+                    <div class="form-grid">
+                        <div class="form-group span-2"><label for="appointment-title">Title (e.g., Patient Name - Service)</label><input type="text" id="appointment-title" name="title" required></div>
+                        <div class="form-group"><label for="start-time">Start Time</label><input type="datetime-local" id="start-time" name="start" required></div>
+                        <div class="form-group"><label for="end-time">End Time</label><input type="datetime-local" id="end-time" name="end" required></div>
+                        <div class="form-group"><label for="therapist">Assign Therapist</label><select id="therapist" name="therapist_id" required><option value="">-- Loading --</option></select></div>
+                        <div class="form-group"><label for="status">Status</label><select id="status" name="status" required><option value="Confirmed">Confirmed</option><option value="Pending">Pending</option><option value="Cancelled">Cancelled</option></select></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="deleteEventBtn" class="btn-danger" style="display: none;">Delete</button>
+                        <button type="submit" class="btn-primary-action">Save Appointment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="js/global.js"></script>
+    <script src="js/appointments.js"></script>
+
+</body>
+</html>

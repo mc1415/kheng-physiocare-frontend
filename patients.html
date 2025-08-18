@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients - Kheng PhysioCare Admin</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header"><img src="../images/LOGOWHITE.png" alt="Logo" class="sidebar-logo"></div>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a></li>
+                <li class="menu-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a></li>
+                <li class="menu-item active"><a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a></li>
+                <li class="menu-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a></li>
+                <li class="menu-item"><a href="inventory.html"><i class="fa-solid fa-pills"></i><span>Inventory</span></a></li>
+                <li class="menu-item"><a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span>Staff</span></a></li>
+                <hr class="sidebar-divider">
+                <li class="menu-item"><a href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+                <li class="menu-item"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
+            </ul>
+        </nav>
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left"><h1 class="page-title">Patient Management</h1></div>
+                <div class="top-bar-right">
+                    <div class="search-box"><input type="text" id="filterPatientsInput" placeholder="Filter by name..."></div>
+                    <button id="addPatientBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> Add New Patient</button>
+                </div>
+            </header>
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Patients</h3>
+                    <div class="filter-options"><button id="exportPatientsBtn" class="filter-btn"><i class="fa-solid fa-file-export"></i> Export</button></div>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead><tr><th>Patient ID</th><th>Name</th><th>Contact Number</th><th>Last Visit</th><th>Assigned Therapist</th><th>Actions</th></tr></thead>
+                        <tbody><!-- JS will populate this --></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="patientModalTitle">Add New Patient</h2><button id="closePatientModalBtn" class="close-button">×</button></div>
+            <div class="modal-body">
+                <form id="patient-form">
+                    <input type="hidden" id="patient-id-field" name="patientId">
+                    <div class="form-grid">
+                        <div class="form-group span-2"><label for="patient-name">Full Name</label><input type="text" id="patient-name" name="full_name" required></div>
+                        <div class="form-group"><label for="patient-dob">Date of Birth</label><input type="date" id="patient-dob" name="date_of_birth" required></div>
+                        <div class="form-group">
+                            <label for="patient-gender">Sex</label>
+                            <select id="patient-gender" name="gender" required>
+                                <option value="">-- Select --</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="assigned-therapist">Assigned Therapist</label><select id="assigned-therapist" name="assigned_therapist_id" required><option value="">Loading...</option></select></div>
+                        <div class="form-group"><label for="patient-phone">Phone Number</label><input type="tel" id="patient-phone" name="phone_number" required></div>
+                        <div class="form-group"><label for="patient-email">Email Address</label><input type="email" id="patient-email" name="email"></div>
+                        <div class="form-group span-2"><label for="patient-address">Address</label><textarea id="patient-address" name="address" rows="3"></textarea></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="deletePatientBtn" class="btn-danger" style="display: none;">Delete Patient</button>
+                        <button type="submit" id="savePatientBtn" class="btn-primary-action">Save Patient</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="js/global.js"></script>
+    <script src="js/patients.js"></script>
+
+</body>
+</html>
