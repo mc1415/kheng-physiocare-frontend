@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://kheng-physiocare-api.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 // admin/js/global.js
 document.addEventListener('DOMContentLoaded', function() {
