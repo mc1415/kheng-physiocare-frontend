@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://kheng-physiocare-api.onrender.com';
 
 async function apiRequest(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, options);
