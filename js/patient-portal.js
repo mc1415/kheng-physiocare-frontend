@@ -17,11 +17,16 @@ loginForm.addEventListener('submit', handleLogin);
 
 // Safely parse JSON responses. Returns `null` when response is not valid JSON.
 async function safeJsonParse(response) {
-  const text = await response.text();
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    console.warn('Non-JSON response received from', response.url);
+    return null;
+  }
+
   try {
-    return JSON.parse(text);
+    return await response.json();
   } catch (err) {
-    console.warn('Non-JSON response received', text);
+    console.warn('Failed to parse JSON from', response.url, err);
     return null;
   }
 }
