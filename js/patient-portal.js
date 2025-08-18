@@ -18,9 +18,16 @@ loginForm.addEventListener('submit', handleLogin);
 // If a patient is already stored, go straight to the dashboard
 const storedPatient = localStorage.getItem('currentPatient');
 if (storedPatient) {
-  loadDashboard(JSON.parse(storedPatient));
-  loginScreen.style.display = 'none';
-  dashboardScreen.style.display = 'block';
+  try {
+    const parsed = JSON.parse(storedPatient);
+    loadDashboard(parsed);
+    loginScreen.style.display = 'none';
+    dashboardScreen.style.display = 'block';
+  } catch (e) {
+    console.warn('Failed to parse stored patient data, clearing it.', e);
+    localStorage.removeItem('currentPatient');
+    loginScreen.style.display = 'block';
+  }
 } else {
   loginScreen.style.display = 'block';
 }
