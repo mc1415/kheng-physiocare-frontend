@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:3000';
+// Base URL for API requests. Using the deployed API rather than localhost
+// ensures the admin portal works in production environments.
+const API_BASE_URL = 'https://kheng-physiocare-api.onrender.com';
 
 // admin/js/global.js
 document.addEventListener('DOMContentLoaded', function() {
