@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercises - Kheng PhysioCare Admin</title>
+    <title>Exercise Form - Kheng PhysioCare Admin</title>
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="css/admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -29,24 +29,39 @@
         </nav>
         <main class="main-content">
             <header class="top-bar">
-                <div class="top-bar-left"><h1 class="page-title">Exercise Library</h1></div>
-                <div class="top-bar-right">
-                    <button id="addExerciseBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> Add Exercise</button>
-                </div>
+                <div class="top-bar-left"><h1 class="page-title" id="form-title">Add Exercise</h1></div>
+                <div class="top-bar-right"><a href="exercises.html" class="btn-secondary-action">&larr; Back to List</a></div>
             </header>
             <div class="card">
-                <div class="card-header"><h3>All Exercises</h3></div>
+                <div class="card-header"><h3>Exercise Details</h3></div>
                 <div class="card-body">
-                    <table class="data-table">
-                        <thead><tr><th>ID</th><th>Title</th><th>Duration (sec)</th><th>Actions</th></tr></thead>
-                        <tbody><!-- JS will populate --></tbody>
-                    </table>
+                    <form id="exercise-form" class="form-grid">
+                        <div class="form-group span-2">
+                            <label for="title">Title</label>
+                            <input type="text" id="title" name="title" required>
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="video_path">Video Path</label>
+                            <input type="text" id="video_path" name="video_path" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration_seconds">Duration (seconds)</label>
+                            <input type="number" id="duration_seconds" name="duration_seconds" min="0" required>
+                        </div>
+                        <div class="form-group span-2" style="text-align:right;">
+                            <button type="submit" class="btn-primary-action">Save Exercise</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
     </div>
     <script src="../js/api.js"></script>
     <script src="js/global.js"></script>
-    <script src="js/exercises.js"></script>
+    <script src="js/exercise-form.js"></script>
 </body>
 </html>
