@@ -1,4 +1,4 @@
-// admin/js/appointments.js (Complete Final Version with Timezone Fix)
+// admin/js/appointments.js (Definitive Final Version with eventTimeFormat)
 
 document.addEventListener('DOMContentLoaded', function() {
     // --- Page Elements ---
@@ -19,32 +19,30 @@ document.addEventListener('DOMContentLoaded', function() {
         try { const response = await fetch(url, options); if (!response.ok) { let e = 'API error.'; try { const t = await response.json(); e = t.message || e } catch (n) { e = response.statusText } throw new Error(e) } return 204 === response.status || "DELETE" === options.method ? { success: !0 } : response.json() } catch (t) { return console.error(`API Error on ${url}:`, t), Toastify({ ...toastConfig, text: `Error: ${t.message}`, style: { background: "var(--red-accent)" } }).showToast(), null }
     }
 
-    // --- Dropdown Population ---
-    async function populateTherapistDropdown() {
-        if (!therapistSelect) return;
-        const result = await fetchApi(`${API_BASE_URL}/api/staff`);
-        if (result && result.success) { therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>'; result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); }); } else { therapistSelect.innerHTML = '<option value="">Could not load</option>'; }
-    }
-    async function populatePatientDropdown() {
-        if (!patientSelect) return;
-        const result = await fetchApi(`${API_BASE_URL}/api/patients`);
-        if (result && result.success) { patientSelect.innerHTML = '<option value="">-- Select Patient --</option>'; result.data.forEach(patient => { const option = document.createElement('option'); option.value = patient.raw_id; option.textContent = `${patient.fullName} (${patient.display_id})`; patientSelect.appendChild(option); }); } else { patientSelect.innerHTML = '<option value="">Could not load</option>'; }
-    }
+    // --- Dropdown Population & Helpers ---
+    async function populateTherapistDropdown() { if (!therapistSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/staff`); if (result && result.success) { therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>'; result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); }); } else { therapistSelect.innerHTML = '<option value="">Could not load</option>'; } }
+    async function populatePatientDropdown() { if (!patientSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/patients`); if (result && result.success) { patientSelect.innerHTML = '<option value="">-- Select Patient --</option>'; result.data.forEach(patient => { const option = document.createElement('option'); option.value = patient.raw_id; option.textContent = `${patient.fullName} (${patient.display_id})`; patientSelect.appendChild(option); }); } else { patientSelect.innerHTML = '<option value="">Could not load</option>'; } }
     function getEventColor(status) { switch (status) { case 'Confirmed': return '#34d399'; case 'Pending': return '#fbbF24'; case 'Cancelled': return '#f87171'; default: return '#38bdf8'; } }
     
     // --- FullCalendar Initialization ---
     const calendar = new FullCalendar.Calendar(calendarEl, {
-        // =================================================================
-        // --- THE FIX IS HERE ---
-        // Force the calendar to display all times in the Cambodia timezone
         timeZone: 'Asia/Phnom_Penh',
+
+        // =================================================================
+        // --- THE FINAL FIX IS HERE ---
+        // Force the time displayed on the event itself to be in H:MM AM/PM format
+        eventTimeFormat: {
+            hour: 'numeric',
+            minute: '2-digit',
+            meridiem: 'short'
+        },
         // =================================================================
         
         initialView: 'timeGridWeek',
         headerToolbar: { left: 'prev,next today', center: 'title', right: 'timeGridWeek,timeGridDay,listWeek' },
         allDaySlot: false,
         slotMinTime: '08:00:00',
-        slotMaxTime: '20:00:00', // 8 PM
+        slotMaxTime: '20:00:00',
         
         events: async function(fetchInfo, successCallback, failureCallback) {
             const result = await fetchApi(`${API_BASE_URL}/api/appointments`);
@@ -55,13 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         editable: true, selectable: true,
         
-        // When you select a time slot to create a new appointment
         select: function(info) {
             appointmentForm.reset();
             appointmentModalTitle.innerText = 'New Appointment';
             deleteEventBtn.style.display = 'none';
             document.getElementById('eventId').value = '';
-            // Use info.startStr which is already in the correct timezone because of the setting above
             document.getElementById('start-time').value = info.startStr.slice(0, 16);
             document.getElementById('end-time').value = info.endStr.slice(0, 16);
             populateTherapistDropdown();
@@ -69,22 +65,15 @@ document.addEventListener('DOMContentLoaded', function() {
             appointmentModal.style.display = 'flex';
         },
         
-        // When you click an existing event to edit it
         eventClick: async function(info) {
             appointmentForm.reset();
             appointmentModalTitle.innerText = 'Edit Appointment';
             deleteEventBtn.style.display = 'block';
             document.getElementById('eventId').value = info.event.id;
             document.getElementById('appointment-title').value = info.event.title;
-            // FullCalendar's event objects have start/end properties that are Date objects.
-            // We need to format them into YYYY-MM-DDTHH:mm for the datetime-local input.
-            const toLocalISOString = (date) => {
-                const pad = (num) => num.toString().padStart(2, '0');
-                return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-            }
+            const toLocalISOString = (date) => { const pad = (num) => num.toString().padStart(2, '0'); return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`; }
             document.getElementById('start-time').value = toLocalISOString(info.event.start);
             document.getElementById('end-time').value = info.event.end ? toLocalISOString(info.event.end) : toLocalISOString(info.event.start);
-
             document.getElementById('status').value = info.event.extendedProps.status || 'Confirmed';
             await populateTherapistDropdown();
             await populatePatientDropdown();
