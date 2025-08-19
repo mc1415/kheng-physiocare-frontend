@@ -1,3 +1,5 @@
+// js/patient-portal.js (Complete Final Version)
+
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('patientToken');
     if (!token) {
@@ -20,27 +22,16 @@ async function fetchApi(endpoint, token, options = {}) {
     const headers = { 'Authorization': `Bearer ${token}`, ...options.headers };
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
-        if (response.status === 401) {
-            localStorage.clear();
-            window.location.href = 'patient-login.html';
-            return null;
-        }
+        if (response.status === 401) { localStorage.clear(); window.location.href = 'patient-login.html'; return null; }
         if (!response.ok) throw new Error('Failed to fetch data');
         return response.json();
-    } catch (error) {
-        console.error(`API Error on ${endpoint}:`, error);
-        return null;
-    }
+    } catch (error) { console.error(`API Error on ${endpoint}:`, error); return null; }
 }
 
 async function fetchDashboardData(token) {
     const result = await fetchApi('/api/portal/dashboard', token);
-    if (result && result.success) {
-        renderDashboard(result.data);
-    } else {
-        // Handle error display
-        document.body.innerHTML = '<h1>Error</h1><p>Could not load your portal data. Please try again later.</p>';
-    }
+    if (result && result.success) { renderDashboard(result.data); } 
+    else { document.body.innerHTML = '<h1>Error</h1><p>Could not load your portal data. Please try again later.</p>'; }
 }
 
 function renderDashboard(data) {
@@ -52,10 +43,8 @@ function renderDashboard(data) {
 
 function renderNextAppointment(appointment) {
     const card = document.getElementById('next-appointment-card');
-    if (!appointment) {
-        card.innerHTML = `<h2>Next Appointment</h2><p class="no-appointment-message">You have no upcoming appointments.</p>`;
-        return;
-    }
+    if (!appointment) { card.innerHTML = `<h2>Next Appointment</h2><p class="no-appointment-message">You have no upcoming appointments.</p>`; return; }
+    
     const date = new Date(appointment.start_time);
     const formattedDate = date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
     const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -72,9 +61,29 @@ function renderNextAppointment(appointment) {
     `;
 }
 
+// --- NEW HELPER FUNCTION TO GET YOUTUBE EMBED URL ---
+function getYoutubeEmbedUrl(url) {
+    if (!url) return null;
+    let videoId = '';
+    try {
+        const urlObj = new URL(url);
+        if (urlObj.hostname === 'youtu.be') {
+            videoId = urlObj.pathname.slice(1);
+        } else if (urlObj.hostname.includes('youtube.com')) {
+            videoId = urlObj.searchParams.get('v');
+        }
+    } catch (error) {
+        console.error("Invalid video URL:", url);
+        return null;
+    }
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+}
+
+
+// --- REVISED FUNCTION TO RENDER THE EXERCISE PLAN WITH VIDEO ---
 function renderExercisePlan(exercises) {
     const container = document.getElementById('exercise-plan');
-    container.innerHTML = ''; // Clear skeleton loaders
+    container.innerHTML = '';
     if (!exercises || exercises.length === 0) {
         container.innerHTML = `<p>You have no exercises assigned at the moment.</p>`;
         return;
@@ -83,8 +92,9 @@ function renderExercisePlan(exercises) {
     const today = new Date().toISOString().split('T')[0];
 
     exercises.forEach(assignedEx => {
-        const exercise = assignedEx.exercises; // The joined exercise details
+        const exercise = assignedEx.exercises;
         const isCompletedToday = assignedEx.completed_dates && assignedEx.completed_dates.includes(today);
+        const embedUrl = getYoutubeEmbedUrl(exercise.video_path);
 
         const exerciseEl = document.createElement('div');
         exerciseEl.className = 'exercise-item';
@@ -94,25 +104,31 @@ function renderExercisePlan(exercises) {
             buttonHtml = `<button class="btn-exercise completed" disabled><i class="fas fa-check-circle"></i> Completed Today!</button>`;
         }
 
+        // Conditionally add the video wrapper if an embed URL exists
+        const videoHtml = embedUrl ? `
+            <div class="exercise-video-wrapper">
+                <iframe src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        ` : '';
+
         exerciseEl.innerHTML = `
             <h4>${exercise.title}</h4>
+            ${videoHtml}
             <p class="notes">${assignedEx.notes || exercise.description || 'Follow standard procedure.'}</p>
             <div class="exercise-actions">
-                ${exercise.video_path ? `<a href="${exercise.video_path}" target="_blank" rel="noopener noreferrer" class="btn-exercise video"><i class="fas fa-video"></i> Watch Video</a>` : ''}
                 ${buttonHtml}
             </div>
         `;
         container.appendChild(exerciseEl);
     });
 
-    // Add event listeners after rendering
     container.querySelectorAll('.btn-exercise.complete').forEach(button => {
         button.addEventListener('click', handleCompleteExercise);
     });
 }
 
 async function handleCompleteExercise(event) {
-    const button = event.target;
+    const button = event.target.closest('button');
     const assignmentId = button.dataset.assignmentId;
     const token = localStorage.getItem('patientToken');
 
@@ -135,10 +151,7 @@ async function handleCompleteExercise(event) {
 function renderAppointmentHistory(history) {
     const list = document.getElementById('appointment-history');
     list.innerHTML = '';
-    if (!history || history.length === 0) {
-        list.innerHTML = `<li>No past appointments found.</li>`;
-        return;
-    }
+    if (!history || history.length === 0) { list.innerHTML = `<li>No past appointments found.</li>`; return; }
     history.forEach(app => {
         const date = new Date(app.start_time);
         const formattedDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -149,8 +162,5 @@ function renderAppointmentHistory(history) {
 function renderClinicInfo(clinic) {
     const container = document.getElementById('clinic-contact-info');
     if (!clinic) { container.innerHTML = '<p>Clinic contact info unavailable.</p>'; return; }
-    container.innerHTML = `
-        <p><i class="fas fa-phone"></i> ${clinic.phone_number}</p>
-        <p><i class="fas fa-map-marker-alt"></i> ${clinic.address.replace(/\n/g, '<br>')}</p>
-    `;
+    container.innerHTML = `<p><i class="fas fa-phone"></i> ${clinic.phone_number}</p><p><i class="fas fa-map-marker-alt"></i> ${clinic.address.replace(/\n/g, '<br>')}</p>`;
 }
