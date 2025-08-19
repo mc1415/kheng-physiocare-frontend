@@ -23,6 +23,7 @@
                 <li class="menu-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a></li>
                 <li class="menu-item active"><a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a></li>
                 <li class="menu-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a></li>
+                <li class="menu-item"><a href="exercises.html"><i class="fa-solid fa-person-running"></i><span>Exercises</span></a></li>
                 <li class="menu-item"><a href="inventory.html"><i class="fa-solid fa-pills"></i><span>Inventory</span></a></li>
                 <li class="menu-item"><a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span>Staff</span></a></li>
                 <hr class="sidebar-divider">
@@ -60,6 +61,7 @@
                     <div class="tabs">
                         <button class="tab-link active" data-tab="appointments">Appointments</button>
                         <button class="tab-link" data-tab="billing">Billing History</button>
+                        <button class="tab-link" data-tab="exercises">Exercises</button>
                         <button class="tab-link" data-tab="notes">Clinical Notes</button>
                     </div>
 
@@ -71,7 +73,17 @@
                             </div>
                         </div>
                     </div>
-
+                    <div id="exercises" class="tab-content">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Assigned Exercises</h3>
+                                <button id="assignExerciseBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> Assign Exercise</button>
+                            </div>
+                            <div class="card-body" id="assigned-exercises-list">
+                                <!-- JS will populate this list -->
+                            </div>
+                        </div>
+                    </div>
                     <div id="billing" class="tab-content">
                         <div class="card">
                             <div class="card-header"><h3>Invoices</h3></div>
@@ -98,7 +110,21 @@
     </div>
 
     <!-- In admin/patient-detail.html, PASTE THIS CODE right before the <script> tag -->
-
+    
+    <div id="assignExerciseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Assign Exercise to Patient</h2><button id="closeAssignModalBtn" class="close-button">×</button></div>
+            <div class="modal-body">
+                <form id="assign-exercise-form">
+                    <div class="form-group"><label for="exercise-select">Exercise</label><select id="exercise-select" name="exercise_id" required><option value="">-- Loading --</option></select></div>
+                    <div class="form-group"><label for="exercise-frequency">Frequency (per week)</label><input type="number" id="exercise-frequency" name="frequency_per_week" value="3" min="1"></div>
+                    <div class="form-group"><label for="exercise-notes">Additional Notes</label><textarea id="exercise-notes" name="notes" rows="3"></textarea></div>
+                    <div class="modal-footer"><button type="submit" class="btn-primary-action">Assign</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <!-- =========== ADD NEW NOTE MODAL (SOAP Format) =========== -->
     <div id="addNoteModal" class="modal">
         <div class="modal-content">

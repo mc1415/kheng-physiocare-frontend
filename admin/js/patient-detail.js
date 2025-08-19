@@ -1,76 +1,40 @@
 // admin/js/patient-detail.js (API-driven version)
 
 document.addEventListener('DOMContentLoaded', async function() {
-    
-    // --- Add a loader element dynamically ---
     const mainContent = document.querySelector('.main-content');
-    const loader = document.createElement('div');
-    loader.id = 'loader';
-    loader.className = 'full-page-loader';
-    loader.innerHTML = '<div class="spinner"></div>';
-    if(mainContent) mainContent.prepend(loader);
-
-    // --- DOM Elements ---
     const mainContentContainer = document.querySelector('.patient-detail-layout');
     const toastConfig = { duration: 3000, close: true, gravity: "top", position: "right", stopOnFocus: true };
 
-    // --- API Call to Fetch Patient Details ---
-    async function fetchPatientDetails(id) {
+    async function fetchApi(url, options = {}) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/patients/${id}`);
-            if (!response.ok) {
-                const errorResult = await response.json().catch(() => ({ message: 'Patient data not found.' }));
-                throw new Error(errorResult.message);
-            }
-            const result = await response.json();
-            return result.data;
-        } catch (error) {
-            console.error('Error fetching patient details:', error);
-            showError(error.message);
-            return null;
-        }
+            const response = await fetch(url, options);
+            if (!response.ok) { let e = 'API error.'; try { const t = await response.json(); e = t.message || e } catch (n) { e = response.statusText } throw new Error(e) }
+            return options.method === 'DELETE' || response.status === 204 ? { success: true } : response.json();
+        } catch (error) { Toastify({ ...toastConfig, text: `Error: ${error.message}`, style: { background: "var(--red-accent)" } }).showToast(); return null; }
     }
-
-    // --- Main Page Logic ---
+    
     const patientId = localStorage.getItem('selectedPatientId');
-    if (!patientId) {
-        showError('No patient ID provided. Please return to the patient list and select a patient.');
-        return;
-    }
+    if (!patientId) { mainContent.innerHTML = `<h1>Error</h1><p>No patient ID found.</p><a href="patients.html">Back to list</a>`; return; }
 
-    // Show loader and hide content initially
-    if(loader) loader.style.display = 'flex';
-    if(mainContentContainer) mainContentContainer.style.display = 'none';
-
-    const patient = await fetchPatientDetails(patientId);
-    
-    // Hide loader
-    if(loader) loader.style.display = 'none';
-    
-    if (patient) {
-        if(mainContentContainer) mainContentContainer.style.display = 'grid';
-        renderPage(patient);
-    } // The showError function is called inside fetchPatientDetails if it fails
-
-    // --- Helper Function to show errors ---
-    function showError(message) {
-        if(mainContent) {
-            mainContent.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;"><h1>Patient Not Found</h1><p>${message}</p><a href="patients.html" class="btn-primary-action" style="margin-top: 20px; display: inline-block;">Back to Patient List</a></div></div>`;
+    async function loadPatientData() {
+        const patientResult = await fetchApi(`${API_BASE_URL}/api/patients/${patientId}`);
+        if (patientResult && patientResult.success) {
+            renderSummary(patientResult.data);
+            
+            // Fetch related data in parallel
+            const [appointments, billing, exercises] = await Promise.all([
+                fetchApi(`${API_BASE_URL}/api/appointments?patient_id=${patientId}`), // We'll need to adjust the API to filter by patient
+                fetchApi(`${API_BASE_URL}/api/invoices?patient_id=${patientId}`), // Same here
+                fetchApi(`${API_BASE_URL}/api/patients/${patientId}/exercises`)
+            ]);
+            
+            // These render functions now need to exist
+            // renderAppointments(appointments?.data || []);
+            // renderBilling(billing?.data || []);
+            renderAssignedExercises(exercises?.data || []);
         }
     }
 
-    // --- Main Render Function ---
-    function renderPage(patient) {
-        renderSummary(patient);
-        // For now, these will use mock data or be empty until we build their APIs
-        renderAppointments(patient.appointments || []);
-        renderBilling(patient.invoices || []);
-        renderNotes(patient.notes || []);
-        initializeTabs();
-        initializeNoteModal(patient);
-    }
-    
-    // --- Component Render Functions ---
     function renderSummary(patient) {
         const summaryInfo = document.getElementById('patient-summary-info');
         const summaryContact = document.getElementById('patient-summary-contact');
@@ -80,11 +44,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             <img src="${patient.avatar_url || '../images/avatar-generic.png'}" alt="Patient Avatar" class="patient-avatar-large">
             <h2 class="patient-name-large">${patient.full_name}</h2>
             <p class="patient-id-large">#PT-${patient.id.toString().padStart(3, '0')}</p>
-            <ul class="patient-meta-list">
-                <li><strong>DOB:</strong> ${patient.date_of_birth || 'N/A'}</li>
-                <li><strong>Sex:</strong> ${patient.gender || 'N/A'}</li>
-                <li><strong>Therapist:</strong> ${patient.assigned_therapist_name || 'Unassigned'}</li>
-            </ul>
         `;
         summaryContact.innerHTML = `
             <h4>Contact Information</h4>
@@ -93,31 +52,26 @@ document.addEventListener('DOMContentLoaded', async function() {
             <p><i class="fa-solid fa-location-dot"></i> ${patient.address || 'N/A'}</p>
         `;
     }
-
-    function renderAppointments(appointments) {
-        const container = document.getElementById('appointments-history');
-        if(!container) return;
-        if (appointments.length === 0) { container.innerHTML = '<p>No appointment history found for this patient.</p>'; return; }
-        container.innerHTML = `<table class="data-table"><thead><tr><th>Date</th><th>Service</th><th>Status</th></tr></thead><tbody>${appointments.map(app => `<tr><td>${app.date}</td><td>${app.service}</td><td>${app.status}</td></tr>`).join('')}</tbody></table>`;
-    }
-
-    function renderBilling(invoices) {
-        const container = document.getElementById('billing-history');
-        if(!container) return;
-        if (invoices.length === 0) { container.innerHTML = '<p>No billing history found for this patient.</p>'; return; }
-        container.innerHTML = `<table class="data-table"><thead><tr><th>Invoice ID</th><th>Date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${invoices.map(inv => `<tr><td>${inv.id}</td><td>${inv.date}</td><td>${inv.amount}</td><td><span class="status-chip ${inv.status.toLowerCase()}">${inv.status}</span></td><td><button class="btn-action view"><i class="fa-solid fa-print"></i></button></td></tr>`).join('')}</tbody></table>`;
-    }
     
-    function renderNotes(notes) {
-        const container = document.getElementById('notes-history');
-        if(!container) return;
+    function renderAssignedExercises(assigned) {
+        const container = document.getElementById('assigned-exercises-list');
         container.innerHTML = '';
-        if (notes.length === 0) { container.innerHTML = '<p>No clinical notes recorded for this patient.</p>'; return; }
-        [...notes].reverse().forEach(note => {
-            const noteEl = document.createElement('div');
-            noteEl.className = 'note-item';
-            noteEl.innerHTML = `<div class="note-header"><strong>${note.date}</strong> - <span>by ${note.therapist}</span></div><div class="note-body">${note.note}</div>`;
-            container.appendChild(noteEl);
+        if (assigned.length === 0) { container.innerHTML = '<p>No exercises assigned to this patient.</p>'; return; }
+        
+        assigned.forEach(item => {
+            const exercise = item.exercises; // The joined data
+            const el = document.createElement('div');
+            el.className = 'assigned-exercise-item';
+            el.innerHTML = `
+                <div class="exercise-item-details">
+                    <strong>${exercise.title}</strong>
+                    <small>${item.notes || 'No specific notes.'}</small>
+                </div>
+                <button class="btn-action delete-assignment" data-assignment-id="${item.id}" title="Un-assign Exercise">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            container.appendChild(el);
         });
     }
 
@@ -134,30 +88,55 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
     
-    function initializeNoteModal(patient) {
-        // This function will need to be updated later to save notes to the DB
-        const addNoteBtn = document.getElementById('addNoteBtn');
-        const addNoteModal = document.getElementById('addNoteModal');
-        const closeNoteModalBtn = document.getElementById('closeNoteModalBtn');
-        const addNoteForm = document.getElementById('add-note-form');
-        
-        if (addNoteBtn && addNoteModal && closeNoteModalBtn) {
-            addNoteBtn.addEventListener('click', () => { addNoteForm.reset(); document.getElementById('note-date').valueAsDate = new Date(); addNoteModal.style.display = 'flex'; });
-            closeNoteModalBtn.addEventListener('click', () => { addNoteModal.style.display = 'none'; });
-            window.addEventListener('click', (event) => { if (event.target == addNoteModal) { addNoteModal.style.display = 'none'; } });
-        }
-        
-        if (addNoteForm) {
-            addNoteForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                // This logic is temporary and only updates the local display
-                const newNoteText = `<strong>S:</strong> ${document.getElementById('note-subjective').value} <br><strong>O:</strong> ${document.getElementById('note-objective').value} <br><strong>A:</strong> ${document.getElementById('note-assessment').value} <br><strong>P:</strong> ${document.getElementById('note-plan').value}`;
-                const newNote = { date: document.getElementById('note-date').value, therapist: 'Admin User', note: newNoteText.trim() };
-                patient.notes.push(newNote); // Add to the local copy
-                renderNotes(patient.notes); // Re-render the notes list
-                addNoteModal.style.display = 'none';
-                Toastify({text: "Clinical note added (local view only).", duration: 3000, close: true, gravity: "top", position: "right", style: { background: "var(--green-accent)" }}).showToast();
+    const assignModal = document.getElementById('assignExerciseModal');
+    const assignBtn = document.getElementById('assignExerciseBtn');
+    const closeAssignModalBtn = document.getElementById('closeAssignModalBtn');
+    const assignForm = document.getElementById('assign-exercise-form');
+
+    assignBtn.addEventListener('click', async () => {
+        const select = document.getElementById('exercise-select');
+        const exercisesResult = await fetchApi(`${API_BASE_URL}/api/exercises`);
+        if (exercisesResult && exercisesResult.success) {
+            select.innerHTML = '<option value="">-- Select an exercise --</option>';
+            exercisesResult.data.forEach(ex => {
+                select.innerHTML += `<option value="${ex.id}">${ex.title}</option>`;
             });
         }
-    }
+        assignModal.style.display = 'flex';
+    });
+    
+    closeAssignModalBtn.addEventListener('click', () => assignModal.style.display = 'none');
+    window.addEventListener('click', e => { if (e.target == assignModal) assignModal.style.display = 'none' });
+    
+    assignForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const data = {
+            exercise_id: assignForm.querySelector('[name="exercise_id"]').value,
+            notes: assignForm.querySelector('[name="notes"]').value,
+            frequency_per_week: assignForm.querySelector('[name="frequency_per_week"]').value,
+        };
+        const result = await fetchApi(`${API_BASE_URL}/api/patients/${patientId}/exercises`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        if (result) {
+            Toastify({ ...toastConfig, text: "Exercise assigned!", style: { background: "var(--green-accent)" } }).showToast();
+            assignModal.style.display = 'none';
+            loadPatientData(); // Reload the list
+        }
+    });
+    
+    document.getElementById('assigned-exercises-list').addEventListener('click', async function(e){
+        const deleteBtn = e.target.closest('.delete-assignment');
+        if(deleteBtn) {
+            const assignmentId = deleteBtn.dataset.assignmentId;
+            if(confirm('Are you sure you want to un-assign this exercise?')) {
+                const result = await fetchApi(`${API_BASE_URL}/api/assigned-exercises/${assignmentId}`, { method: 'DELETE' });
+                if(result) {
+                     Toastify({ ...toastConfig, text: "Exercise unassigned.", style: { background: "var(--red-accent)" } }).showToast();
+                     loadPatientData();
+                }
+            }
+        }
+    });
+
+    loadPatientData();
+    // initializeTabs(); // Make sure this is called if needed
 });
