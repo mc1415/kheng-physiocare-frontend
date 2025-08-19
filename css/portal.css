@@ -1,0 +1,130 @@
+/* --- Login Page --- */
+.login-container {
+    max-width: 450px;
+    margin: 40px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.login-container h2 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+.login-container p {
+    margin-bottom: 30px;
+    color: var(--text-color-light);
+}
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.error-message {
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    min-height: 1.2em;
+}
+
+/* --- Portal Dashboard --- */
+.portal-welcome {
+    font-size: 2rem;
+    margin-bottom: 40px;
+    color: var(--text-color-dark);
+}
+.portal-section {
+    margin-bottom: 40px;
+}
+.portal-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--primary-color-light);
+    padding-bottom: 10px;
+}
+.card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Next Appointment Card */
+#next-appointment-card h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+#next-appointment-card p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+    color: var(--text-color-dark);
+}
+#next-appointment-card i {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+#next-appointment-card .notes {
+    font-style: italic;
+    color: var(--text-color-light);
+    font-size: 1rem;
+}
+
+/* Status Badges */
+.status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: capitalize;
+    display: inline-block;
+    color: #fff;
+}
+.status-scheduled { background-color: #3498db; }
+.status-completed { background-color: #2ecc71; }
+.status-cancelled, .status-canceled { background-color: #e74c3c; }
+.status-no_show { background-color: #f39c12; }
+
+/* Appointment History Table */
+#appointment-history-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#appointment-history-table th, 
+#appointment-history-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+#appointment-history-table th {
+    background-color: var(--bg-light-gray);
+}
+
+/* Exercise Grid */
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+.exercise-card h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+.exercise-card p {
+    margin-bottom: 20px;
+    flex-grow: 1; /* Makes cards in a row the same height */
+}
+.exercise-card {
+    display: flex;
+    flex-direction: column;
+}
