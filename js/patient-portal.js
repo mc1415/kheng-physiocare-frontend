@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchDashboardData(token) {
     try {
-        const response = await fetch('http://localhost:3000/api/portal/dashboard', {
+        const response = await fetch(`${API_BASE_URL}/api/portal/dashboard`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
