@@ -1,4 +1,4 @@
-// admin/js/appointments.js (Definitive Final Version with eventTimeFormat)
+// admin/js/appointments.js (Final Verified Code)
 
 document.addEventListener('DOMContentLoaded', function() {
     // --- Page Elements ---
@@ -27,17 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- FullCalendar Initialization ---
     const calendar = new FullCalendar.Calendar(calendarEl, {
         timeZone: 'Asia/Phnom_Penh',
-
-        // =================================================================
-        // --- THE FINAL FIX IS HERE ---
-        // Force the time displayed on the event itself to be in H:MM AM/PM format
         eventTimeFormat: {
             hour: 'numeric',
             minute: '2-digit',
             meridiem: 'short'
         },
-        // =================================================================
-        
         initialView: 'timeGridWeek',
         headerToolbar: { left: 'prev,next today', center: 'title', right: 'timeGridWeek,timeGridDay,listWeek' },
         allDaySlot: false,
@@ -82,18 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
             appointmentModal.style.display = 'flex';
         },
 
-        // Drag-and-drop handler
         eventDrop: async function(info) {
             const event = info.event;
-            const updatedEvent = {
-                patient_id: event.extendedProps.patient_id,
-                title: event.title,
-                // event.start/end are now correctly in the target timezone
-                start: event.start.toISOString(),
-                end: event.end ? event.end.toISOString() : null,
-                therapist_id: event.extendedProps.therapist_id,
-                status: event.extendedProps.status
-            };
+            const updatedEvent = { patient_id: event.extendedProps.patient_id, title: event.title, start: event.start.toISOString(), end: event.end ? event.end.toISOString() : null, therapist_id: event.extendedProps.therapist_id, status: event.extendedProps.status };
             const result = await fetchApi(`${API_BASE_URL}/api/appointments/${event.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedEvent) });
             if (!result) info.revert();
             else Toastify({...toastConfig, text: "Appointment rescheduled!", style: { background: "var(--primary-accent)" }}).showToast();
@@ -111,59 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     calendar.render();
 
-    // --- Modal & Form Event Listeners (No changes needed here) ---
-    if (newAppointmentBtn) {
-        newAppointmentBtn.addEventListener('click', () => {
-            appointmentForm.reset();
-            appointmentModalTitle.innerText = 'New Appointment';
-            deleteEventBtn.style.display = 'none';
-            document.getElementById('eventId').value = '';
-            populateTherapistDropdown();
-            populatePatientDropdown();
-            appointmentModal.style.display = 'flex';
-        });
-    }
-    if (closeAppointmentModalBtn) closeAppointmentModalBtn.addEventListener('click', () => { appointmentModal.style.display = 'none'; });
+    // --- Modal & Form Event Listeners ---
+    if (newAppointmentBtn) { newAppointmentBtn.addEventListener('click', () => { appointmentForm.reset(); appointmentModalTitle.innerText = 'New Appointment'; deleteEventBtn.style.display = 'none'; document.getElementById('eventId').value = ''; populateTherapistDropdown(); populatePatientDropdown(); appointmentModal.style.display = 'flex'; }); }
+    if (closeAppointmentModalBtn) { closeAppointmentModalBtn.addEventListener('click', () => { appointmentModal.style.display = 'none'; }); }
     window.addEventListener('click', (event) => { if (event.target == appointmentModal) appointmentModal.style.display = 'none'; });
-    
-    if (appointmentForm) {
-        appointmentForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const eventId = document.getElementById('eventId').value;
-            const isEditing = !!eventId;
-            const appointmentData = {
-                patient_id: document.getElementById('appointment-patient').value,
-                title: document.getElementById('appointment-title').value,
-                start: document.getElementById('start-time').value,
-                end: document.getElementById('end-time').value,
-                therapist_id: document.getElementById('therapist').value,
-                status: document.getElementById('status').value
-            };
-            const url = isEditing ? `${API_BASE_URL}/api/appointments/${eventId}` : `${API_BASE_URL}/api/appointments`;
-            const method = isEditing ? 'PATCH' : 'POST';
-            const result = await fetchApi(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appointmentData) });
-            if (result) {
-                Toastify({...toastConfig, text: isEditing ? "Appointment updated!" : "Appointment created!", style: { background: "var(--primary-accent)" }}).showToast();
-                appointmentModal.style.display = 'none';
-                calendar.refetchEvents();
-            }
-        });
-    }
-
-    if (deleteEventBtn) {
-        deleteEventBtn.addEventListener('click', function() {
-            const eventId = document.getElementById('eventId').value;
-            if (!eventId || !confirm('Are you sure you want to delete this appointment?')) return;
-            
-            const deleteAppointment = async () => {
-                const result = await fetchApi(`${API_BASE_URL}/api/appointments/${eventId}`, { method: 'DELETE' });
-                if(result) {
-                    Toastify({...toastConfig, text: "Appointment deleted.", style: { background: "var(--red-accent)" }}).showToast();
-                    appointmentModal.style.display = 'none';
-                    calendar.refetchEvents();
-                }
-            };
-            deleteAppointment();
-        });
-    }
+    if (appointmentForm) { appointmentForm.addEventListener('submit', async function(event) { event.preventDefault(); const eventId = document.getElementById('eventId').value; const isEditing = !!eventId; const appointmentData = { patient_id: document.getElementById('appointment-patient').value, title: document.getElementById('appointment-title').value, start: document.getElementById('start-time').value, end: document.getElementById('end-time').value, therapist_id: document.getElementById('therapist').value, status: document.getElementById('status').value }; const url = isEditing ? `${API_BASE_URL}/api/appointments/${eventId}` : `${API_BASE_URL}/api/appointments`; const method = isEditing ? 'PATCH' : 'POST'; const result = await fetchApi(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appointmentData) }); if (result) { Toastify({...toastConfig, text: isEditing ? "Appointment updated!" : "Appointment created!", style: { background: "var(--primary-accent)" }}).showToast(); appointmentModal.style.display = 'none'; calendar.refetchEvents(); } }); }
+    if (deleteEventBtn) { deleteEventBtn.addEventListener('click', function() { const eventId = document.getElementById('eventId').value; if (!eventId || !confirm('Are you sure you want to delete this appointment?')) return; const deleteAppointment = async () => { const result = await fetchApi(`${API_BASE_URL}/api/appointments/${eventId}`, { method: 'DELETE' }); if(result) { Toastify({...toastConfig, text: "Appointment deleted.", style: { background: "var(--red-accent)" }}).showToast(); appointmentModal.style.display = 'none'; calendar.refetchEvents(); } }; deleteAppointment(); }); }
 });
