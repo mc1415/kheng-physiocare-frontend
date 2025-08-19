@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const newAppointmentBtn = document.getElementById('newAppointmentBtn');
     const therapistSelect = document.getElementById('therapist');
     const toastConfig = { duration: 3000, close: true, gravity: "top", position: "right", stopOnFocus: true };
-    const patientSelect = document.getElementById('appointment-patient');
 
     // --- API HELPER (Unchanged) ---
     async function fetchApi(url, options = {}) {
@@ -57,21 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         } catch (error) { console.error(`API Error on ${url}:`, error); Toastify({...toastConfig, text: `Error: ${error.message}`, style: { background: "var(--red-accent)" }}).showToast(); return null; }
     }
-    async function populatePatientDropdown() {
-        if (!patientSelect) return;
-        const result = await fetchApi(`${API_BASE_URL}/api/patients`);
-        if (result && result.success) {
-            patientSelect.innerHTML = '<option value="">-- Select Patient --</option>';
-            result.data.forEach(patient => {
-                const option = document.createElement('option');
-                option.value = patient.raw_id; // Use the real database ID
-                option.textContent = `${patient.fullName} (${patient.display_id})`;
-                patientSelect.appendChild(option);
-            });
-        } else {
-            patientSelect.innerHTML = '<option value="">Could not load patients</option>';
-        }
-    }
+    async function populatePatientDropdown() { const patientSelect = document.getElementById('appointment-patient'); if(!patientSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/patients`); if(result && result.success) { patientSelect.innerHTML = '<option value="">-- Select Patient --</option>'; result.data.forEach(patient => { const option = document.createElement('option'); option.value = patient.raw_id; option.textContent = `${patient.fullName} (${patient.display_id})`; patientSelect.appendChild(option); }); } else { patientSelect.innerHTML = '<option value="">Could not load patients</option>'; } }
     async function populateTherapistDropdown() {
         if (!therapistSelect) return;
         const result = await fetchApi(`${API_BASE_URL}/api/staff`);
