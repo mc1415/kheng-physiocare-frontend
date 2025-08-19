@@ -46,7 +46,8 @@
                 <form id="appointment-form">
                     <input type="hidden" id="eventId" name="eventId">
                     <div class="form-grid">
-                        <div class="form-group span-2"><label for="appointment-title">Title (e.g., Patient Name - Service)</label><input type="text" id="appointment-title" name="title" required></div>
+                        <div class="form-group"><label for="appointment-patient">Patient</label><select id="appointment-patient" name="patient_id" required><option value="">-- Loading --</option></select></div>
+                        <div class="form-group span-2"><label for="appointment-title">Title / Service</label><input type="text" id="appointment-title" name="title" required></div>
                         <div class="form-group"><label for="start-time">Start Time</label><input type="datetime-local" id="start-time" name="start" required></div>
                         <div class="form-group"><label for="end-time">End Time</label><input type="datetime-local" id="end-time" name="end" required></div>
                         <div class="form-group"><label for="therapist">Assign Therapist</label><select id="therapist" name="therapist_id" required><option value="">-- Loading --</option></select></div>

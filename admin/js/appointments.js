@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const newAppointmentBtn = document.getElementById('newAppointmentBtn');
     const therapistSelect = document.getElementById('therapist');
     const toastConfig = { duration: 3000, close: true, gravity: "top", position: "right", stopOnFocus: true };
+    const patientSelect = document.getElementById('appointment-patient');
 
     // --- API HELPER (Unchanged) ---
     async function fetchApi(url, options = {}) {
@@ -32,76 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- DROPDOWN POPULATION (Unchanged) ---
-    async function populateTherapistDropdown() { /* ... same as before, no changes needed ... */ }
-
-    // --- FULLCALENDAR INITIALIZATION (This is where all the changes are) ---
-    function getEventColor(status) { /* ... same as before, no changes needed ... */ }
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        // --- NEW CONFIGURATION ---
-        timeZone: 'Asia/Bangkok', // Sets default to GMT+7
-        eventTimeZone: 'Asia/Bangkok', 
-        initialView: 'timeGridWeek', // Start on the week view
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'timeGridWeek,timeGridDay,listWeek' // Removed 'dayGridMonth'
-        },
-        views: {
-            timeGridWeek: {
-                // For week view, don't show time slots, just the event "pills"
-                allDaySlot: false,
-                slotDuration: '01:00:00',
-                slotLabelFormat: { hour: 'numeric', minute: '2-digit', omitZeroMinute: false, meridiem: 'short' },
-                // This is a custom setting to hide time labels. We will use CSS instead for better control.
-            },
-            timeGridDay: {
-                // For day view, show time slots from 8 AM to 8 PM
-                allDaySlot: false,
-                slotMinTime: '08:00:00',
-                slotMaxTime: '20:00:00', // 8 PM
-            }
-        },
-        // --- END OF NEW CONFIGURATION ---
-
-        events: async function(fetchInfo, successCallback, failureCallback) { /* ... same as before ... */ },
-        editable: true,
-        selectable: true,
-
-        // All other event handlers (select, eventClick, eventDrop, eventDidMount) are the same as before
-        select: function(info) { /* ... same as before ... */ },
-        eventClick: async function(info) { /* ... same as before ... */ },
-        eventDrop: async function(info) { /* ... same from before ... */ },
-        eventDidMount: function(info) { /* ... same as before ... */ }
-    });
-    calendar.render();
     
-    // All EVENT LISTENERS for the modal and form are the same as before
-    if (newAppointmentBtn) { /* ... same as before ... */ }
-    if (closeAppointmentModalBtn) { /* ... same as before ... */ }
-    if (appointmentForm) { /* ... same as before ... */ }
-    if (deleteEventBtn) { /* ... same as before ... */ }
     
-    // --- To be safe, let's paste the full, final code again ---
-    async function populateTherapistDropdown() {
-        if (!therapistSelect) return;
-        const result = await fetchApi(`${API_BASE_URL}/api/staff`);
-        if (result && result.success) {
-            const staffList = result.data;
-            therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>';
-            staffList.forEach(staff => {
-                const option = document.createElement('option');
-                option.value = staff.id;
-                option.textContent = staff.full_name;
-                therapistSelect.appendChild(option);
-            });
-        } else { therapistSelect.innerHTML = '<option value="">Could not load therapists</option>'; }
-    }
-    function getEventColor(status) {
-        switch (status) { case 'Confirmed': return '#34d399'; case 'Pending': return '#fbbF24'; case 'Cancelled': return '#f87171'; default: return '#38bdf8'; }
-    }
-    // ... Paste the rest of the functions (event listeners, calendar handlers) from the previous final version here. They do not need to change.
 });
 
 // To ensure no mistakes, here is the absolute final code for the entire file.
@@ -123,6 +56,21 @@ document.addEventListener('DOMContentLoaded', function() {
             if (options.method === 'DELETE' || response.status === 204) return { success: true };
             return response.json();
         } catch (error) { console.error(`API Error on ${url}:`, error); Toastify({...toastConfig, text: `Error: ${error.message}`, style: { background: "var(--red-accent)" }}).showToast(); return null; }
+    }
+    async function populatePatientDropdown() {
+        if (!patientSelect) return;
+        const result = await fetchApi(`${API_BASE_URL}/api/patients`);
+        if (result && result.success) {
+            patientSelect.innerHTML = '<option value="">-- Select Patient --</option>';
+            result.data.forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.raw_id; // Use the real database ID
+                option.textContent = `${patient.fullName} (${patient.display_id})`;
+                patientSelect.appendChild(option);
+            });
+        } else {
+            patientSelect.innerHTML = '<option value="">Could not load patients</option>';
+        }
     }
     async function populateTherapistDropdown() {
         if (!therapistSelect) return;
@@ -157,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('start-time').value = info.startStr.slice(0, 16);
             document.getElementById('end-time').value = info.endStr.slice(0, 16);
             populateTherapistDropdown();
+            populatePatientDropdown();
             if(appointmentModal) appointmentModal.style.display = 'flex';
         },
         eventClick: async function(info) {
@@ -169,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('end-time').value = info.event.end ? info.event.endStr.slice(0, 16) : info.event.startStr.slice(0, 16);
             document.getElementById('status').value = info.event.extendedProps.status || 'Confirmed';
             await populateTherapistDropdown();
+            document.getElementById('appointment-patient').value = info.event.extendedProps.patient_id || '';
             document.getElementById('therapist').value = info.event.extendedProps.therapist_id || '';
             if(appointmentModal) appointmentModal.style.display = 'flex';
         },
@@ -199,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(deleteEventBtn) deleteEventBtn.style.display = 'none';
             document.getElementById('eventId').value = '';
             populateTherapistDropdown();
+            populatePatientDropdown();
             if(appointmentModal) appointmentModal.style.display = 'flex';
         });
     }
@@ -209,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             const eventId = document.getElementById('eventId').value;
             const isEditing = !!eventId;
-            const appointmentData = { title: document.getElementById('appointment-title').value, start: document.getElementById('start-time').value, end: document.getElementById('end-time').value, therapist_id: document.getElementById('therapist').value, status: document.getElementById('status').value };
+            const appointmentData = { patient_id: document.getElementById('appointment-patient').value, title: document.getElementById('appointment-title').value, start: document.getElementById('start-time').value, end: document.getElementById('end-time').value, therapist_id: document.getElementById('therapist').value, status: document.getElementById('status').value };
             const url = isEditing ? `${API_BASE_URL}/api/appointments/${eventId}` : `${API_BASE_URL}/api/appointments`;
             const method = isEditing ? 'PATCH' : 'POST';
             const result = await fetchApi(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appointmentData) });
