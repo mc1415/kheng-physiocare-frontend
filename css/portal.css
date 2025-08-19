@@ -1,130 +1,196 @@
-/* --- Login Page --- */
-.login-container {
-    max-width: 450px;
-    margin: 40px auto;
-    padding: 40px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-.login-container h2 {
-    margin-bottom: 10px;
-    color: var(--primary-color);
-}
-.login-container p {
-    margin-bottom: 30px;
-    color: var(--text-color-light);
-}
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-.error-message {
-    color: var(--accent-color);
-    margin-bottom: 20px;
-    min-height: 1.2em;
+/* === NEW PATIENT PORTAL STYLES === */
+
+/* --- General Layout & Typography --- */
+body {
+    background-color: #f8f9fa; /* A light grey background */
 }
 
-/* --- Portal Dashboard --- */
+.portal-header {
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.portal-main {
+    padding: 2rem 0;
+}
+
 .portal-welcome {
     font-size: 2rem;
-    margin-bottom: 40px;
+    font-weight: 600;
     color: var(--text-color-dark);
+    margin-bottom: 2rem;
 }
-.portal-section {
-    margin-bottom: 40px;
+
+/* --- Responsive Grid Layout --- */
+.portal-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile: Single column */
+    gap: 2rem;
 }
-.portal-section h2 {
+
+@media (min-width: 992px) {
+    .portal-grid {
+        /* Desktop: Two columns, main is wider */
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* --- Card Styling --- */
+.portal-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    height: fit-content;
+}
+
+.portal-card h2 {
     font-size: 1.5rem;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--primary-color-light);
-    padding-bottom: 10px;
-}
-.card {
-    background: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* Next Appointment Card */
-#next-appointment-card h3 {
-    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
     color: var(--primary-color);
-}
-#next-appointment-card p {
-    font-size: 1.1rem;
-    margin: 10px 0;
-    color: var(--text-color-dark);
-}
-#next-appointment-card i {
-    margin-right: 10px;
-    color: var(--primary-color);
-}
-#next-appointment-card .notes {
-    font-style: italic;
-    color: var(--text-color-light);
-    font-size: 1rem;
-}
-
-/* Status Badges */
-.status {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: capitalize;
-    display: inline-block;
-    color: #fff;
-}
-.status-scheduled { background-color: #3498db; }
-.status-completed { background-color: #2ecc71; }
-.status-cancelled, .status-canceled { background-color: #e74c3c; }
-.status-no_show { background-color: #f39c12; }
-
-/* Appointment History Table */
-#appointment-history-table table {
-    width: 100%;
-    border-collapse: collapse;
-}
-#appointment-history-table th, 
-#appointment-history-table td {
-    padding: 15px;
-    text-align: left;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid #eee;
 }
-#appointment-history-table th {
-    background-color: var(--bg-light-gray);
-}
 
-/* Exercise Grid */
-.exercise-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+/* --- Next Appointment Card (Prominent) --- */
+.portal-card.prominent {
+    border-left: 5px solid var(--primary-color);
 }
-.exercise-card h4 {
-    margin-bottom: 10px;
+.appointment-details {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.appointment-details .icon {
+    font-size: 2.5rem;
     color: var(--primary-color);
 }
-.exercise-card p {
-    margin-bottom: 20px;
-    flex-grow: 1; /* Makes cards in a row the same height */
+.appointment-info h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-color-dark);
 }
-.exercise-card {
+.appointment-info p {
+    font-size: 1.1rem;
+    color: var(--text-color-light);
+    margin-top: 0.25rem;
+}
+.no-appointment-message {
+    font-size: 1.1rem;
+    color: var(--text-color-light);
+}
+
+/* --- Exercise Plan --- */
+.exercise-list {
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+}
+.exercise-item {
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+}
+.exercise-item h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.exercise-item .notes {
+    color: var(--text-color-light);
+    margin-bottom: 1rem;
+}
+.exercise-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Big, clear buttons for exercises */
+.btn-exercise {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+.btn-exercise i {
+    font-size: 1.2rem;
+}
+.btn-exercise.video {
+    background-color: var(--secondary-color);
+    color: #fff;
+}
+.btn-exercise.video:hover {
+    background-color: #1a6a8f;
+}
+.btn-exercise.complete {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+.btn-exercise.complete:hover {
+    background-color: #dcfce7;
+}
+.btn-exercise.completed {
+    background-color: #16a34a;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+/* --- History & Info Lists --- */
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.history-item {
+    font-size: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f3f5;
+}
+.history-item:last-child {
+    border-bottom: none;
+}
+.history-item .date {
+    font-weight: 600;
+    color: var(--text-color-dark);
+}
+.history-item .status {
+    text-transform: capitalize;
+    font-weight: 500;
+}
+#clinic-contact-info p {
+    font-size: 1rem;
+    color: var(--text-color-light);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* --- Skeleton Loaders for Better UX --- */
+.skeleton-loader {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite linear;
+    border-radius: 8px;
+    height: 70px;
+    margin-bottom: 1rem;
+}
+.skeleton-loader.large-loader {
+    height: 120px;
+}
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }

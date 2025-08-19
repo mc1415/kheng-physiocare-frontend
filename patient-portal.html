@@ -6,68 +6,64 @@
     <title>Your Portal - Kheng PhysioCare</title>
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/portal.css">
+    <link rel="stylesheet" href="css/portal.css"> <!-- We will replace this file's content -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header class="header">
+    <header class="header portal-header">
         <div class="container">
             <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
             <div class="header-buttons">
-                <button id="logout-button" class="btn btn-secondary">Logout</button>
+                <button id="logout-button" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <main>
-        <section class="section">
-            <div class="container">
-                <h1 class="portal-welcome">Welcome, <span id="patient-name">...</span>!</h1>
-                
-                <!-- Next Appointment -->
-                <div class="portal-section">
-                    <h2>Your Next Appointment</h2>
-                    <div id="next-appointment-card" class="card">
-                        <!-- Content will be injected by JS -->
-                    </div>
+    <main class="portal-main">
+        <div class="container">
+            <h1 id="welcome-header" class="portal-welcome">Welcome...</h1>
+
+            <div class="portal-grid">
+                <!-- Main Content Column -->
+                <div class="portal-main-column">
+                    <section id="next-appointment-card" class="portal-card prominent">
+                        <!-- JS will populate this -->
+                        <div class="skeleton-loader large-loader"></div>
+                    </section>
+                    
+                    <section class="portal-card">
+                        <h2>Your Exercise Plan</h2>
+                        <div id="exercise-plan" class="exercise-list">
+                            <!-- JS will populate this -->
+                            <div class="skeleton-loader"></div>
+                            <div class="skeleton-loader"></div>
+                        </div>
+                    </section>
                 </div>
 
-                <!-- Assigned Exercises -->
-                <div class="portal-section">
-                    <h2>Your Prescribed Exercises</h2>
-                    <div id="exercise-list" class="exercise-grid">
-                        <!-- Exercise cards will be injected by JS -->
-                    </div>
+                <!-- Sidebar Column -->
+                <div class="portal-sidebar-column">
+                    <section class="portal-card">
+                        <h2>Appointment History</h2>
+                        <ul id="appointment-history" class="history-list">
+                            <!-- JS will populate this -->
+                        </ul>
+                    </section>
+                    
+                    <section id="clinic-info-card" class="portal-card">
+                         <h2>Clinic Information</h2>
+                         <div id="clinic-contact-info">
+                             <!-- JS will populate this -->
+                         </div>
+                    </section>
                 </div>
-                
-                <!-- Appointment History -->
-                <div class="portal-section">
-                    <h2>Appointment History</h2>
-                    <div id="appointment-history-table" class="card">
-                       <table>
-                           <thead>
-                               <tr>
-                                   <th>Date</th>
-                                   <th>Time</th>
-                                   <th>Status</th>
-                               </tr>
-                           </thead>
-                           <tbody id="history-tbody">
-                               <!-- History rows will be injected by JS -->
-                           </tbody>
-                       </table>
-                    </div>
-                </div>
-
             </div>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="container copyright">
-            <p>© 2024 Kheng PhysioCare. All Rights Reserved.</p>
         </div>
-    </footer>
-    <script src="js/patient-portal.js"></script> <!-- We will create this file -->
+    </main>
+    
+    <script src="js/config.js"></script>
+    <script src="js/patient-portal.js"></script> <!-- We will replace this file's content -->
 </body>
 </html>
