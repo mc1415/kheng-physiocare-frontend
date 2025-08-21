@@ -1095,3 +1095,14 @@ html[lang="km"] body {
     width: 16px;
     text-align: center;
 }
+
+.language-select {
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.language-select:focus {
+    outline: none;
+}

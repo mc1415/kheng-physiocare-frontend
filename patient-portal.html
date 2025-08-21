@@ -15,8 +15,8 @@
             <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
             <div class="header-buttons">
                 <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                    <option value="en">English</option>
-                    <option value="km">Khmer</option>
+                    <option value="en">🇺🇸</option>
+                    <option value="km">🇰🇭</option>
                 </select>
                 <button id="logout-button" class="btn btn-secondary">
                     <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
@@ -50,6 +50,11 @@
                 <!-- Sidebar Column -->
                 <div class="portal-sidebar-column">
                     <section class="portal-card">
+                        <h2 data-i18n="progressOverview">Progress Overview</h2>
+                        <canvas id="exercise-progress-chart"></canvas>
+                    </section>
+
+                    <section class="portal-card">
                         <h2 data-i18n="appointmentHistory">Appointment History</h2>
                         <ul id="appointment-history" class="history-list">
                             <!-- JS will populate this -->
@@ -69,6 +74,7 @@
     
     <script src="js/config.js"></script>
     <script src="js/language.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/patient-portal.js"></script> <!-- We will replace this file's content -->
 </body>
 </html>
