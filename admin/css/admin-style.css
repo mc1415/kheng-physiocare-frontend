@@ -18,7 +18,7 @@
 }
 
 html[lang="km"] {
-    --font-sans: 'Suwannaphum', Poppins, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif, Poppins, 'Suwannaphum';
 }
 
 body {
@@ -29,7 +29,7 @@ body {
 }
 
 html[lang="km"] body {
-    font-family: 'Suwannaphum', Poppins, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: Poppins, 'Suwannaphum', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* --- Login Page Specific Styles --- */
