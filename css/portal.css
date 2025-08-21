@@ -214,3 +214,92 @@ body {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
+
+/* --- Patient Login Page --- */
+.login-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    background: linear-gradient(135deg, #e0f2ff 0%, #ffffff 100%);
+}
+
+.login-container {
+    max-width: 400px;
+    width: 100%;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    animation: floatUp 0.6s ease forwards;
+}
+
+.login-container h2 {
+    text-align: center;
+    color: var(--primary-blue);
+}
+
+.login-container p {
+    text-align: center;
+    color: var(--dark-text);
+    margin-bottom: 1.5rem;
+}
+
+.login-container .form-group {
+    margin-bottom: 1rem;
+}
+
+.login-container .form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-container .form-group input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.1);
+    outline: none;
+}
+
+.login-container .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-blue);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+    margin-left: 0.5rem;
+    display: none;
+}
+
+.login-container .btn.loading .spinner {
+    display: inline-block;
+}
+
+.login-container .btn.loading .button-text {
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes floatUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
