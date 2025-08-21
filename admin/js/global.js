@@ -2,6 +2,20 @@ const API_BASE_URL = 'https://kheng-physiocare-api.onrender.com';
 
 // admin/js/global.js
 document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebarOverlay = document.querySelector('.sidebar-overlay');
+    if (sidebar && sidebarToggle && sidebarOverlay) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+    }
+
     const userProfile = document.getElementById('user-profile-container');
     if (!userProfile) return; // Only run if the element exists
 
