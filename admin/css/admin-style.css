@@ -28,6 +28,10 @@ body {
     margin: 0;
 }
 
+body.sidebar-open {
+    overflow: hidden;
+}
+
 html[lang="km"] body {
     font-family: Poppins, 'Suwannaphum', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }

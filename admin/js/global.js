@@ -9,10 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('active');
             sidebarOverlay.classList.toggle('active');
+            document.body.classList.toggle('sidebar-open');
         });
         sidebarOverlay.addEventListener('click', () => {
             sidebar.classList.remove('active');
             sidebarOverlay.classList.remove('active');
+            document.body.classList.remove('sidebar-open');
         });
     }
 
