@@ -28,6 +28,9 @@ async function fetchApi(endpoint, token, options = {}) {
     } catch (error) { console.error(`API Error on ${endpoint}:`, error); return null; }
 }
 
+let portalExercises = [];
+let progressChart;
+
 async function fetchDashboardData(token) {
     const result = await fetchApi('/api/portal/dashboard', token);
     if (result && result.success) { renderDashboard(result.data); } 
@@ -35,8 +38,10 @@ async function fetchDashboardData(token) {
 }
 
 function renderDashboard(data) {
+    portalExercises = data.exercises || [];
     renderNextAppointment(data.nextAppointment);
-    renderExercisePlan(data.exercises);
+    renderExercisePlan(portalExercises);
+    renderProgressChart(portalExercises);
     renderAppointmentHistory(data.appointmentHistory);
     renderClinicInfo(data.clinic);
 }
@@ -129,6 +134,49 @@ function renderExercisePlan(exercises) {
     });
 }
 
+function renderProgressChart(exercises) {
+    const canvas = document.getElementById('exercise-progress-chart');
+    if (!canvas) return;
+
+    if (!exercises || exercises.length === 0) {
+        canvas.style.display = 'none';
+        canvas.parentElement.innerHTML += `<p data-i18n="noExercises"></p>`;
+        translatePage();
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    let completed = 0;
+    exercises.forEach(ex => {
+        if (ex.completed_dates && ex.completed_dates.includes(today)) completed++;
+    });
+    const pending = exercises.length - completed;
+    const data = [completed, pending];
+
+    if (progressChart) {
+        progressChart.data.datasets[0].data = data;
+        progressChart.update();
+        return;
+    }
+
+    progressChart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: [t('completedExercises'), t('pendingExercises')],
+            datasets: [{
+                data,
+                backgroundColor: ['#4caf50', '#e0e0e0'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+
 async function handleCompleteExercise(event) {
     const button = event.target.closest('button');
     const assignmentId = button.dataset.assignmentId;
@@ -143,6 +191,13 @@ async function handleCompleteExercise(event) {
         button.classList.remove('complete');
         button.classList.add('completed');
         button.innerHTML = `<i class="fas fa-check-circle"></i> ${t('completedToday')}`;
+        const today = new Date().toISOString().split('T')[0];
+        const ex = portalExercises.find(e => e.id === parseInt(assignmentId));
+        if (ex) {
+            if (!ex.completed_dates) ex.completed_dates = [];
+            if (!ex.completed_dates.includes(today)) ex.completed_dates.push(today);
+        }
+        renderProgressChart(portalExercises);
     } else {
         button.disabled = false;
         button.innerHTML = `<i class="fas fa-check-circle"></i> ${t('markAsDone')}`;

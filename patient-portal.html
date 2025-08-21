@@ -50,6 +50,11 @@
                 <!-- Sidebar Column -->
                 <div class="portal-sidebar-column">
                     <section class="portal-card">
+                        <h2 data-i18n="progressOverview">Progress Overview</h2>
+                        <canvas id="exercise-progress-chart"></canvas>
+                    </section>
+
+                    <section class="portal-card">
                         <h2 data-i18n="appointmentHistory">Appointment History</h2>
                         <ul id="appointment-history" class="history-list">
                             <!-- JS will populate this -->
@@ -69,6 +74,7 @@
     
     <script src="js/config.js"></script>
     <script src="js/language.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/patient-portal.js"></script> <!-- We will replace this file's content -->
 </body>
 </html>
