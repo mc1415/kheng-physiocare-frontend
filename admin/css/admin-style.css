@@ -1,6 +1,7 @@
 /* Kheng PhysioCare - ADMIN STYLESHEET */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Suwannaphum:wght@100;300;400;700;900&display=swap');
 
 /* --- Variables and Base Styles --- */
 :root {
@@ -16,11 +17,19 @@
     --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif, Poppins;
 }
 
+html[lang="km"] {
+    --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif, Poppins, 'Suwannaphum';
+}
+
 body {
     font-family: Poppins;
     background-color: var(--admin-bg);
     color: var(--text-primary);
     margin: 0;
+}
+
+html[lang="km"] body {
+    font-family: Poppins, 'Suwannaphum', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* --- Login Page Specific Styles --- */
