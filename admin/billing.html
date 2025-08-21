@@ -15,32 +15,36 @@
         <nav class="sidebar">
             <div class="sidebar-header"><img src="../images/LOGOWHITE.png" alt="Logo" class="sidebar-logo"></div>
             <ul class="sidebar-menu">
-                <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a></li>
-                <li class="menu-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a></li>
-                <li class="menu-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a></li>
-                <li class="menu-item active"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a></li>
-                <li class="menu-item"><a href="exercises.html"><i class="fa-solid fa-person-running"></i><span>Exercises</span></a></li>
-                <li class="menu-item"><a href="inventory.html"><i class="fa-solid fa-pills"></i><span>Inventory</span></a></li>
-                <li class="menu-item"><a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span>Staff</span></a></li>
+                <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></a></li>
+                <li class="menu-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span data-i18n="appointments">Appointments</span></a></li>
+                <li class="menu-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span data-i18n="patients">Patients</span></a></li>
+                <li class="menu-item active"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span data-i18n="billing">Billing</span></a></li>
+                <li class="menu-item"><a href="exercises.html"><i class="fa-solid fa-person-running"></i><span data-i18n="exercises">Exercises</span></a></li>
+                <li class="menu-item"><a href="inventory.html"><i class="fa-solid fa-pills"></i><span data-i18n="inventory">Inventory</span></a></li>
+                <li class="menu-item"><a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span data-i18n="staff">Staff</span></a></li>
                 <hr class="sidebar-divider">
-                <li class="menu-item"><a href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
-                <li class="menu-item"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a></li>
+                <li class="menu-item"><a href="settings.html"><i class="fa-solid fa-gear"></i><span data-i18n="settings">Settings</span></a></li>
+                <li class="menu-item"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span data-i18n="logout">Logout</span></a></li>
             </ul>
         </nav>
 
         <main class="main-content">
             <header class="top-bar">
                 <div class="top-bar-left">
-                    <h1 class="page-title">Billing & Invoices</h1>
+                    <h1 class="page-title" data-i18n="billing">Billing</h1>
                 </div>
                 <div class="top-bar-right">
                     <!-- The search input is now part of the top bar for better layout -->
+                    <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
+                        <option value="en">🇺🇸</option>
+                        <option value="km">🇰🇭</option>
+                    </select>
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <!-- Add the ID for our filter script -->
                         <input type="text" id="filterInvoicesInput" placeholder="Filter by Patient or ID...">
                     </div>
-                    <button id="createInvoiceBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> Create New Invoice</button>
+                    <button id="createInvoiceBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> <span data-i18n="createInvoice">Create New Invoice</span></button>
                 </div>
             </header>
 
@@ -100,6 +104,7 @@
     </div>
     <script src="js/global.js"></script>
     <script src="js/billing.js"></script>
+    <script src="../js/language.js"></script>
 
 </body>
 </html>

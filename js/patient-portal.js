@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const welcomeHeader = document.getElementById('welcome-header');
-    welcomeHeader.textContent = `Welcome, ${localStorage.getItem('patientName')}!`;
+    welcomeHeader.textContent = `${t('welcome')}, ${localStorage.getItem('patientName')}!`;
 
     document.getElementById('logout-button').addEventListener('click', () => {
         localStorage.clear();
@@ -43,22 +43,23 @@ function renderDashboard(data) {
 
 function renderNextAppointment(appointment) {
     const card = document.getElementById('next-appointment-card');
-    if (!appointment) { card.innerHTML = `<h2>Next Appointment</h2><p class="no-appointment-message">You have no upcoming appointments.</p>`; return; }
-    
+    if (!appointment) { card.innerHTML = `<h2 data-i18n="nextAppointment"></h2><p class="no-appointment-message" data-i18n="noAppointments"></p>`; translatePage(); return; }
+
     const date = new Date(appointment.start_time);
     const formattedDate = date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
     const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-    
+
     card.innerHTML = `
-        <h2>Next Appointment</h2>
+        <h2 data-i18n="nextAppointment"></h2>
         <div class="appointment-details">
             <i class="fas fa-calendar-check icon"></i>
             <div class="appointment-info">
                 <h3>${formattedDate}</h3>
-                <p>at <strong>${formattedTime}</strong> with ${appointment.staff.full_name || 'your therapist'}</p>
+                <p>${t('at')} <strong>${formattedTime}</strong> ${t('with')} ${appointment.staff.full_name || 'your therapist'}</p>
             </div>
         </div>
     `;
+    translatePage();
 }
 
 // --- NEW HELPER FUNCTION TO GET YOUTUBE EMBED URL ---
@@ -85,7 +86,8 @@ function renderExercisePlan(exercises) {
     const container = document.getElementById('exercise-plan');
     container.innerHTML = '';
     if (!exercises || exercises.length === 0) {
-        container.innerHTML = `<p>You have no exercises assigned at the moment.</p>`;
+        container.innerHTML = `<p data-i18n="noExercises"></p>`;
+        translatePage();
         return;
     }
 
@@ -99,9 +101,9 @@ function renderExercisePlan(exercises) {
         const exerciseEl = document.createElement('div');
         exerciseEl.className = 'exercise-item';
         
-        let buttonHtml = `<button class="btn-exercise complete" data-assignment-id="${assignedEx.id}"><i class="fas fa-check-circle"></i> Mark as Done</button>`;
+        let buttonHtml = `<button class="btn-exercise complete" data-assignment-id="${assignedEx.id}"><i class="fas fa-check-circle"></i> ${t('markAsDone')}</button>`;
         if (isCompletedToday) {
-            buttonHtml = `<button class="btn-exercise completed" disabled><i class="fas fa-check-circle"></i> Completed Today!</button>`;
+            buttonHtml = `<button class="btn-exercise completed" disabled><i class="fas fa-check-circle"></i> ${t('completedToday')}</button>`;
         }
 
         // Conditionally add the video wrapper if an embed URL exists
@@ -133,17 +135,17 @@ async function handleCompleteExercise(event) {
     const token = localStorage.getItem('patientToken');
 
     button.disabled = true;
-    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`;
+    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t('saving')}`;
 
     const result = await fetchApi(`/api/assigned-exercises/${assignmentId}/complete`, token, { method: 'PATCH' });
 
     if (result && result.success) {
         button.classList.remove('complete');
         button.classList.add('completed');
-        button.innerHTML = `<i class="fas fa-check-circle"></i> Completed Today!`;
+        button.innerHTML = `<i class="fas fa-check-circle"></i> ${t('completedToday')}`;
     } else {
         button.disabled = false;
-        button.innerHTML = `<i class="fas fa-check-circle"></i> Mark as Done`;
+        button.innerHTML = `<i class="fas fa-check-circle"></i> ${t('markAsDone')}`;
         alert('Could not save progress. Please try again.');
     }
 }
@@ -151,7 +153,7 @@ async function handleCompleteExercise(event) {
 function renderAppointmentHistory(history) {
     const list = document.getElementById('appointment-history');
     list.innerHTML = '';
-    if (!history || history.length === 0) { list.innerHTML = `<li>No past appointments found.</li>`; return; }
+    if (!history || history.length === 0) { list.innerHTML = `<li data-i18n="noPastAppointments"></li>`; translatePage(); return; }
     history.forEach(app => {
         const date = new Date(app.start_time);
         const formattedDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });

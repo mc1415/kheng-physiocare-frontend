@@ -12,27 +12,32 @@
     <div class="login-container">
         <div class="login-header">
             <img src="../images/logo.jpg" alt="Kheng PhysioCare Logo" class="login-logo">
-            <h2>Admin Portal</h2>
-            <p>Please sign in to continue</p>
+            <h2 data-i18n="adminPortal">Admin Portal</h2>
+            <p data-i18n="signInPrompt">Please sign in to continue</p>
+            <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
+                <option value="en">🇺🇸</option>
+                <option value="km">🇰🇭</option>
+            </select>
         </div>
 
         <form id="admin-login-form" class="login-form">
             <div class="form-group">
-                <label for="admin-username">Email Address</label>
+                <label for="admin-username" data-i18n="emailAddress">Email Address</label>
                 <input type="email" id="admin-username" name="username" placeholder="e.g., admin@khengphysio.com" required>
             </div>
             <div class="form-group">
-                <label for="admin-password">Password</label>
+                <label for="admin-password" data-i18n="password">Password</label>
                 <input type="password" id="admin-password" name="password" placeholder="Your Password" required>
             </div>
             <button type="submit" id="login-btn" class="btn-login">
-                <span class="btn-text">Sign In</span>
+                <span class="btn-text" data-i18n="signIn">Sign In</span>
                 <div class="spinner"></div>
             </button>
-            <p id="login-error-message" class="error-message">Invalid credentials. Please try again.</p>
+            <p id="login-error-message" class="error-message" data-i18n="invalidCredentials">Invalid credentials. Please try again.</p>
         </form>
     </div>
 <script src="js/global.js"></script>
+<script src="../js/language.js"></script>
 <script>
     const loginForm = document.getElementById('admin-login-form');
     const loginBtn = document.getElementById('login-btn');

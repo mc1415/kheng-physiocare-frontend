@@ -339,3 +339,14 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.language-select {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.language-select:focus {
+  outline: none;
+}

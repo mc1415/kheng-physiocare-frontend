@@ -14,8 +14,12 @@
         <div class="container">
             <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
             <div class="header-buttons">
+                <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
+                    <option value="en">🇺🇸</option>
+                    <option value="km">🇰🇭</option>
+                </select>
                 <button id="logout-button" class="btn btn-secondary">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
                 </button>
             </div>
         </div>
@@ -34,7 +38,7 @@
                     </section>
                     
                     <section class="portal-card">
-                        <h2>Your Exercise Plan</h2>
+                        <h2 data-i18n="yourExercisePlan">Your Exercise Plan</h2>
                         <div id="exercise-plan" class="exercise-list">
                             <!-- JS will populate this -->
                             <div class="skeleton-loader"></div>
@@ -46,14 +50,14 @@
                 <!-- Sidebar Column -->
                 <div class="portal-sidebar-column">
                     <section class="portal-card">
-                        <h2>Appointment History</h2>
+                        <h2 data-i18n="appointmentHistory">Appointment History</h2>
                         <ul id="appointment-history" class="history-list">
                             <!-- JS will populate this -->
                         </ul>
                     </section>
                     
                     <section id="clinic-info-card" class="portal-card">
-                         <h2>Clinic Information</h2>
+                         <h2 data-i18n="clinicInformation">Clinic Information</h2>
                          <div id="clinic-contact-info">
                              <!-- JS will populate this -->
                          </div>
@@ -64,6 +68,7 @@
     </main>
     
     <script src="js/config.js"></script>
+    <script src="js/language.js"></script>
     <script src="js/patient-portal.js"></script> <!-- We will replace this file's content -->
 </body>
 </html>
