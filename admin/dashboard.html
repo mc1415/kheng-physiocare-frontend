@@ -23,30 +23,30 @@
             </div>
             <ul class="sidebar-menu">
                 <li class="menu-item active">
-                    <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+                    <a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></a>
                 </li>
                 <li class="menu-item">
-                    <a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a>
+                    <a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span data-i18n="appointments">Appointments</span></a>
                 </li>
                 <li class="menu-item">
-                    <a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+                    <a href="patients.html"><i class="fa-solid fa-users"></i><span data-i18n="patients">Patients</span></a>
                 </li>
                 <li class="menu-item">
-                    <a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a>
+                    <a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span data-i18n="billing">Billing</span></a>
                 </li>
-                <li class="menu-item"><a href="exercises.html"><i class="fa-solid fa-person-running"></i><span>Exercises</span></a></li>
+                <li class="menu-item"><a href="exercises.html"><i class="fa-solid fa-person-running"></i><span data-i18n="exercises">Exercises</span></a></li>
                 <li class="menu-item">
-                    <a href="inventory.html"><i class="fa-solid fa-pills"></i><span>Inventory</span></a>
+                    <a href="inventory.html"><i class="fa-solid fa-pills"></i><span data-i18n="inventory">Inventory</span></a>
                 </li>
                 <li class="menu-item">
-                    <a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span>Staff</span></a>
+                    <a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span data-i18n="staff">Staff</span></a>
                 </li>
                 <hr class="sidebar-divider">
                 <li class="menu-item">
-                    <a href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+                    <a href="settings.html"><i class="fa-solid fa-gear"></i><span data-i18n="settings">Settings</span></a>
                 </li>
                 <li class="menu-item">
-                    <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+                    <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span data-i18n="logout">Logout</span></a>
                 </li>
             </ul>
         </nav>
@@ -56,12 +56,16 @@
             <!-- Top Bar -->
             <header class="top-bar">
                 <div class="top-bar-left">
-                    <h1 class="page-title">Dashboard</h1>
+                    <h1 class="page-title" data-i18n="dashboard">Dashboard</h1>
                 </div>
                 <div class="top-bar-right">
+                    <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
+                        <option value="en">English</option>
+                        <option value="km">Khmer</option>
+                    </select>
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search...">
+                        <input type="text" placeholder="Search..." data-i18n-placeholder="searchPlaceholder">
                     </div>
                     <button class="icon-button"><i class="fa-regular fa-bell"></i></button>
                     <div class="user-profile" id="user-profile-container">
@@ -75,7 +79,7 @@
                 <!-- General Report Card -->
                 <div class="card card-span-2">
                     <div class="card-header">
-                        <h3>General Report</h3>
+                        <h3 data-i18n="generalReport">General Report</h3>
                         <div class="time-filter">
                             <button class="active">Daily</button>
                             <button>Weekly</button>
@@ -83,23 +87,23 @@
                     </div>
                     <div class="report-grid">
                         <div class="report-item">
-                            <p class="report-title">TODAY'S REVENUE</p>
-                            <p class="report-value" id="stat-total-revenue">Loading...</p>
+                            <p class="report-title" data-i18n="todaysRevenue">TODAY'S REVENUE</p>
+                            <p class="report-value" id="stat-total-revenue" data-i18n="loading">Loading...</p>
                             <p class="report-trend positive">+5%</p> <!-- Trend is static for now -->
                         </div>
                         <div class="report-item">
-                            <p class="report-title">APPOINTMENTS TODAY</p>
-                            <p class="report-value" id="stat-appointments-today">Loading...</p>
+                            <p class="report-title" data-i18n="appointmentsToday">APPOINTMENTS TODAY</p>
+                            <p class="report-value" id="stat-appointments-today" data-i18n="loading">Loading...</p>
                             <p class="report-trend negative">-2</p> <!-- Trend is static for now -->
                         </div>
                         <div class="report-item">
-                            <p class="report-title">NEW PATIENTS TODAY</p>
-                            <p class="report-value" id="stat-new-patients">Loading...</p>
+                            <p class="report-title" data-i18n="newPatientsToday">NEW PATIENTS TODAY</p>
+                            <p class="report-value" id="stat-new-patients" data-i18n="loading">Loading...</p>
                             <p class="report-trend positive">+1</p> <!-- Trend is static for now -->
                         </div>
                         <div class="report-item">
-                            <p class="report-title">CANCELLATIONS TODAY</p>
-                            <p class="report-value" id="stat-cancellations">Loading...</p>
+                            <p class="report-title" data-i18n="cancellationsToday">CANCELLATIONS TODAY</p>
+                            <p class="report-value" id="stat-cancellations" data-i18n="loading">Loading...</p>
                             <p class="report-trend neutral">-</p> <!-- Trend is static for now -->
                         </div>
                     </div>
@@ -108,8 +112,8 @@
                 <!-- Consultations Chart Card -->
                 <div class="card card-span-2">
                      <div class="card-header">
-                        <h3>Consultations</h3>
-                        <span>Last 30 Days</span>
+                        <h3 data-i18n="consultations">Consultations</h3>
+                        <span data-i18n="last30Days">Last 30 Days</span>
                     </div>
                     <div class="card-body">
                         <canvas id="consultationsChart"></canvas>
@@ -156,6 +160,7 @@
 
 <script src="js/global.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="../js/language.js"></script>
 
 </body>
 </html>
