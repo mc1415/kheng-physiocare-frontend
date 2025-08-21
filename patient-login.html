@@ -26,7 +26,7 @@
     </header>
 
     <main>
-        <section class="section">
+        <section class="section login-section">
             <div class="container">
                 <div class="login-container">
                     <h2>Patient Portal Login</h2>
@@ -41,7 +41,10 @@
                             <input type="password" id="password" name="password" required>
                         </div>
                         <div id="error-message" class="error-message"></div>
-                        <button type="submit" class="btn btn-primary">Sign In</button>
+                        <button type="submit" id="login-button" class="btn btn-primary">
+                            <span class="button-text">Sign In</span>
+                            <span class="spinner" aria-hidden="true"></span>
+                        </button>
                     </form>
                 </div>
             </div>

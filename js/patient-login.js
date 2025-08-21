@@ -6,10 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loginForm = document.getElementById('patient-login-form');
     const errorMessage = document.getElementById('error-message');
+    const loginButton = document.getElementById('login-button');
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         errorMessage.textContent = '';
+        loginButton.classList.add('loading');
+        loginButton.disabled = true;
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
@@ -35,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Login request failed:', error);
             errorMessage.textContent = 'An error occurred. Please try again later.';
+        } finally {
+            loginButton.classList.remove('loading');
+            loginButton.disabled = false;
         }
     });
 });
