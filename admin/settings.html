@@ -29,11 +29,15 @@
                 <li class="menu-item"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span data-i18n="logout">Logout</span></a></li>
             </ul>
         </nav>
+        <div class="sidebar-overlay"></div>
 
         <!-- =========== MAIN CONTENT =========== -->
         <main class="main-content">
             <header class="top-bar">
-                <div class="top-bar-left"><h1 class="page-title" data-i18n="settings">Settings</h1></div>
+                <div class="top-bar-left">
+                    <button class="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
+                    <h1 class="page-title" data-i18n="settings">Settings</h1>
+                </div>
                 <div class="top-bar-right">
                     <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
                         <option value="en">🇺🇸</option>
