@@ -1,8 +1,14 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // If user is already logged in, redirect them to the portal
-    if (localStorage.getItem('patientToken')) {
-        window.location.href = 'patient-portal.html';
-    }
+document.addEventListener('DOMContentLoaded', async () => {
+    // If already signed in with Supabase, go to portal
+    try {
+        if (window.supabaseClient) {
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            if (session) {
+                window.location.href = 'patient-portal.html';
+                return;
+            }
+        }
+    } catch {}
 
     const loginForm = document.getElementById('patient-login-form');
     const errorMessage = document.getElementById('error-message');
@@ -14,30 +20,20 @@ document.addEventListener('DOMContentLoaded', () => {
         loginButton.classList.add('loading');
         loginButton.disabled = true;
 
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/patient/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+            if (!window.supabaseClient) throw new Error('Auth not initialized');
+            const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) throw error;
 
-            const result = await response.json();
-
-            if (result.success) {
-                // Store the token and user info
-                localStorage.setItem('patientToken', result.token);
-                localStorage.setItem('patientName', result.user.fullName);
-                // Redirect to the portal
-                window.location.href = 'patient-portal.html';
-            } else {
-                errorMessage.textContent = result.message || 'Login failed. Please check your credentials.';
-            }
+            // Do not set display name from Supabase metadata.
+            // The portal will fetch the real name from patients table via Edge Function.
+            window.location.href = 'patient-portal.html';
         } catch (error) {
-            console.error('Login request failed:', error);
-            errorMessage.textContent = 'An error occurred. Please try again later.';
+            console.error('Login error:', error);
+            errorMessage.textContent = error.message || 'Login failed. Please check your credentials.';
         } finally {
             loginButton.classList.remove('loading');
             loginButton.disabled = false;

@@ -6,7 +6,7 @@
     <title>Patients - Kheng PhysioCare Admin</title>
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="css/admin-style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
@@ -57,6 +57,38 @@
             </div>
         </main>
     </div>
+    
+    <!-- Credentials Modal (shown after Auth account creation) -->
+    <div id="credentialsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Patient Credentials</h2>
+                <button id="closeCredentialsModalBtn" class="close-button">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-top:0">Share these credentials with the patient. They can change their password later.</p>
+                <div class="form-grid" style="margin-top: 10px;">
+                    <div class="form-group span-2">
+                        <label>Email</label>
+                        <input type="text" id="cred-email" readonly>
+                    </div>
+                    <div class="form-group span-2">
+                        <label>Temporary Password</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="cred-password" readonly style="flex:1;">
+                            <button id="copyCredsBtn" class="btn-primary-action" type="button" style="white-space:nowrap;">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span style="color: var(--text-secondary);">Advise the patient to change their password after first login.</span>
+                <div>
+                    <button id="doneCredentialsBtn" class="btn-primary-action" type="button">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="patientModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2 id="patientModalTitle">Add New Patient</h2><button id="closePatientModalBtn" class="close-button">×</button></div>
@@ -64,6 +96,17 @@
                 <form id="patient-form">
                     <input type="hidden" id="patient-id-field" name="patientId">
                     <div class="form-grid">
+                        <div class="form-group span-2">
+                            <label>Patient Photo</label>
+                            <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                                <img id="patient-avatar-preview" alt="Preview" style="width:96px; height:96px; border-radius:50%; object-fit:cover; border:1px solid var(--border-color); background:#2b3445;">
+                                <div style="display:flex; gap:10px;">
+                                    <button type="button" id="avatarUploadBtn" class="btn-primary-action">Upload Image</button>
+                                    <button type="button" id="avatarCameraBtn" class="btn-secondary-action">Take Photo</button>
+                                </div>
+                                <input type="file" id="avatarFileInput" accept="image/*" style="display:none">
+                            </div>
+                        </div>
                         <div class="form-group span-2"><label for="patient-name">Full Name</label><input type="text" id="patient-name" name="full_name" required></div>
                         <div class="form-group"><label for="patient-dob">Date of Birth</label><input type="date" id="patient-dob" name="date_of_birth" required></div>
                         <div class="form-group">
@@ -78,6 +121,9 @@
                         <div class="form-group"><label for="patient-phone">Phone Number</label><input type="tel" id="patient-phone" name="phone_number" required></div>
                         <div class="form-group"><label for="patient-email">Email Address</label><input type="email" id="patient-email" name="email"></div>
                         <div class="form-group span-2"><label for="patient-address">Address</label><textarea id="patient-address" name="address" rows="3"></textarea></div>
+
+                        <!-- Patient Photo Upload/Capture -->
+                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="deletePatientBtn" class="btn-danger" style="display: none;">Delete Patient</button>
@@ -87,6 +133,28 @@
             </div>
         </div>
     </div>
+    <!-- Camera Modal for taking instant picture -->
+    <div id="cameraModal" class="modal">
+        <div class="modal-content" style="max-width:720px;">
+            <div class="modal-header">
+                <h2>Take Patient Photo</h2>
+                <button id="closeCameraModalBtn" class="close-button">×</button>
+            </div>
+            <div class="modal-body" style="display:flex; flex-direction:column; gap:12px; align-items:center;">
+                <video id="cameraVideo" autoplay playsinline style="max-width:100%; border-radius:8px; display:block; background:#000;"></video>
+                <canvas id="cameraCanvas" style="max-width:100%; border-radius:8px; display:none; background:#000;"></canvas>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" id="captureBtn" class="btn-primary-action">Capture</button>
+                    <button type="button" id="retakeBtn" class="btn-secondary-action" style="display:none;">Retake</button>
+                    <button type="button" id="usePhotoBtn" class="btn-primary-action" style="display:none;">Use Photo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Supabase (UMD build for browsers) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-init.js"></script>
     <script src="js/global.js"></script>
     <script src="js/patients.js"></script>
     <script src="../js/language.js"></script>

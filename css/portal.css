@@ -35,6 +35,60 @@ body {
     }
 }
 
+/* --- Mobile App Layout --- */
+.mobile-app { display: none; }
+.bottom-nav { display: none; }
+
+@media (max-width: 768px) {
+    /* Hide desktop grid on mobile */
+    .portal-grid { display: none; }
+
+    /* Show mobile app sections */
+    .mobile-app { display: block; padding-bottom: 64px; }
+    .mobile-page { display: none; }
+    .mobile-page.active { display: block; }
+
+    /* Fixed bottom navigation */
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        height: 56px;
+        background: #fff;
+        border-top: 1px solid #e6e6e6;
+        box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
+        z-index: 100;
+    }
+    .bottom-nav .nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #666;
+        background: none; border: none; cursor: pointer;
+    }
+    .bottom-nav .nav-item i { font-size: 18px; margin-bottom: 2px; }
+    .bottom-nav .nav-item.active { color: var(--primary-color); }
+}
+
+/* Mobile profile header */
+.mobile-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.mobile-profile-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e6e6e6;
+    background: #f5f5f5;
+}
+.mobile-profile-header .light { color: var(--text-color-light); margin-top: 2px; }
+
 /* --- Card Styling --- */
 .portal-card {
     background-color: #ffffff;
@@ -202,6 +256,26 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+/* --- Change Password Card --- */
+.change-password-form .form-group {
+    margin-bottom: 0.75rem;
+}
+.change-password-form input[type="password"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.change-password-form .error-message {
+    color: var(--red-accent);
+    margin: 0.5rem 0 0.75rem;
+}
+.hint-text {
+    margin-top: 0.75rem;
+    color: var(--text-color-light);
+    font-size: 0.9rem;
 }
 
 #exercise-progress-chart {

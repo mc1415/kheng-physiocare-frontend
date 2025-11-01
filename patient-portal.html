@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/portal.css"> <!-- We will replace this file's content -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
     <header class="header portal-header">
@@ -67,11 +67,115 @@
                              <!-- JS will populate this -->
                          </div>
                     </section>
+
+                    <!-- Change Password -->
+                    <section id="change-password-card" class="portal-card">
+                        <h2>Change Password</h2>
+                        <form id="change-password-form" class="change-password-form">
+                            <div class="form-group">
+                                <label for="current-password">Current Password</label>
+                                <input type="password" id="current-password" required autocomplete="current-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password" required autocomplete="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirm New Password</label>
+                                <input type="password" id="confirm-password" required autocomplete="new-password">
+                            </div>
+                            <div id="change-password-error" class="error-message" style="display:none"></div>
+                            <button type="submit" id="change-password-btn" class="btn btn-primary">Update Password</button>
+                        </form>
+                        <p class="hint-text">If this is your first login, your temporary password is <strong>KPC@2025</strong>.</p>
+                    </section>
                 </div>
             </div>
+
+            <!-- Mobile App Pages (hidden on desktop) -->
+            <div id="mobile-app" class="mobile-app">
+                <section id="page-home" class="mobile-page active">
+                    <div id="next-appointment-card-mobile" class="portal-card prominent">
+                        <div class="skeleton-loader large-loader"></div>
+                    </div>
+                </section>
+
+                <section id="page-exercises" class="mobile-page">
+                    <div class="portal-card">
+                        <h2 data-i18n="yourExercisePlan">Your Exercise Plan</h2>
+                        <div id="exercise-plan-mobile" class="exercise-list">
+                            <div class="skeleton-loader"></div>
+                            <div class="skeleton-loader"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="page-progress" class="mobile-page">
+                    <div class="portal-card">
+                        <h2 data-i18n="progressOverview">Progress Overview</h2>
+                        <canvas id="exercise-progress-chart-mobile"></canvas>
+                    </div>
+                </section>
+
+                <section id="page-history" class="mobile-page">
+                    <div class="portal-card">
+                        <h2 data-i18n="appointmentHistory">Appointment History</h2>
+                        <ul id="appointment-history-mobile" class="history-list"></ul>
+                    </div>
+                </section>
+
+                <section id="page-profile" class="mobile-page">
+                    <div class="portal-card">
+                        <div class="mobile-profile-header">
+                            <img id="mobile-profile-avatar" class="mobile-profile-avatar" alt="Avatar">
+                            <div>
+                                <h3 id="mobile-profile-name">Patient</h3>
+                                <p id="mobile-profile-email" class="light"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portal-card">
+                        <h2 data-i18n="clinicInformation">Clinic Information</h2>
+                        <div id="clinic-contact-info-mobile"></div>
+                    </div>
+                    <div class="portal-card">
+                        <h2>Change Password</h2>
+                        <form id="change-password-form-mobile" class="change-password-form">
+                            <div class="form-group">
+                                <label for="current-password-mobile">Current Password</label>
+                                <input type="password" id="current-password-mobile" required autocomplete="current-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password-mobile">New Password</label>
+                                <input type="password" id="new-password-mobile" required autocomplete="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password-mobile">Confirm New Password</label>
+                                <input type="password" id="confirm-password-mobile" required autocomplete="new-password">
+                            </div>
+                            <div id="change-password-error-mobile" class="error-message" style="display:none"></div>
+                            <button type="submit" id="change-password-btn-mobile" class="btn btn-primary">Update Password</button>
+                        </form>
+                        <p class="hint-text">Temporary password for new accounts: <strong>KPC@2025</strong>.</p>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Bottom Navigation (mobile only) -->
+            <nav id="bottom-nav" class="bottom-nav">
+                <button data-target="page-home" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></button>
+                <button data-target="page-exercises" class="nav-item"><i class="fas fa-dumbbell"></i><span>Exercises</span></button>
+                <button data-target="page-progress" class="nav-item"><i class="fas fa-chart-doughnut"></i><span>Progress</span></button>
+                <button data-target="page-history" class="nav-item"><i class="fas fa-clock-rotate-left"></i><span>History</span></button>
+                <button data-target="page-profile" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></button>
+            </nav>
         </div>
     </main>
     
+    <!-- Supabase UMD for Edge Functions; shared admin config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="admin/js/supabase-config.js"></script>
+    <script src="admin/js/supabase-init.js"></script>
     <script src="js/config.js"></script>
     <script src="js/language.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
