@@ -27,6 +27,13 @@ const translations = {
     yourExercisePlan: 'Your Exercise Plan',
     appointmentHistory: 'Appointment History',
     clinicInformation: 'Clinic Information',
+    latestUpdates: 'Latest Updates',
+    invoices: 'Invoices',
+    patientInformation: 'Patient Information',
+    ageLabel: 'Age',
+    genderLabel: 'Gender',
+    phoneLabel: 'Phone',
+    emailLabel: 'Email',
     noAppointments: 'You have no upcoming appointments.',
     nextAppointment: 'Next Appointment',
     at: 'at',
@@ -37,6 +44,15 @@ const translations = {
     saving: 'Saving...',
     noPastAppointments: 'No past appointments found.',
     progressOverview: 'Progress Overview',
+    changePassword: 'Change Password',
+    currentPassword: 'Current Password',
+    newPassword: 'New Password',
+    confirmPassword: 'Confirm New Password',
+    updatePassword: 'Update Password',
+    tempPasswordHint: 'Temporary password for new accounts:',
+    patientFallback: 'Patient',
+    noInvoices: 'No invoices available yet.',
+    downloadInvoice: 'Download PDF',
     completedExercises: 'Completed',
     pendingExercises: 'Pending',
     loading: 'Loading...',
@@ -83,6 +99,13 @@ const translations = {
     yourExercisePlan: 'ផែនការហាត់ប្រាណ​របស់អ្នក',
     appointmentHistory: 'ប្រវត្តិនៃការណាត់ជួប',
     clinicInformation: 'ព័ត៌មានគ្លីនិក',
+    latestUpdates: 'បច្ចុប្បន្នភាពថ្មីៗ',
+    invoices: 'វិក្កយបត្រ',
+    patientInformation: 'ព័ត៌មានអ្នកជម្ងឺ',
+    ageLabel: 'អាយុ',
+    genderLabel: 'ភេទ',
+    phoneLabel: 'លេខទូរស័ព្ទ',
+    emailLabel: 'អ៊ីមែល',
     noAppointments: 'អ្នកមិនមានការណាត់ជួបពេលខាងមុខទេ',
     nextAppointment: 'ការណាត់ជួបបន្ទាប់',
     at: 'នៅ',
@@ -96,6 +119,15 @@ const translations = {
     completedExercises: 'បានបញ្ចប់',
     pendingExercises: 'មិនទាន់ធ្វើ',
     loading: 'កំពុងដំណើរការ',
+    changePassword: 'ប្តូរពាក្យសម្ងាត់',
+    currentPassword: 'ពាក្យសម្ងាត់បច្ចុប្បន្ន',
+    newPassword: 'ពាក្យសម្ងាត់ថ្មី',
+    confirmPassword: 'បញ្ជាក់ពាក្យសម្ងាត់ថ្មី',
+    updatePassword: 'រក្សាទុកពាក្យសម្ងាត់',
+    tempPasswordHint: 'ប្រសិនបើជាគណនីថ្មី នេះជាពាក្យសម្ងាត់បណ្តោះអាសន្ន៖',
+    patientFallback: 'អ្នកជម្ងឺ',
+    noInvoices: 'មិនទាន់មានវិក្កយបត្រ។',
+    downloadInvoice: 'ទាញយក PDF',
     newAppointment: 'ការណាត់ជួបថ្មី',
     saveAppointment: 'រក្សាទុកការណាត់ជួប',
     delete: 'លុប',
@@ -121,29 +153,102 @@ function t(key) {
 function translatePage() {
   const lang = localStorage.getItem('lang') || 'en';
   document.documentElement.setAttribute('lang', lang);
+  if (document.body) document.body.classList.toggle('lang-km', lang === 'km');
+  const langPack = translations[lang] || {};
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    const translation = t(key);
+    const hasTranslation = Object.prototype.hasOwnProperty.call(langPack, key);
+    const translation = hasTranslation ? langPack[key] : (translations['en'][key] || key);
     if (el.tagName.toLowerCase() === 'input' || el.tagName.toLowerCase() === 'textarea') {
       el.value = translation;
     } else {
       el.textContent = translation;
     }
+    el.classList.toggle('use-base-font', lang === 'km' && !hasTranslation);
   });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.getAttribute('data-i18n-placeholder');
-    el.placeholder = t(key);
+    const hasTranslation = Object.prototype.hasOwnProperty.call(langPack, key);
+    const translation = hasTranslation ? langPack[key] : (translations['en'][key] || key);
+    el.placeholder = translation;
+    el.classList.toggle('use-base-font', lang === 'km' && !hasTranslation);
   });
   const selector = document.getElementById('language-select');
   if (selector) selector.value = lang;
+  const patientNameEl = document.getElementById('mobile-profile-name');
+  if (patientNameEl && patientNameEl.dataset.hasName !== 'true') {
+    patientNameEl.textContent = t('patientFallback');
+  }
+  if (typeof window.refreshPatientInfoLanguage === 'function') {
+    window.refreshPatientInfoLanguage();
+  }
+  highlightLanguageMenu(lang);
 }
 
 function setLanguage(lang) {
   localStorage.setItem('lang', lang);
   translatePage();
+  closeAllLanguageMenus();
 }
 
-document.addEventListener('DOMContentLoaded', translatePage);
+function highlightLanguageMenu(lang) {
+  document.querySelectorAll('.language-menu [data-lang]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+const languageSwitchers = [];
+let languageMenuClickHandlerBound = false;
+
+function closeAllLanguageMenus() {
+  languageSwitchers.forEach(({ menu, toggle }) => {
+    menu.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function initLanguageMenu() {
+  languageSwitchers.length = 0;
+  const configs = [
+    { toggle: document.getElementById('language-toggle'), menu: document.getElementById('language-menu') }
+  ];
+  configs.forEach(({ toggle, menu }) => {
+    if (!toggle || !menu) return;
+    languageSwitchers.push({ toggle, menu });
+    if (toggle.dataset.languageBound === 'true') return;
+    toggle.dataset.languageBound = 'true';
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const willOpen = !menu.classList.contains('open');
+      closeAllLanguageMenus();
+      if (willOpen) {
+        menu.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+      } else {
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    menu.addEventListener('click', (event) => {
+      const btn = event.target.closest('button[data-lang]');
+      if (!btn) return;
+      setLanguage(btn.dataset.lang);
+      closeAllLanguageMenus();
+    });
+  });
+  if (!languageMenuClickHandlerBound) {
+    document.addEventListener('click', (event) => {
+      if (languageSwitchers.some(({ menu, toggle }) => menu.contains(event.target) || toggle.contains(event.target))) return;
+      closeAllLanguageMenus();
+    });
+    languageMenuClickHandlerBound = true;
+  }
+  highlightLanguageMenu(localStorage.getItem('lang') || 'en');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  translatePage();
+  initLanguageMenu();
+});
 
 window.setLanguage = setLanguage;
 window.translatePage = translatePage;

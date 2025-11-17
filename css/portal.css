@@ -9,6 +9,11 @@ body {
     background: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+.portal-header .header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
 
 .portal-main {
     padding: 2rem 0;
@@ -19,6 +24,38 @@ body {
     font-weight: 600;
     color: var(--text-color-dark);
     margin-bottom: 2rem;
+}
+body.lang-km {
+    font-family: "Hanuman", serif;
+    font-optical-sizing: auto;
+    font-size: 1.12rem;
+}
+body.lang-km button,
+body.lang-km input,
+body.lang-km select,
+body.lang-km textarea {
+    font-family: "Hanuman", serif;
+}
+body.lang-km .portal-card h2 {
+    font-size: 1.65rem;
+}
+body.lang-km .btn,
+body.lang-km .bottom-nav .nav-item {
+    font-size: 1.05rem;
+}
+body.lang-km .bottom-nav .nav-item i {
+    font-size: 24px;
+}
+body.lang-km .facebook-embed,
+body.lang-km .portal-card p,
+body.lang-km .portal-card span:not([data-i18n]) {
+    font-family: var(--font-family, 'Poppins', sans-serif);
+}
+.use-base-font {
+    font-family: var(--font-family, 'Poppins', sans-serif) !important;
+}
+.welcome-hidden {
+    display: none;
 }
 
 /* --- Responsive Grid Layout --- */
@@ -53,7 +90,7 @@ body {
         display: flex;
         position: fixed;
         left: 0; right: 0; bottom: 0;
-        height: 56px;
+        height: 68px;
         background: #fff;
         border-top: 1px solid #e6e6e6;
         box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
@@ -62,32 +99,69 @@ body {
     .bottom-nav .nav-item {
         flex: 1;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
-        color: #666;
-        background: none; border: none; cursor: pointer;
+        font-size: 14px;
+        color: #444;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: color 0.2s ease, transform 0.2s ease;
     }
-    .bottom-nav .nav-item i { font-size: 18px; margin-bottom: 2px; }
-    .bottom-nav .nav-item.active { color: var(--primary-color); }
+    .bottom-nav .nav-item i {
+        font-size: 22px;
+    }
+    .bottom-nav .nav-item.active {
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
 }
 
-/* Mobile profile header */
-.mobile-profile-header {
+/* Mobile profile card */
+.mobile-profile-card {
+    text-align: center;
+    padding-top: 2.5rem;
+}
+.mobile-profile-avatar-wrapper {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    border: 4px solid rgba(0,0,0,0.05);
+    padding: 4px;
+    background: linear-gradient(145deg, rgba(0, 144, 214, 0.15), rgba(0, 218, 183, 0.15));
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
 }
 .mobile-profile-avatar {
-    width: 64px;
-    height: 64px;
+    width: 112px;
+    height: 112px;
     border-radius: 50%;
     object-fit: cover;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
     border: 1px solid #e6e6e6;
     background: #f5f5f5;
 }
-.mobile-profile-header .light { color: var(--text-color-light); margin-top: 2px; }
+.mobile-profile-name {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+.mobile-profile-email {
+    color: var(--text-color-light);
+    margin-bottom: 1.25rem;
+}
+.mobile-profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.btn-block {
+    width: 100%;
+}
 
 /* --- Card Styling --- */
 .portal-card {
@@ -97,6 +171,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     height: fit-content;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 0.5rem;
 }
 
 .portal-card:hover {
@@ -233,22 +308,155 @@ body {
     flex-direction: column;
     gap: 1rem;
 }
-.history-item {
-    font-size: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #f1f3f5;
+.history-card {
+    border: 1px solid #eef2f5;
+    border-radius: 14px;
+    padding: 1rem;
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
-.history-item:last-child {
-    border-bottom: none;
+.history-card-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
 }
-.history-item .date {
-    font-weight: 600;
+.history-title {
+    margin: 0;
+    font-size: 1.05rem;
     color: var(--text-color-dark);
 }
-.history-item .status {
-    text-transform: capitalize;
-    font-weight: 500;
+.history-date {
+    margin: 0.15rem 0 0;
+    color: var(--text-color-light);
+    font-size: 0.9rem;
 }
+.status-chip {
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: #eef2f7;
+    color: var(--text-color-dark);
+}
+.status-chip.status-completed,
+.status-chip.status-confirmed {
+    background: rgba(22, 163, 74, 0.15);
+    color: #15803d;
+}
+.status-chip.status-cancelled {
+    background: rgba(239, 68, 68, 0.15);
+    color: #b91c1c;
+}
+.status-chip.status-pending,
+.status-chip.status-scheduled {
+    background: rgba(250, 204, 21, 0.25);
+    color: #b45309;
+}
+.status-chip.status-paid {
+    background: rgba(34, 197, 94, 0.18);
+    color: #15803d;
+}
+.status-chip.status-unpaid,
+.status-chip.status-overdue {
+    background: rgba(248, 113, 113, 0.18);
+    color: #b91c1c;
+}
+.history-meta {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.95rem;
+}
+.history-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--text-color-dark);
+}
+.history-meta i {
+    color: var(--primary-color);
+}
+.history-item.empty {
+    border: 1px dashed #cfd8f3;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-color-light);
+}
+.patient-info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.patient-info-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: var(--text-color-dark);
+}
+.patient-info-list span {
+    color: var(--text-color-light);
+}
+.invoice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.invoice-row {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1rem;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.invoice-row-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+}
+.invoice-row-header .invoice-id {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.invoice-row-header .invoice-date {
+    margin: 0;
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+}
+.invoice-row-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+.invoice-row-meta .amount {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+.invoice-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+.invoice-actions .download-invoice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.85rem;
+}
+
 #clinic-contact-info p {
     font-size: 1rem;
     color: var(--text-color-light);
@@ -257,6 +465,99 @@ body {
     align-items: center;
     gap: 0.75rem;
 }
+
+/* --- Mobile Password Modal --- */
+.mobile-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 300;
+}
+.mobile-modal.open {
+    display: flex;
+}
+.mobile-modal-content {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem 1.5rem 1.75rem;
+    position: relative;
+    box-shadow: 0 25px 45px rgba(15, 23, 42, 0.15);
+}
+.mobile-modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+.mobile-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    color: var(--text-color-light);
+    cursor: pointer;
+}
+
+/* --- Language Switcher --- */
+.language-switcher {
+    position: relative;
+}
+.icon-button {
+    border: none;
+    background: rgba(0,0,0,0.05);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--text-color-dark);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.icon-button:hover {
+    background: rgba(0,0,0,0.1);
+}
+.language-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.15);
+    padding: 0.25rem;
+    display: none;
+    min-width: 140px;
+    z-index: 200;
+}
+.language-menu.open {
+    display: block;
+}
+.language-menu button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 0.65rem 0.75rem;
+    text-align: left;
+    font-size: 0.95rem;
+    color: var(--text-color-dark);
+    border-radius: 8px;
+}
+.language-menu button:hover {
+    background: rgba(0, 144, 214, 0.08);
+}
+.language-menu button.active {
+    background: rgba(0, 144, 214, 0.15);
+    font-weight: 600;
+}
+
 
 /* --- Change Password Card --- */
 .change-password-form .form-group {
@@ -387,4 +688,29 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+.card-title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.card-title-with-icon i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.facebook-embed {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    background: linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%);
+}
+.facebook-embed .fb-page {
+    width: 100% !important;
+}
+.facebook-embed .fb-page > span,
+.facebook-embed .fb-page iframe {
+    width: 100% !important;
 }

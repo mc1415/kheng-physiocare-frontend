@@ -52,6 +52,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 default: return '#38bdf8';
             }
         }
+        const GMT7_OFFSET = 7;
+        const inputGmt7ToUtcIso = (value) => {
+            if (!value) return null;
+            const [datePart, timePart = '00:00'] = value.split('T');
+            const [y, m, d] = datePart.split('-').map(Number);
+            const [hh, mm] = timePart.split(':').map(Number);
+            return new Date(Date.UTC(y, (m || 1) - 1, d || 1, (hh || 0) - GMT7_OFFSET, mm || 0))
+                .toISOString();
+        };
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
@@ -129,7 +138,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.preventDefault();
                 const eventId = document.getElementById('eventId').value;
                 const isEditing = !!eventId;
-                const appointmentData = { title: document.getElementById('appointment-title').value, start: document.getElementById('start-time').value, end: document.getElementById('end-time').value, therapist_id: document.getElementById('therapist').value, status: document.getElementById('status').value };
+                const appointmentData = {
+                    title: document.getElementById('appointment-title').value,
+                    start: inputGmt7ToUtcIso(document.getElementById('start-time').value),
+                    end: inputGmt7ToUtcIso(document.getElementById('end-time').value),
+                    therapist_id: document.getElementById('therapist').value,
+                    status: document.getElementById('status').value
+                };
                 const url = isEditing ? `/api/appointments/${eventId}` : '/api/appointments';
                 const method = isEditing ? 'PATCH' : 'POST';
                 const result = await fetchApi(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appointmentData) });

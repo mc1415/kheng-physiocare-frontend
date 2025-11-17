@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,16 +8,24 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/portal.css"> <!-- We will replace this file's content -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header portal-header">
         <div class="container">
             <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
             <div class="header-buttons">
-                <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                    <option value="en">🇺🇸</option>
-                    <option value="km">🇰🇭</option>
-                </select>
+                <div class="language-switcher">
+                    <button type="button" id="language-toggle" class="icon-button" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-language"></i>
+                    </button>
+                    <div id="language-menu" class="language-menu" role="menu">
+                        <button type="button" data-lang="en" role="menuitem">English</button>
+                        <button type="button" data-lang="km" role="menuitem">ខ្មែរ</button>
+                    </div>
+                </div>
                 <button id="logout-button" class="btn btn-secondary">
                     <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
                 </button>
@@ -45,12 +53,36 @@
                             <div class="skeleton-loader"></div>
                         </div>
                     </section>
+
+                    <section id="facebook-updates-card" class="portal-card">
+                        <h2 class="card-title-with-icon">
+                            <i class="fab fa-facebook-square" aria-hidden="true"></i>
+                            <span data-i18n="latestUpdates">Latest Updates</span>
+                        </h2>
+                        <div class="facebook-embed">
+                            <div class="fb-page"
+                                data-href="https://www.facebook.com/srinleangkheng"
+                                data-tabs="timeline"
+                                data-width="500"
+                                data-height="520"
+                                data-adapt-container-width="true"
+                                data-hide-cover="false"
+                                data-show-facepile="true">
+                                <blockquote cite="https://www.facebook.com/srinleangkheng" class="fb-xfbml-parse-ignore">
+                                    <a href="https://www.facebook.com/srinleangkheng">Kheng PhysioCare</a>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
                 <!-- Sidebar Column -->
                 <div class="portal-sidebar-column">
                     <section class="portal-card">
-                        <h2 data-i18n="progressOverview">Progress Overview</h2>
+                        <h2 class="card-title-with-icon">
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                            <span data-i18n="progressOverview">Progress Overview</span>
+                        </h2>
                         <canvas id="exercise-progress-chart"></canvas>
                     </section>
 
@@ -60,34 +92,40 @@
                             <!-- JS will populate this -->
                         </ul>
                     </section>
-                    
-                    <section id="clinic-info-card" class="portal-card">
-                         <h2 data-i18n="clinicInformation">Clinic Information</h2>
-                         <div id="clinic-contact-info">
-                             <!-- JS will populate this -->
-                         </div>
+
+                    <section class="portal-card">
+                        <h2 class="card-title-with-icon">
+                            <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                            <span data-i18n="invoices">Invoices</span>
+                        </h2>
+                        <div id="invoices-list" class="invoice-list">
+                            <!-- JS will populate -->
+                        </div>
                     </section>
 
                     <!-- Change Password -->
                     <section id="change-password-card" class="portal-card">
-                        <h2>Change Password</h2>
+                        <h2 data-i18n="changePassword">Change Password</h2>
                         <form id="change-password-form" class="change-password-form">
                             <div class="form-group">
-                                <label for="current-password">Current Password</label>
+                                <label for="current-password" data-i18n="currentPassword">Current Password</label>
                                 <input type="password" id="current-password" required autocomplete="current-password">
                             </div>
                             <div class="form-group">
-                                <label for="new-password">New Password</label>
+                                <label for="new-password" data-i18n="newPassword">New Password</label>
                                 <input type="password" id="new-password" required autocomplete="new-password">
                             </div>
                             <div class="form-group">
-                                <label for="confirm-password">Confirm New Password</label>
+                                <label for="confirm-password" data-i18n="confirmPassword">Confirm New Password</label>
                                 <input type="password" id="confirm-password" required autocomplete="new-password">
                             </div>
                             <div id="change-password-error" class="error-message" style="display:none"></div>
-                            <button type="submit" id="change-password-btn" class="btn btn-primary">Update Password</button>
+                            <button type="submit" id="change-password-btn" class="btn btn-primary" data-i18n="updatePassword">Update Password</button>
                         </form>
-                        <p class="hint-text">If this is your first login, your temporary password is <strong>KPC@2025</strong>.</p>
+                        <p class="hint-text">
+                            <span data-i18n="tempPasswordHint">Temporary password for new accounts:</span>
+                            <strong>KPC@2025</strong>.
+                        </p>
                     </section>
                 </div>
             </div>
@@ -97,6 +135,24 @@
                 <section id="page-home" class="mobile-page active">
                     <div id="next-appointment-card-mobile" class="portal-card prominent">
                         <div class="skeleton-loader large-loader"></div>
+                    </div>
+                    <div class="portal-card">
+                        <h2 class="card-title-with-icon">
+                            <i class="fab fa-facebook-square" aria-hidden="true"></i>
+                            <span data-i18n="latestUpdates">Latest Updates</span>
+                        </h2>
+                        <div class="facebook-embed">
+                            <div class="fb-page"
+                                data-href="https://www.facebook.com/srinleangkheng"
+                                data-tabs="timeline"
+                                data-adapt-container-width="true"
+                                data-hide-cover="false"
+                                data-show-facepile="false">
+                                <blockquote cite="https://www.facebook.com/srinleangkheng" class="fb-xfbml-parse-ignore">
+                                    <a href="https://www.facebook.com/srinleangkheng">Kheng PhysioCare</a>
+                                </blockquote>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -112,7 +168,10 @@
 
                 <section id="page-progress" class="mobile-page">
                     <div class="portal-card">
-                        <h2 data-i18n="progressOverview">Progress Overview</h2>
+                        <h2 class="card-title-with-icon">
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                            <span data-i18n="progressOverview">Progress Overview</span>
+                        </h2>
                         <canvas id="exercise-progress-chart-mobile"></canvas>
                     </div>
                 </section>
@@ -122,57 +181,95 @@
                         <h2 data-i18n="appointmentHistory">Appointment History</h2>
                         <ul id="appointment-history-mobile" class="history-list"></ul>
                     </div>
+                    <div class="portal-card">
+                        <h2 class="card-title-with-icon">
+                            <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                            <span data-i18n="invoices">Invoices</span>
+                        </h2>
+                        <div id="invoices-list-mobile" class="invoice-list"></div>
+                    </div>
                 </section>
 
                 <section id="page-profile" class="mobile-page">
-                    <div class="portal-card">
-                        <div class="mobile-profile-header">
+                    <div class="portal-card mobile-profile-card">
+                        <div class="mobile-profile-avatar-wrapper">
                             <img id="mobile-profile-avatar" class="mobile-profile-avatar" alt="Avatar">
-                            <div>
-                                <h3 id="mobile-profile-name">Patient</h3>
-                                <p id="mobile-profile-email" class="light"></p>
-                            </div>
+                        </div>
+                        <h3 id="mobile-profile-name" class="mobile-profile-name">Patient</h3>
+                        <p id="mobile-profile-email" class="mobile-profile-email"></p>
+                        <div class="mobile-profile-actions">
+                            <button type="button" id="mobile-change-password-trigger" class="btn btn-primary btn-block">
+                                <i class="fas fa-key"></i> <span data-i18n="changePassword">Change Password</span>
+                            </button>
+                            <button type="button" id="mobile-logout-button" class="btn btn-secondary btn-block">
+                                <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
+                            </button>
                         </div>
                     </div>
                     <div class="portal-card">
-                        <h2 data-i18n="clinicInformation">Clinic Information</h2>
-                        <div id="clinic-contact-info-mobile"></div>
-                    </div>
-                    <div class="portal-card">
-                        <h2>Change Password</h2>
-                        <form id="change-password-form-mobile" class="change-password-form">
-                            <div class="form-group">
-                                <label for="current-password-mobile">Current Password</label>
-                                <input type="password" id="current-password-mobile" required autocomplete="current-password">
-                            </div>
-                            <div class="form-group">
-                                <label for="new-password-mobile">New Password</label>
-                                <input type="password" id="new-password-mobile" required autocomplete="new-password">
-                            </div>
-                            <div class="form-group">
-                                <label for="confirm-password-mobile">Confirm New Password</label>
-                                <input type="password" id="confirm-password-mobile" required autocomplete="new-password">
-                            </div>
-                            <div id="change-password-error-mobile" class="error-message" style="display:none"></div>
-                            <button type="submit" id="change-password-btn-mobile" class="btn btn-primary">Update Password</button>
-                        </form>
-                        <p class="hint-text">Temporary password for new accounts: <strong>KPC@2025</strong>.</p>
+                        <h2 data-i18n="patientInformation">Patient Information</h2>
+                        <ul id="patient-info-mobile" class="patient-info-list">
+                            <li><span data-i18n="ageLabel">Age</span><strong>&mdash;</strong></li>
+                            <li><span data-i18n="genderLabel">Gender</span><strong>&mdash;</strong></li>
+                            <li><span data-i18n="phoneLabel">Phone</span><strong>&mdash;</strong></li>
+                            <li><span data-i18n="emailLabel">Email</span><strong>&mdash;</strong></li>
+                        </ul>
                     </div>
                 </section>
+            </div>
+
+            <div id="mobile-password-modal" class="mobile-modal" aria-hidden="true">
+                <div class="mobile-modal-content">
+                    <button type="button" id="mobile-password-modal-close" class="mobile-modal-close" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h3 data-i18n="changePassword">Change Password</h3>
+                    <form id="change-password-form-mobile" class="change-password-form">
+                        <div class="form-group">
+                            <label for="current-password-mobile" data-i18n="currentPassword">Current Password</label>
+                            <input type="password" id="current-password-mobile" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password-mobile" data-i18n="newPassword">New Password</label>
+                            <input type="password" id="new-password-mobile" required autocomplete="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password-mobile" data-i18n="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirm-password-mobile" required autocomplete="new-password">
+                        </div>
+                        <div id="change-password-error-mobile" class="error-message" style="display:none"></div>
+                        <button type="submit" id="change-password-btn-mobile" class="btn btn-primary" data-i18n="updatePassword">Update Password</button>
+                    </form>
+                    <p class="hint-text">
+                        <span data-i18n="tempPasswordHint">Temporary password for new accounts:</span>
+                        <strong>KPC@2025</strong>.
+                    </p>
+                </div>
             </div>
             
             <!-- Bottom Navigation (mobile only) -->
             <nav id="bottom-nav" class="bottom-nav">
-                <button data-target="page-home" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></button>
-                <button data-target="page-exercises" class="nav-item"><i class="fas fa-dumbbell"></i><span>Exercises</span></button>
-                <button data-target="page-progress" class="nav-item"><i class="fas fa-chart-doughnut"></i><span>Progress</span></button>
-                <button data-target="page-history" class="nav-item"><i class="fas fa-clock-rotate-left"></i><span>History</span></button>
-                <button data-target="page-profile" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></button>
+                <button data-target="page-home" class="nav-item active" aria-label="Home"><i class="fas fa-home"></i></button>
+                <button data-target="page-exercises" class="nav-item" aria-label="Exercises"><i class="fas fa-dumbbell"></i></button>
+                <button data-target="page-progress" class="nav-item" aria-label="Progress"><i class="fas fa-chart-line"></i></button>
+                <button data-target="page-history" class="nav-item" aria-label="History"><i class="fas fa-clock-rotate-left"></i></button>
+                <button data-target="page-profile" class="nav-item" aria-label="Profile"><i class="fas fa-user"></i></button>
             </nav>
         </div>
     </main>
     
     <!-- Supabase UMD for Edge Functions; shared admin config -->
+    <div id="fb-root"></div>
+    <script>
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            var appId = window.FACEBOOK_APP_ID || '';
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v24.0" + (appId ? "&appId=" + appId : "");
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="admin/js/supabase-config.js"></script>
     <script src="admin/js/supabase-init.js"></script>
@@ -182,3 +279,4 @@
     <script src="js/patient-portal.js"></script> <!-- We will replace this file's content -->
 </body>
 </html>
+

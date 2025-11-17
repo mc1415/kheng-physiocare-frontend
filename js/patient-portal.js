@@ -1,4 +1,4 @@
-// js/patient-portal.js (Complete Final Version)
+﻿// js/patient-portal.js (Complete Final Version)
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Prefer Supabase Auth session
@@ -15,11 +15,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const welcomeHeader = document.getElementById('welcome-header');
     welcomeHeader.textContent = `${t('welcome')}...`;
 
-    document.getElementById('logout-button').addEventListener('click', async () => {
+    const handleLogout = async () => {
         try { if (window.supabaseClient) await window.supabaseClient.auth.signOut(); } catch {}
         localStorage.clear();
         window.location.href = 'patient-login.html';
+    };
+    ['logout-button', 'mobile-logout-button'].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', handleLogout);
     });
+    const mobilePasswordModal = document.getElementById('mobile-password-modal');
+    const openPasswordBtn = document.getElementById('mobile-change-password-trigger');
+    const closePasswordBtn = document.getElementById('mobile-password-modal-close');
+    if (openPasswordBtn) openPasswordBtn.addEventListener('click', () => toggleMobilePasswordModal(true));
+    if (closePasswordBtn) closePasswordBtn.addEventListener('click', () => toggleMobilePasswordModal(false));
+    if (mobilePasswordModal) {
+        mobilePasswordModal.addEventListener('click', (e) => {
+            if (e.target === mobilePasswordModal) toggleMobilePasswordModal(false);
+        });
+    }
     
     // Change Password form handler (desktop)
     const changeForm = document.getElementById('change-password-form');
@@ -93,7 +107,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitBtn.disabled = true; submitBtn.textContent = 'Updating...';
             const result = await fetchApi('/api/patient/change-password', token, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currentPassword, newPassword }) });
             submitBtn.disabled = false; submitBtn.textContent = 'Update Password';
-            if (result && result.success) { alert('Password updated. Please sign in again.'); localStorage.clear(); window.location.href = 'patient-login.html'; }
+            if (result && result.success) {
+                alert('Password updated. Please sign in again.');
+                toggleMobilePasswordModal(false);
+                localStorage.clear();
+                window.location.href = 'patient-login.html';
+            }
             else { errorEl.textContent = (result && result.message) ? result.message : 'Could not update password.'; errorEl.style.display = 'block'; }
         });
     }
@@ -156,8 +175,16 @@ async function fetchApi(endpoint, token, options = {}) {
 }
 
 let portalExercises = [];
+let portalInvoices = [];
 let progressChart;
 let progressChartMobile;
+const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+    <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#e9eef5"/><stop offset="1" stop-color="#f6f8fc"/></linearGradient></defs>
+    <rect width="128" height="128" fill="url(#g)"/>
+    <circle cx="64" cy="48" r="24" fill="#cbd5e1"/>
+    <path d="M20 110a44 44 0 0 1 88 0" fill="#cbd5e1"/>
+  </svg>`);
 
 async function fetchDashboardData(token) {
     const result = await fetchApi('/api/portal/dashboard', token);
@@ -167,16 +194,19 @@ async function fetchDashboardData(token) {
 
 function renderDashboard(data) {
     portalExercises = data.exercises || [];
+    portalInvoices = data.invoices || [];
     renderNextAppointment(data.nextAppointment);
     renderExercisePlan(portalExercises);
     renderProgressChart(portalExercises);
     renderAppointmentHistory(data.appointmentHistory);
+    renderInvoices(portalInvoices);
     renderClinicInfo(data.clinic);
     // Mobile mirrors
     renderNextAppointment(data.nextAppointment, true);
     renderExercisePlan(portalExercises, true);
     renderProgressChart(portalExercises, true);
     renderAppointmentHistory(data.appointmentHistory, true);
+    renderInvoices(portalInvoices, true);
     renderClinicInfo(data.clinic, true);
 }
 
@@ -347,72 +377,220 @@ async function handleCompleteExercise(event) {
 
 function renderAppointmentHistory(history, mobile = false) {
     const list = document.getElementById(mobile ? 'appointment-history-mobile' : 'appointment-history');
+    if (!list) return;
     list.innerHTML = '';
-    if (!history || history.length === 0) { list.innerHTML = `<li data-i18n="noPastAppointments"></li>`; translatePage(); return; }
+    if (!history || history.length === 0) { list.innerHTML = `<li class="history-item empty" data-i18n="noPastAppointments"></li>`; translatePage(); return; }
     history.forEach(app => {
-        const date = new Date(app.start_time);
-        const formattedDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-        list.innerHTML += `<li class="history-item"><span class="date">${formattedDate}</span> - <span class="status">${app.status}</span></li>`;
+        const start = new Date(app.start_time);
+        const end = app.end_time ? new Date(app.end_time) : null;
+        const formattedDate = start.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        const startTime = start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        const endTime = end ? end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : null;
+        const therapist = app.staff?.full_name ? `<span><i class="fas fa-user-md"></i> ${app.staff.full_name}</span>` : '';
+        list.insertAdjacentHTML('beforeend', `
+            <li class="history-card">
+                <div class="history-card-row">
+                    <div>
+                        <p class="history-title">${app.title || 'Therapy Session'}</p>
+                        <p class="history-date">${formattedDate}</p>
+                    </div>
+                    <span class="status-chip status-${(app.status || 'pending').toLowerCase()}">${formatAppointmentStatus(app.status)}</span>
+                </div>
+                <div class="history-meta">
+                    <span><i class="fas fa-clock"></i> ${startTime}${endTime ? ` - ${endTime}` : ''}</span>
+                    ${therapist}
+                </div>
+            </li>
+        `);
     });
+}
+
+function renderInvoices(invoices, mobile = false) {
+    const container = document.getElementById(mobile ? 'invoices-list-mobile' : 'invoices-list');
+    if (!container) return;
+    if (!invoices || invoices.length === 0) {
+        container.innerHTML = `<p class="history-item empty" data-i18n="noInvoices"></p>`;
+        translatePage();
+        return;
+    }
+    container.innerHTML = invoices.map((inv) => {
+        const formattedDate = inv.created_at ? new Date(inv.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+        const appointment = inv.appointment?.start_time ? new Date(inv.appointment.start_time).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+        const statusClass = (inv.status || 'pending').toLowerCase();
+        return `
+            <div class="invoice-row">
+                <div class="invoice-row-header">
+                    <div>
+                        <p class="invoice-id">#${String(inv.id).padStart(5, '0')}</p>
+                        <p class="invoice-date">${formattedDate}</p>
+                    </div>
+                    <div class="invoice-row-meta">
+                        <span class="amount">${formatCurrency(inv.total_amount)}</span>
+                        <span class="status-chip status-${statusClass}">${formatInvoiceStatus(inv.status)}</span>
+                    </div>
+                </div>
+                ${appointment ? `<p class="invoice-date"><i class="fas fa-calendar-check"></i> ${appointment}</p>` : ''}
+                <div class="invoice-actions">
+                    <button type="button" class="btn btn-secondary download-invoice" data-invoice-id="${inv.id}">
+                        <i class="fas fa-file-download"></i> <span data-i18n="downloadInvoice">Download PDF</span>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+    translatePage();
 }
 
 function renderClinicInfo(clinic, mobile = false) {
     const container = document.getElementById(mobile ? 'clinic-contact-info-mobile' : 'clinic-contact-info');
+    if (!container) return;
     if (!clinic) { container.innerHTML = '<p>Clinic contact info unavailable.</p>'; return; }
     container.innerHTML = `<p><i class="fas fa-phone"></i> ${clinic.phone_number}</p><p><i class="fas fa-map-marker-alt"></i> ${clinic.address.replace(/\n/g, '<br>')}</p>`;
 }
-
-// Fetch and render profile avatar/name/email for mobile
-(async function loadProfileForMobile(){
+async function loadProfileForMobile(prefetchedPatient) {
     const token = localStorage.getItem('patientToken');
+    const patient = prefetchedPatient || await fetchPatientProfile(token);
+    applyMobileProfile(patient);
+    window.portalPatientProfile = patient;
+}
+
+async function fetchPatientProfile(token) {
+    const result = await fetchApi('/api/portal/me', token);
+    return result && result.success ? result.data : null;
+}
+
+function applyMobileProfile(patient) {
     const avatarEl = document.getElementById('mobile-profile-avatar');
     const nameEl = document.getElementById('mobile-profile-name');
     const emailEl = document.getElementById('mobile-profile-email');
-    // Keep placeholder until real name arrives from patients table
-    if (nameEl && !nameEl.textContent) nameEl.textContent = 'Patient';
-
-    // Fallback avatar (embedded SVG data URI to avoid 404s)
-    const defaultAvatar = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-        <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#e9eef5"/><stop offset="1" stop-color="#f6f8fc"/></linearGradient></defs>
-        <rect width="128" height="128" fill="url(#g)"/>
-        <circle cx="64" cy="48" r="24" fill="#cbd5e1"/>
-        <path d="M20 110a44 44 0 0 1 88 0" fill="#cbd5e1"/>
-      </svg>`);
-
-    if (avatarEl) {
-        const cached = localStorage.getItem('patientAvatarUrl');
-        avatarEl.src = cached || defaultAvatar;
+    const storedName = localStorage.getItem('patientName');
+    const storedEmail = localStorage.getItem('patientEmail');
+    if (nameEl) {
+        const hasRealName = !!(patient?.full_name || storedName);
+        nameEl.textContent = hasRealName ? (patient?.full_name || storedName) : t('patientFallback');
+        nameEl.dataset.hasName = hasRealName ? 'true' : 'false';
     }
+    if (emailEl) emailEl.textContent = patient?.email || storedEmail || '';
 
-    // Fetch profile via portal API (Supabase session is used under the hood)
-    const result = await fetchApi('/api/portal/me', token);
-    if (result && result.success) {
-        if (result.data?.full_name) {
-            if (nameEl) nameEl.textContent = result.data.full_name;
-            // Also update desktop welcome header to use patients.full_name
-            const header = document.getElementById('welcome-header');
-            if (header) header.textContent = `${t('welcome')}, ${result.data.full_name}!`;
-            localStorage.setItem('patientName', result.data.full_name);
-        }
-        if (result.data?.email && emailEl) {
-            emailEl.textContent = result.data.email;
-            localStorage.setItem('patientEmail', result.data.email);
-        }
-        if (result.data?.avatar_url) {
-            localStorage.setItem('patientAvatarUrl', result.data.avatar_url);
-            if (avatarEl) avatarEl.src = result.data.avatar_url;
-        } else if (avatarEl) {
-            avatarEl.src = defaultAvatar;
-        }
-    } else if (avatarEl) {
-        avatarEl.src = avatarEl.src || defaultAvatar;
+    if (patient?.full_name) localStorage.setItem('patientName', patient.full_name);
+    if (patient?.email) localStorage.setItem('patientEmail', patient.email);
+
+    const welcomeHeader = document.getElementById('welcome-header');
+    if (welcomeHeader && patient?.full_name) welcomeHeader.textContent = `${t('welcome')}, ${patient.full_name}!`;
+
+    const avatarUrl = patient?.avatar_url || localStorage.getItem('patientAvatarUrl') || DEFAULT_AVATAR;
+    if (avatarEl) avatarEl.src = avatarUrl;
+    if (patient?.avatar_url) localStorage.setItem('patientAvatarUrl', patient.avatar_url);
+
+    updatePatientInfoList(patient);
+}
+
+function updatePatientInfoList(patient) {
+    const list = document.getElementById('patient-info-mobile');
+    if (!list) return;
+    const age = patient?.date_of_birth ? calculateAge(patient.date_of_birth) : null;
+    const lang = localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'en';
+    const ageSuffix = lang === 'km' ? 'ឆ្នាំ' : 'yrs';
+    const dash = '—';
+    const fields = [
+        { key: 'ageLabel', raw: age, isAge: true },
+        { key: 'genderLabel', raw: patient?.gender || dash },
+        { key: 'phoneLabel', raw: patient?.phone_number || dash },
+        { key: 'emailLabel', raw: patient?.email || dash }
+    ];
+    list.innerHTML = fields.map(field => {
+        const value = field.isAge
+            ? (field.raw != null ? `${field.raw} ${ageSuffix}` : dash)
+            : (field.raw || dash);
+        const attr = field.isAge ? ` data-age-value="${field.raw ?? ''}"` : '';
+        return `<li><span data-i18n="${field.key}">${t(field.key)}</span><strong${attr}>${value}</strong></li>`;
+    }).join('');
+    refreshPatientInfoLanguage();
+}
+
+function calculateAge(dateString) {
+    const birthday = new Date(dateString);
+    if (Number.isNaN(birthday.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birthday.getFullYear();
+    const monthDiff = today.getMonth() - birthday.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) age--;
+    return age;
+}
+
+loadProfileForMobile();
+
+function formatAppointmentStatus(status = '') {
+    const normalized = status.replace(/_/g, ' ').trim().toLowerCase();
+    if (!normalized) return 'Pending';
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function formatInvoiceStatus(status = '') {
+    const normalized = (status || '').replace(/_/g, ' ').trim().toLowerCase();
+    if (!normalized) return 'Pending';
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function formatCurrency(amount) {
+    const num = Number(amount ?? 0);
+    return `$${num.toFixed(2)}`;
+}
+
+document.addEventListener('click', (event) => {
+    const downloadBtn = event.target.closest('.download-invoice');
+    if (!downloadBtn) return;
+    const invoiceId = downloadBtn.dataset.invoiceId;
+    const invoice = portalInvoices.find((inv) => String(inv.id) === String(invoiceId));
+    if (invoice) downloadInvoice(invoice);
+});
+
+function downloadInvoice(invoice) {
+    const patient = window.portalPatientProfile || {};
+    const patientName = patient.full_name || localStorage.getItem('patientName') || t('patientFallback');
+    const patientAge = patient.date_of_birth ? calculateAge(patient.date_of_birth) : null;
+    const patientSex = patient.gender || 'N/A';
+    const items = (invoice.invoice_items || []).map((item) => ({
+        service: item.service_name || item.service || 'Service',
+        qty: item.quantity || 1,
+        price: Number(item.unit_price ?? item.price ?? 0),
+        disc: 0
+    }));
+    if (!items.length) {
+        items.push({
+            service: invoice.diagnostic || 'Consultation',
+            qty: 1,
+            price: Number(invoice.total_amount ?? 0),
+            disc: 0
+        });
     }
-})();
+    const receiptData = {
+        patientName,
+        patientAge: patientAge ?? 'N/A',
+        patientSex,
+        billDate: invoice.created_at ? new Date(invoice.created_at).toISOString().split('T')[0] : '',
+        diagnostic: invoice.diagnostic || 'As per consultation',
+        items
+    };
+    localStorage.setItem('currentInvoiceData', JSON.stringify(receiptData));
+    window.open('kheng-physiocare-receipt.html', '_blank');
+}
+
+function toggleMobilePasswordModal(show) {
+    const modal = document.getElementById('mobile-password-modal');
+    if (!modal) return;
+    modal.classList.toggle('open', show);
+    modal.setAttribute('aria-hidden', show ? 'false' : 'true');
+}
 
 function initMobileNav() {
     const nav = document.getElementById('bottom-nav');
     const pages = document.querySelectorAll('.mobile-page');
+    const welcomeHeader = document.getElementById('welcome-header');
+    const toggleWelcome = (isHome) => {
+        if (welcomeHeader) welcomeHeader.classList.toggle('welcome-hidden', !isHome);
+    };
+    toggleWelcome(true);
     if (!nav) return;
     nav.addEventListener('click', (e) => {
         const btn = e.target.closest('.nav-item');
@@ -420,7 +598,19 @@ function initMobileNav() {
         nav.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const targetId = btn.dataset.target;
+        toggleWelcome(targetId === 'page-home');
         pages.forEach(p => p.classList.toggle('active', p.id === targetId));
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
+
+function refreshPatientInfoLanguage() {
+    const lang = localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'en';
+    const ageSuffix = lang === 'km' ? 'ឆ្នាំ' : 'yrs';
+    document.querySelectorAll('#patient-info-mobile strong[data-age-value]').forEach((node) => {
+        const value = node.getAttribute('data-age-value');
+        node.textContent = value ? `${value} ${ageSuffix}` : '—';
+    });
+}
+
+window.refreshPatientInfoLanguage = refreshPatientInfoLanguage;
