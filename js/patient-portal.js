@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('patientToken'); // legacy fallback
     if (!hasSession && !token) { window.location.href = 'patient-login.html'; return; }
 
+    portalSplashEl = document.getElementById('portal-splash');
+    portalSplashMessageEl = document.getElementById('portal-splash-message');
+    showPortalSplash();
+
     const welcomeHeader = document.getElementById('welcome-header');
     welcomeHeader.textContent = `${t('welcome')}...`;
 
@@ -174,6 +178,8 @@ async function fetchApi(endpoint, token, options = {}) {
     } catch (error) { console.error(`API Error on ${endpoint}:`, error); return null; }
 }
 
+let portalSplashEl = null;
+let portalSplashMessageEl = null;
 let portalExercises = [];
 let portalInvoices = [];
 let progressChart;
@@ -186,10 +192,30 @@ const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
     <path d="M20 110a44 44 0 0 1 88 0" fill="#cbd5e1"/>
   </svg>`);
 
+function showPortalSplash(message) {
+    if (!portalSplashEl) return;
+    const fallback = typeof t === 'function' ? t('loading') : 'Loading...';
+    portalSplashEl.classList.remove('is-hidden');
+    if (portalSplashMessageEl) {
+        portalSplashMessageEl.textContent = message || fallback;
+    }
+}
+
+function hidePortalSplash() {
+    if (!portalSplashEl) return;
+    portalSplashEl.classList.add('is-hidden');
+}
+
 async function fetchDashboardData(token) {
+    showPortalSplash();
     const result = await fetchApi('/api/portal/dashboard', token);
-    if (result && result.success) { renderDashboard(result.data); } 
-    else { document.body.innerHTML = '<h1>Error</h1><p>Could not load your portal data. Please try again later.</p>'; }
+    if (result && result.success) {
+        renderDashboard(result.data);
+        hidePortalSplash();
+    } else {
+        hidePortalSplash();
+        document.body.innerHTML = '<h1>Error</h1><p>Could not load your portal data. Please try again later.</p>';
+    }
 }
 
 function renderDashboard(data) {

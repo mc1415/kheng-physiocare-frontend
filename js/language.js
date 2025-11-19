@@ -69,7 +69,20 @@ const translations = {
     addPatient: 'Add New Patient',
     allPatients: 'All Patients',
     backToPatients: 'Back to All Patients',
-    clinicalNotes: 'Clinical Notes'
+    clinicalNotes: 'Clinical Notes',
+    bookNow: 'Book Now',
+    navHome: 'Home',
+    navAbout: 'About Us',
+    navServices: 'Services',
+    navContact: 'Contact',
+    patientPortalLoginTitle: 'Patient Portal Login',
+    patientPortalLoginIntro: 'Access your appointments, exercises, and invoices in one secure place.',
+    loginHeroSubtitle: 'Sign in to continue your care plan, track progress, and reach your goals faster.',
+    loginHeroBullet1: 'See your upcoming appointments at a glance.',
+    loginHeroBullet2: 'Complete daily exercise videos tailored to you.',
+    loginHeroBullet3: 'Securely download receipts and invoices any time.',
+    loginHelpText: 'Need help? Contact our support team and we\'ll be happy to assist.',
+    footerRights: 'Copyright 2024 Kheng PhysioCare. All rights reserved.'
   },
   km: {
     adminPortal: 'ផ្ទាំងគ្រប់គ្រងរដ្ឋបាល',
@@ -141,7 +154,21 @@ const translations = {
     addPatient: 'បន្ថែមអ្នកជំងឺថ្មី',
     allPatients: 'អ្នកជំងឺទាំងអស់',
     backToPatients: 'ត្រឡប់ទៅអ្នកជំងឺទាំងអស់',
-    clinicalNotes: 'កំណត់ត្រាគ្លីនិក'
+    clinicalNotes: 'កំណត់ត្រាគ្លីនិក',
+
+    bookNow: 'Book Now',
+    navHome: 'Home',
+    navAbout: 'About Us',
+    navServices: 'Services',
+    navContact: 'Contact',
+    patientPortalLoginTitle: 'Patient Portal Login',
+    patientPortalLoginIntro: 'Access your appointments, exercises, and invoices in one secure place.',
+    loginHeroSubtitle: 'Sign in to continue your care plan, track progress, and reach your goals faster.',
+    loginHeroBullet1: 'See your upcoming appointments at a glance.',
+    loginHeroBullet2: 'Complete daily exercise videos tailored to you.',
+    loginHeroBullet3: 'Securely download receipts and invoices any time.',
+    loginHelpText: 'Need help? Contact our support team and we\'ll be happy to assist.',
+    footerRights: 'Copyright 2024 Kheng PhysioCare. All rights reserved.'
   }
 };
 

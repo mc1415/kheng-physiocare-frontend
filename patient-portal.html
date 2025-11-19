@@ -13,6 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="portal-splash" class="portal-splash" role="status" aria-live="polite">
+        <div class="portal-splash-content">
+            <div class="portal-splash-logo">
+                <img src="images/logo2.jpg" alt="Kheng PhysioCare Logo">
+            </div>
+            <p id="portal-splash-message" class="portal-splash-message">Loading your portal...</p>
+            <div class="portal-splash-spinner" aria-hidden="true"></div>
+        </div>
+    </div>
     <header class="header portal-header">
         <div class="container">
             <a href="index.html"><img src="images/logo.jpg" alt="Kheng PhysioCare Logo" class="logo"></a>
@@ -196,7 +205,6 @@
                             <img id="mobile-profile-avatar" class="mobile-profile-avatar" alt="Avatar">
                         </div>
                         <h3 id="mobile-profile-name" class="mobile-profile-name">Patient</h3>
-                        <p id="mobile-profile-email" class="mobile-profile-email"></p>
                         <div class="mobile-profile-actions">
                             <button type="button" id="mobile-change-password-trigger" class="btn btn-primary btn-block">
                                 <i class="fas fa-key"></i> <span data-i18n="changePassword">Change Password</span>
