@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let allInvoices = [];
 
     const professionalServices = [
-        { name: "Physiotherapy Consultation", price: "55.00", isService: true },
+        { name: "Physiotherapy Treatment", price: "20.00", isService: true },
         { name: "Dry Needling Session", price: "45.00", isService: true },
         { name: "Sports Massage (30 min)", price: "40.00", isService: true }
     ];
