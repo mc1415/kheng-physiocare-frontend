@@ -117,55 +117,86 @@
         </footer>
     </div>
 
+<script src="js/config.js"></script>
 <script>
-window.onload = function() {
-    const invoiceData = JSON.parse(localStorage.getItem('currentInvoiceData'));
-    if (!invoiceData) {
-        document.body.innerHTML = '<h1>No invoice data found. Please generate an invoice from the admin panel.</h1>';
+async function loadReceipt() {
+    const params = new URLSearchParams(window.location.search);
+    const receiptId = params.get('receipt-id') || params.get('invoiceId') || params.get('id');
+    if (!receiptId) {
+        document.body.innerHTML = '<h1>No invoice id provided. Please open from the admin panel.</h1>';
+        return;
+    }
+    if (!window.API_BASE_URL) {
+        document.body.innerHTML = '<h1>Missing API_BASE_URL configuration.</h1>';
         return;
     }
 
-    // Populate Patient Info
-    document.getElementById('patient-name').textContent = invoiceData.patientName;
-    document.getElementById('footer-customer-name').textContent = invoiceData.patientName;
-    document.getElementById('patient-age').textContent = invoiceData.patientAge;
-    document.getElementById('receipt-patient-sex').textContent = invoiceData.patientSex || 'N/A';
-    document.getElementById('bill-date').textContent = invoiceData.billDate;
-    document.getElementById('patient-diagnostic').textContent = invoiceData.diagnostic || 'As per consultation';
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/invoices/${receiptId}`);
+        const result = await res.json();
+        if (!res.ok || !result?.success) throw new Error(result?.message || 'Invoice not found');
 
-    // Populate Table Items
-    const tableBody = document.getElementById('invoice-items-body');
-    let grandTotal = 0;
-    let grandDiscount = 0;
-    
-    invoiceData.items.forEach((item, index) => {
-        const row = tableBody.insertRow();
-        const itemTotal = (item.qty * item.price) - item.disc;
-        grandTotal += itemTotal;
-        grandDiscount += parseFloat(item.disc);
+        const inv = result.data;
+        const patient = inv.patients || inv.patient || {};
+        const patientName = patient.full_name || inv.patientName || 'Unknown';
+        const patientGender = patient.gender || 'N/A';
+        const patientDob = patient.date_of_birth;
+        const patientAge = patientDob ? new Date().getFullYear() - new Date(patientDob).getFullYear() : 'N/A';
+        const billDate = inv.created_at ? inv.created_at.split('T')[0] : (inv.date || '');
+        const diagnostic = inv.diagnostic || 'As per consultation';
+        const items = inv.items || [];
+
+        // Populate Patient Info
+        document.getElementById('patient-name').textContent = patientName;
+        document.getElementById('footer-customer-name').textContent = patientName;
+        document.getElementById('patient-age').textContent = patientAge;
+        document.getElementById('receipt-patient-sex').textContent = patientGender;
+        document.getElementById('bill-date').textContent = billDate;
+        document.getElementById('patient-diagnostic').textContent = diagnostic;
+
+        // Populate Table Items
+        const tableBody = document.getElementById('invoice-items-body');
+        let subtotal = 0;
+
+        items.forEach((item, index) => {
+            const row = tableBody.insertRow();
+            const qty = item.quantity || item.qty || 1;
+            const price = parseFloat(item.unit_price ?? item.price ?? 0);
+            const itemTotal = qty * price;
+            subtotal += itemTotal;
+
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${item.service_name || item.service}</td>
+                <td>${qty}</td>
+                <td>${price.toFixed(2)}</td>
+                <td>0.00</td>
+                <td>${itemTotal.toFixed(2)}</td>
+            `;
+        });
+
+        const discountType = inv.discount_type || 'none';
+        const discountValue = parseFloat(inv.discount_value || 0);
+        const discountAmount = discountType === 'percent'
+            ? subtotal * (discountValue / 100)
+            : discountType === 'flat'
+                ? discountValue
+                : 0;
+        const total = Math.max(0, subtotal - discountAmount);
+
+        // Populate Totals
+        document.getElementById('total-discount').textContent = `${discountAmount.toFixed(2)} $`;
+        document.getElementById('total-amount').textContent = `${total.toFixed(2)} $`;
         
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${item.service}</td>
-            <td>${item.qty}</td>
-            <td>${parseFloat(item.price).toFixed(2)}</td>
-            <td>${parseFloat(item.disc).toFixed(2)}</td>
-            <td>${itemTotal.toFixed(2)}</td>
-        `;
-    });
+        setTimeout(() => {
+            window.print();
+        }, 500);
+    } catch (err) {
+        document.body.innerHTML = `<h1>Could not load receipt.</h1><p>${err.message}</p>`;
+    }
+}
 
-    // Populate Totals
-    document.getElementById('total-discount').textContent = `${grandDiscount.toFixed(2)} $`;
-    document.getElementById('total-amount').textContent = `${grandTotal.toFixed(2)} $`;
-    
-    // Auto-print and clean up
-    setTimeout(() => {
-        window.print();
-        // Optional: you might want to close the window after printing
-        // window.onafterprint = function() { window.close(); };
-        localStorage.removeItem('currentInvoiceData');
-    }, 500); // Delay to ensure content is rendered
-};
+window.onload = loadReceipt;
 </script>
 
 </body>

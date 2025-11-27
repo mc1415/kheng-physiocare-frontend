@@ -41,10 +41,13 @@
                     <h1 class="page-title" data-i18n="staff">Staff</h1>
                 </div>
                 <div class="top-bar-right">
-                    <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                        <option value="en">🇺🇸</option>
-                        <option value="km">🇰🇭</option>
-                    </select>
+                    <div class="language-toggle">
+                        <i class="fa-solid fa-earth-asia"></i>
+                        <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
+                            <option value="en">EN</option>
+                            <option value="km">KM</option>
+                        </select>
+                    </div>
                     <button id="addStaffBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> <span data-i18n="addStaff">Add New Staff</span></button>
                 </div>
             </header>
@@ -76,11 +79,12 @@
 <div id="addStaffModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>Add New Staff Member</h2>
+            <h2 id="staffModalTitle">Add New Staff Member</h2>
             <button id="closeStaffModalBtn" class="close-button">×</button>
         </div>
         <div class="modal-body">
             <form id="add-staff-form">
+                <input type="hidden" id="staff-id-field" name="staffId">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="staff-name">Full Name</label>

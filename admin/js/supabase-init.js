@@ -11,10 +11,15 @@
       window.supabaseClient = null;
       return;
     }
-    window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    // Use a fresh, non-persisted client so we don't pick up patient portal sessions
+    window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false
+      }
+    });
   } catch (e) {
     console.error('Failed to init Supabase client:', e);
     window.supabaseClient = null;
   }
 })();
-

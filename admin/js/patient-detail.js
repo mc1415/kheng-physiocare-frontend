@@ -14,15 +14,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) { Toastify({ ...toastConfig, text: `Error: ${error.message}`, style: { background: "var(--red-accent)" } }).showToast(); return null; }
     }
 
-    // --- Initialization ---
-    const patientId = localStorage.getItem('selectedPatientId');
-    if (!patientId) {
-        loader.style.display = 'none';
-        mainContent.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;"><h1>Error</h1><p>No Patient ID was found. Please return to the patient list.</p><a href="patients.html" class="btn-primary-action">Back to Patients</a></div></div>`;
-        return;
-    }
-    await loadAllPatientData();
-    
     // --- Main Data Loading Function ---
     async function loadAllPatientData() {
         loader.style.display = 'flex';
@@ -34,8 +25,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             mainContent.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;"><h1>Patient Not Found</h1><p>The requested patient could not be found.</p><a href="patients.html" class="btn-primary-action">Back to Patients</a></div></div>`;
             return;
         }
-        
-        renderSummary(patientResult.data);
 
         // Fetch all related data in parallel for speed
         const [appointments, billing, exercises, notes] = await Promise.all([
@@ -45,6 +34,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             fetchApi(`${API_BASE_URL}/api/patients/${patientId}/notes`)
         ]);
 
+        const exerciseStats = deriveExerciseStats(exercises?.data || []);
+        renderSummary(patientResult.data, {
+            appointments: (appointments?.data || []).length,
+            invoices: (billing?.data || []).length,
+            assignedExercises: exerciseStats.totalAssigned,
+            completedDates: exerciseStats.completedDates,
+            lastAssigned: exerciseStats.lastAssigned
+        });
         renderAppointments(appointments?.data || []);
         renderBilling(billing?.data || []);
         renderAssignedExercises(exercises?.data || []);
@@ -57,29 +54,142 @@ document.addEventListener('DOMContentLoaded', async function() {
         layoutContainer.style.display = 'grid';
     }
 
+    // --- Helpers ---
+    const formatDate = (value) => {
+        if (!value) return 'N/A';
+        try { return new Date(value).toLocaleDateString(); } catch { return value; }
+    };
+    const calcAge = (dob) => {
+        if (!dob) return '—';
+        const birth = new Date(dob);
+        if (isNaN(birth)) return '—';
+        const diff = Date.now() - birth.getTime();
+        return Math.floor(diff / (365.25 * 24 * 3600 * 1000));
+    };
+    function deriveExerciseStats(list) {
+        if (!Array.isArray(list) || list.length === 0) return { totalAssigned: 0, completedDates: 0, lastAssigned: null };
+        const completedDates = list.reduce((sum, item) => sum + (Array.isArray(item.completed_dates) ? item.completed_dates.length : 0), 0);
+        const lastAssigned = list.reduce((latest, item) => {
+            const assigned = item.start_date || item.created_at;
+            if (!assigned) return latest;
+            return !latest || new Date(assigned) > new Date(latest) ? assigned : latest;
+        }, null);
+        return { totalAssigned: list.length, completedDates, lastAssigned };
+    }
+
+    // --- Initialization (after helpers so functions are defined) ---
+    const patientId = localStorage.getItem('selectedPatientId');
+    if (!patientId) {
+        loader.style.display = 'none';
+        mainContent.innerHTML = `<div class="card"><div class="card-body" style="text-align:center;"><h1>Error</h1><p>No Patient ID was found. Please return to the patient list.</p><a href="patients.html" class="btn-primary-action">Back to Patients</a></div></div>`;
+        return;
+    }
+    await loadAllPatientData();
+
     // --- RENDER FUNCTIONS ---
-    function renderSummary(patient) {
-        document.getElementById('patient-summary-info').innerHTML = `<img src="${patient.avatar_url || '../images/avatar-generic.png'}" alt="Patient Avatar" class="patient-avatar-large"><h2 class="patient-name-large">${patient.full_name}</h2><p class="patient-id-large">#PT-${patient.id.toString().padStart(3, '0')}</p>`;
-        document.getElementById('patient-summary-contact').innerHTML = `<h4>Contact Information</h4><p><i class="fa-solid fa-phone"></i> ${patient.phone_number || 'N/A'}</p><p><i class="fa-solid fa-envelope"></i> ${patient.email || 'N/A'}</p><p><i class="fa-solid fa-location-dot"></i> ${patient.address || 'N/A'}</p>`;
+    function renderSummary(patient, stats = {}) {
+        const safeId = patient.display_id || patient.id || patient.raw_id || 'N/A';
+        const numericId = typeof safeId === 'number' ? safeId : parseInt(String(safeId).replace(/\D/g, ''), 10);
+        const formattedId = !isNaN(numericId) ? `#PT-${numericId.toString().padStart(3, '0')}` : safeId;
+        document.getElementById('patient-summary-info').innerHTML = `
+            <div class="patient-identity">
+                <img src="${patient.avatar_url || '../images/avatar-generic.png'}" alt="Patient Avatar" class="patient-avatar-large">
+                <div>
+                    <h2 class="patient-name-large">${patient.full_name}</h2>
+                    <p class="patient-id-large">${formattedId}</p>
+                    <div class="pill-row">
+                        <span class="pill-badge soft">Age ${calcAge(patient.date_of_birth)}</span>
+                        <span class="pill-badge soft">${patient.gender || 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('patient-summary-stats').innerHTML = `
+            <div class="metric-chip"><div class="chip-label">Appointments</div><div class="chip-value">${stats.appointments || 0}</div></div>
+            <div class="metric-chip"><div class="chip-label">Invoices</div><div class="chip-value">${stats.invoices || 0}</div></div>
+            <div class="metric-chip"><div class="chip-label">Exercises</div><div class="chip-value">${stats.assignedExercises || 0}</div></div>
+            <div class="metric-chip"><div class="chip-label">Completions</div><div class="chip-value">${stats.completedDates || 0}</div></div>
+        `;
+
+        const assignedTherapist = patient.assigned_therapist || patient.assigned_therapist_id || 'N/A';
+        document.getElementById('patient-summary-contact').innerHTML = `
+            <div class="contact-card"><i class="fa-solid fa-phone"></i><div><p class="contact-label">Phone</p><p class="contact-value">${patient.phone_number || 'N/A'}</p></div></div>
+            <div class="contact-card"><i class="fa-solid fa-envelope"></i><div><p class="contact-label">Email</p><p class="contact-value">${patient.email || 'N/A'}</p></div></div>
+            <div class="contact-card"><i class="fa-solid fa-location-dot"></i><div><p class="contact-label">Address</p><p class="contact-value">${patient.address || 'N/A'}</p></div></div>
+            <div class="contact-card"><i class="fa-solid fa-calendar-day"></i><div><p class="contact-label">DOB</p><p class="contact-value">${formatDate(patient.date_of_birth)}</p></div></div>
+            <div class="contact-card"><i class="fa-solid fa-user-doctor"></i><div><p class="contact-label">Therapist</p><p class="contact-value">${assignedTherapist}</p></div></div>
+            <div class="contact-card"><i class="fa-solid fa-clock"></i><div><p class="contact-label">Last Assigned</p><p class="contact-value">${formatDate(stats.lastAssigned)}</p></div></div>
+        `;
     }
 
     function renderAppointments(apps) {
         const container = document.getElementById('appointments');
         if (apps.length === 0) { container.innerHTML = '<div class="card"><div class="card-body"><p>No appointments found for this patient.</p></div></div>'; return; }
-        const tableRows = apps.map(app => `<tr><td>${new Date(app.start).toLocaleDateString()}</td><td>${new Date(app.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td><td>${app.title}</td><td>${app.extendedProps.therapist}</td><td><span class="status-chip ${app.extendedProps.status.toLowerCase()}">${app.extendedProps.status}</span></td></tr>`).join('');
+        const tableRows = apps.map(app => {
+            const startDate = app.start || app.start_time;
+            const start = startDate ? new Date(startDate) : null;
+            const therapist = app.extendedProps?.therapist || app.therapist || 'N/A';
+            const status = app.extendedProps?.status || app.status || 'N/A';
+            return `<tr><td>${start ? start.toLocaleDateString() : '—'}</td><td>${start ? start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '—'}</td><td>${app.title || 'N/A'}</td><td>${therapist}</td><td><span class="status-chip ${status.toLowerCase()}">${status}</span></td></tr>`;
+        }).join('');
         container.innerHTML = `<div class="card"><div class="card-header"><h3>Appointment History</h3></div><div class="card-body"><table class="data-table"><thead><tr><th>Date</th><th>Time</th><th>Service</th><th>Therapist</th><th>Status</th></tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
     }
 
     function renderBilling(invoices) {
         const container = document.getElementById('billing');
         if (invoices.length === 0) { container.innerHTML = '<div class="card"><div class="card-body"><p>No invoices found for this patient.</p></div></div>'; return; }
-        const tableRows = invoices.map(inv => `<tr><td>${inv.id}</td><td>${inv.date}</td><td>$${inv.amount.toFixed(2)}</td><td><span class="status-chip ${inv.status.toLowerCase()}">${inv.status}</span></td><td><button class="btn-action print" data-invoice-id="${inv.raw_id}"><i class="fa-solid fa-print"></i></button></td></tr>`).join('');
+        const tableRows = invoices.map(inv => {
+            const amount = typeof inv.amount === 'number' ? inv.amount : parseFloat(inv.amount || 0);
+            const status = inv.status || 'N/A';
+            const rawId = inv.raw_id || inv.id;
+            return `<tr><td>${inv.id}</td><td>${inv.date}</td><td>$${amount.toFixed(2)}</td><td><span class="status-chip ${status.toLowerCase()}">${status}</span></td><td><button class="btn-action print" data-invoice-id="${rawId}"><i class="fa-solid fa-print"></i></button></td></tr>`;
+        }).join('');
         container.innerHTML = `<div class="card"><div class="card-header"><h3>Invoice History</h3></div><div class="card-body"><table class="data-table"><thead><tr><th>ID</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
     }
 
     function renderAssignedExercises(assigned) {
-        const listHtml = assigned.length === 0 ? '<p>No exercises assigned.</p>' : assigned.map(item => `<div class="assigned-exercise-item"><div><strong>${item.exercises.title}</strong><small>${item.notes || 'No specific notes.'}</small></div><button class="btn-action delete-assignment" data-assignment-id="${item.id}"><i class="fa-solid fa-trash-can"></i></button></div>`).join('');
-        document.getElementById('exercises').innerHTML = `<div class="card"><div class="card-header"><h3>Assigned Exercises</h3><button id="assignExerciseBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> Assign</button></div><div class="card-body" id="assigned-exercises-list">${listHtml}</div></div>`;
+        const container = document.getElementById('exercises');
+        if (assigned.length === 0) {
+            container.innerHTML = `<div class="card"><div class="card-header"><h3>Assigned Exercises</h3><button id="assignExerciseBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> Assign</button></div><div class="card-body" id="assigned-exercises-list"><p>No exercises assigned.</p></div></div>`;
+            return;
+        }
+
+        const listHtml = assigned.map(item => {
+            const completedDates = Array.isArray(item.completed_dates) ? item.completed_dates : [];
+            const completedCount = completedDates.length;
+            const freq = item.frequency_per_week || 0;
+            const fullyCompleted = freq ? completedCount >= freq : completedCount > 0;
+            const statusLabel = fullyCompleted ? 'Completed' : 'Not completed';
+            const statusClass = fullyCompleted ? 'completed' : 'not-completed';
+            const statusIcon = fullyCompleted ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-regular fa-circle"></i>';
+            const assignedOn = formatDate(item.start_date || item.created_at);
+            const lastCompleted = completedDates.length ? formatDate(completedDates[completedDates.length - 1]) : '—';
+
+            return `
+                <div class="assigned-exercise-card">
+                    <div class="assigned-exercise-main">
+                        <div>
+                            <div class="exercise-title">${item.exercises?.title || 'Exercise'}</div>
+                            <div class="exercise-notes">${item.notes || 'No specific notes.'}</div>
+                        </div>
+                        <div class="exercise-status">
+                            <span class="pill-badge ${statusClass}">${statusIcon} ${statusLabel}</span>
+                            <small>&nbsp;</small>
+                        </div>
+                    </div>
+                    <div class="assigned-exercise-meta">
+                        <span><i class="fa-regular fa-calendar-plus"></i> Assigned: ${assignedOn}</span>
+                        <span><i class="fa-regular fa-circle-check"></i> Last done: ${lastCompleted}</span>
+                    </div>
+                    <div class="assigned-exercise-actions">
+                        <button class="btn-secondary-action delete-assignment" data-assignment-id="${item.id}"><i class="fa-solid fa-trash-can"></i> Remove</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = `<div class="card"><div class="card-header"><h3>Assigned Exercises</h3><button id="assignExerciseBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> Assign</button></div><div class="card-body exercise-list" id="assigned-exercises-list">${listHtml}</div></div>`;
     }
 
     function renderNotes(notes) {

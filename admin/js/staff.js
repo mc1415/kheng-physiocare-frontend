@@ -1,4 +1,4 @@
-// admin/js/staff.js (Final Version with Full Functionality)
+// admin/js/staff.js
 
 document.addEventListener('DOMContentLoaded', function() {
     const staffTableBody = document.querySelector('.data-table tbody');
@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const addStaffModal = document.getElementById('addStaffModal');
     const closeStaffModalBtn = document.getElementById('closeStaffModalBtn');
     const staffForm = document.getElementById('add-staff-form');
+    const staffModalTitle = document.getElementById('staffModalTitle');
+    const staffIdField = document.getElementById('staff-id-field');
+    const submitBtn = staffForm?.querySelector('button[type="submit"]');
     const toastConfig = { duration: 3000, close: true, gravity: "top", position: "right", stopOnFocus: true };
 
     async function fetchApi(url, options = {}) {
@@ -49,25 +52,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${staff.email || 'N/A'}</td>
                 <td>${staff.phone_number || 'N/A'}</td>
                 <td><span class="status-chip active">Active</span></td>
-                <td><div class="action-buttons"><button class="btn-action edit"><i class="fa-solid fa-pencil"></i></button></div></td>
+                <td><div class="action-buttons"><button class="btn-action edit" title="Edit"><i class="fa-solid fa-pencil"></i></button></div></td>
             `;
             staffTableBody.appendChild(row);
         });
     }
 
-        function openModalForEdit(staffId) {
-            console.log("Attempting to edit staff with ID:", staffId);
-            Toastify({...toastConfig, text: "Edit functionality not yet implemented."}).showToast();
-            // Later, you will fetch staff data here and populate the same modal used for adding.
+    function openModalForAdd() {
+        if (!staffForm || !addStaffModal) return;
+        staffForm.reset();
+        staffIdField.value = '';
+        staffModalTitle.textContent = 'Add New Staff Member';
+        submitBtn.textContent = 'Save Staff Member';
+        const passwordField = staffForm.querySelector('#staff-password');
+        if (passwordField) {
+            passwordField.required = true;
+            passwordField.placeholder = 'Min. 6 characters';
         }
+        addStaffModal.style.display = 'flex';
+    }
 
+    async function openModalForEdit(staffId) {
+        if (!staffForm || !addStaffModal) return;
+        staffForm.reset();
+        staffIdField.value = staffId;
+        staffModalTitle.textContent = 'Edit Staff Member';
+        submitBtn.textContent = 'Save Changes';
+        const passwordField = staffForm.querySelector('#staff-password');
+        if (passwordField) {
+            passwordField.value = '';
+            passwordField.required = false; // optional on edit
+            passwordField.placeholder = 'Leave blank to keep current password';
+        }
+        const result = await fetchApi(`${API_BASE_URL}/api/staff/${staffId}`);
+        if (result && result.success) {
+            const staff = result.data;
+            document.getElementById('staff-name').value = staff.full_name || '';
+            document.getElementById('staff-role').value = staff.role || '';
+            document.getElementById('staff-email').value = staff.email || '';
+            document.getElementById('staff-phone').value = staff.phone_number || '';
+        }
+        addStaffModal.style.display = 'flex';
+    }
 
     // --- MODAL EVENT LISTENERS ---
     if (addStaffBtn) {
-        addStaffBtn.addEventListener('click', () => {
-            if (staffForm) staffForm.reset();
-            if (addStaffModal) addStaffModal.style.display = 'flex';
-        });
+        addStaffBtn.addEventListener('click', openModalForAdd);
     }
     if (closeStaffModalBtn) {
         closeStaffModalBtn.addEventListener('click', () => {
@@ -80,11 +110,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-        if (staffTableBody) {
+    if (staffTableBody) {
         staffTableBody.addEventListener('click', (event) => {
             const editButton = event.target.closest('.btn-action.edit');
             if (editButton) {
-                // Find the parent table row and get the staff ID from its dataset
                 const staffId = editButton.closest('tr').dataset.staffId;
                 openModalForEdit(staffId);
             }
@@ -97,22 +126,32 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             const formData = new FormData(staffForm);
             const staffData = Object.fromEntries(formData.entries());
+            const staffId = staffData.staffId;
+            const isEditing = !!staffId;
 
-            if (staffData.staffPassword.length < 6) {
+            if (!isEditing && staffData.staffPassword.length < 6) {
                 Toastify({...toastConfig, text: "Password must be at least 6 characters.", style: { background: "var(--red-accent)" }}).showToast();
                 return;
             }
-            
-            const result = await fetchApi(`${API_BASE_URL}/api/staff`, {
-                method: 'POST',
+
+            if (isEditing && !staffData.staffPassword) {
+                delete staffData.staffPassword;
+            }
+
+            const url = isEditing ? `${API_BASE_URL}/api/staff/${staffId}` : `${API_BASE_URL}/api/staff`;
+            const method = isEditing ? 'PATCH' : 'POST';
+
+            const result = await fetchApi(url, {
+                method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(staffData)
             });
 
             if (result && result.success) {
-                Toastify({...toastConfig, text: "Staff member created successfully!", style: { background: "var(--green-accent)" }}).showToast();
+                const message = isEditing ? "Staff member updated!" : "Staff member created successfully!";
+                Toastify({...toastConfig, text: message, style: { background: "var(--green-accent)" }}).showToast();
                 if (addStaffModal) addStaffModal.style.display = 'none';
-                setTimeout(() => fetchAndRenderStaff(), 500); // Refresh the table
+                setTimeout(() => fetchAndRenderStaff(), 500);
             }
         });
     }

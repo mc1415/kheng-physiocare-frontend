@@ -19,6 +19,7 @@
 
 html[lang="km"] {
     --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif, Poppins, 'Suwannaphum';
+    font-size: 18px;
 }
 
 body {
@@ -645,6 +646,10 @@ html[lang="km"] body {
     border-bottom: none;
 }
 
+.discount-row {
+    margin-top: 16px;
+}
+
 .btn-remove-item {
     background-color: rgba(248, 113, 113, 0.1);
     border: 1px solid var(--red-accent);
@@ -684,7 +689,7 @@ html[lang="km"] body {
 
 .patient-detail-layout {
     display: grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 400px 1fr;
     gap: 30px;
     margin-top: 20px;
     align-items: flex-start;
@@ -695,6 +700,16 @@ html[lang="km"] body {
     text-align: center;
     position: sticky; /* Make it stick on scroll */
     top: 20px;
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+    background: radial-gradient(circle at 30% 20%, rgba(56,189,248,0.12), transparent 35%), var(--card-bg);
+}
+
+.patient-hero {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
 }
 
 .patient-avatar-large {
@@ -716,6 +731,65 @@ html[lang="km"] body {
     font-size: 1rem;
     color: var(--text-secondary);
     margin-bottom: 20px;
+}
+
+.patient-summary-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 16px 0 4px;
+}
+
+.metric-chip {
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    padding: 12px 14px;
+    text-align: left;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.metric-chip .chip-label {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+.metric-chip .chip-value {
+    font-weight: 800;
+    font-size: 1.15rem;
+}
+
+.pill-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+.pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.05);
+}
+.pill-badge.soft {
+    background: var(--admin-bg);
+}
+.pill-badge.in-progress {
+    background: rgba(56, 189, 248, 0.12);
+    color: #0ea5e9;
+    border-color: rgba(56, 189, 248, 0.3);
+}
+.pill-badge.completed {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+.pill-badge.not-completed {
+    background: rgba(248, 180, 0, 0.15);
+    color: #fbbf24;
+    border-color: rgba(248, 180, 0, 0.35);
 }
 
 .patient-meta-list {
@@ -748,6 +822,42 @@ html[lang="km"] body {
     gap: 10px;
 }
 
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+@media (min-width: 520px) {
+    .contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.contact-card {
+    display: flex;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid rgba(148,163,184,0.2);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    align-items: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.contact-card i {
+    color: var(--primary-accent);
+}
+.contact-card > div { min-width: 0; } /* allow text to shrink and ellipsis */
+.contact-card .contact-label {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.85rem;
+}
+.contact-card .contact-value {
+    margin: 2px 0 0 0;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
 /* --- Tabs --- */
 .tabs {
     display: flex;
@@ -763,6 +873,7 @@ html[lang="km"] body {
     cursor: pointer;
     position: relative;
     border-bottom: 3px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 .tab-link.active {
     color: var(--primary-accent);
@@ -774,6 +885,56 @@ html[lang="km"] body {
 }
 .tab-content.active {
     display: block;
+}
+
+.exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.assigned-exercise-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 14px;
+    background: rgba(40, 52, 71, 0.65);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+.assigned-exercise-main {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.exercise-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 6px;
+}
+.exercise-notes {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+.exercise-status {
+    text-align: right;
+    min-width: 140px;
+}
+.assigned-exercise-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+.assigned-exercise-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.assigned-exercise-actions {
+    margin-top: 12px;
+    text-align: right;
 }
 
 /* --- Notes Styles --- */
@@ -1157,11 +1318,31 @@ html[lang="km"] body {
     text-align: center;
 }
 
+.language-toggle {
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-gap: 8px;
+    align-items: center;
+    padding: 4px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--admin-bg);
+}
+.language-toggle i {
+    color: var(--primary-accent);
+    width: 18px;
+    text-align: center;
+}
+
 .language-select {
     border: none;
-    background: transparent;
-    font-size: 1.2rem;
+    background: transparent !important;
+    background-image: none !important;
+    font-size: 0.95rem;
     cursor: pointer;
+    color: var(--text-primary);
+    padding-left: 0;
+    appearance: none;
 }
 
 .language-select:focus {

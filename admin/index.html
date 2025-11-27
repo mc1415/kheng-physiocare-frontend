@@ -14,10 +14,13 @@
             <img src="../images/logo.jpg" alt="Kheng PhysioCare Logo" class="login-logo">
             <h2 data-i18n="adminPortal">Admin Portal</h2>
             <p data-i18n="signInPrompt">Please sign in to continue</p>
-            <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                <option value="en">🇺🇸</option>
-                <option value="km">🇰🇭</option>
-            </select>
+            <div class="language-toggle">
+                <i class="fa-solid fa-earth-asia"></i>
+                <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
+                    <option value="en">EN</option>
+                    <option value="km">KM</option>
+                </select>
+            </div>
         </div>
 
         <form id="admin-login-form" class="login-form">

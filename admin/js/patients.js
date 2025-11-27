@@ -319,6 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!pendingAvatarFile) return; // nothing to upload
         if (!window.supabaseClient || !window.AVATARS_BUCKET) throw new Error('Supabase storage not configured');
         const ext = (pendingAvatarFile.type || '').includes('png') ? 'png' : 'jpg';
+        // Store inside the avatars bucket under patients/<file>
         const path = `patients/${patientId}-${Date.now()}.${ext}`;
         const { error: upErr } = await window.supabaseClient.storage.from(window.AVATARS_BUCKET).upload(path, pendingAvatarFile, { upsert: true, contentType: pendingAvatarFile.type || 'image/jpeg' });
         if (upErr) throw upErr;

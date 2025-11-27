@@ -37,18 +37,22 @@
                     <a href="patients.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="backToPatients">Back to All Patients</span></a>
                 </div>
                 <div class="top-bar-right">
-                    <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                        <option value="en">🇺🇸</option>
-                        <option value="km">🇰🇭</option>
-                    </select>
+                    <div class="language-toggle">
+                        <i class="fa-solid fa-earth-asia"></i>
+                        <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
+                            <option value="en">EN</option>
+                            <option value="km">KM</option>
+                        </select>
+                    </div>
                 </div>
             </header>
 
             <div class="patient-detail-layout" style="display: none;">
                 <div class="patient-summary-card card">
-                    <div id="patient-summary-info"><!-- JS populates --></div>
+                    <div id="patient-summary-info" class="patient-hero"><!-- JS populates --></div>
+                    <div id="patient-summary-stats" class="patient-summary-stats"><!-- JS populates --></div>
                     <hr class="sidebar-divider">
-                    <div id="patient-summary-contact"><!-- JS populates --></div>
+                    <div id="patient-summary-contact" class="contact-grid"><!-- JS populates --></div>
                 </div>
 
                 <div class="patient-main-content">
