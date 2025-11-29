@@ -1,4 +1,7 @@
+// Primary API endpoint for all admin requests.
 const API_BASE_URL = 'https://kheng-physiocare-api.onrender.com';
+// Expose for any scripts loaded after this file.
+window.API_BASE_URL = API_BASE_URL;
 
 // admin/js/global.js
 document.addEventListener('DOMContentLoaded', function() {

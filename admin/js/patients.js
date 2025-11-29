@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (avatarPreview) {
                 avatarPreview.src = patientData.avatar_url || '';
             }
+            if (deletePatientBtn) deletePatientBtn.dataset.authUserId = patientData.auth_user_id || '';
             pendingAvatarFile = null;
         }
     }
@@ -75,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalTitle.textContent = 'Add New Patient';
         savePatientBtn.textContent = 'Save Patient';
         if (deletePatientBtn) deletePatientBtn.style.display = 'none';
+        if (deletePatientBtn) deletePatientBtn.dataset.authUserId = '';
         patientForm.reset();
         patientIdField.value = '';
         populateTherapistDropdown();
@@ -333,6 +335,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         pendingAvatarFile = null;
     }
+
+    async function deleteAuthUser(authUserId) {
+        if (!authUserId) return false;
+        const fnName = window.SUPABASE_FUNCTION_DELETE_PATIENT || '';
+        const fnUrl = window.SUPABASE_FUNCTION_DELETE_URL || '';
+        const mode = (window.SUPABASE_FUNCTION_MODE || 'auto').toLowerCase();
+        const payload = { auth_user_id: authUserId };
+
+        const tryInvoke = async () => {
+            if (!window.supabaseClient || !fnName) throw new Error('Supabase client or delete function name missing');
+            const { error } = await window.supabaseClient.functions.invoke(fnName, { body: payload });
+            if (error) throw error;
+            return true;
+        };
+
+        const tryHttp = async () => {
+            if (!fnUrl || !window.SUPABASE_ANON_KEY) throw new Error('Delete function URL or anon key missing');
+            const res = await fetch(fnUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': window.SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) {
+                let msg = 'Delete function request failed';
+                try { const j = await res.json(); msg = j?.error || j?.message || msg; } catch {}
+                throw new Error(msg);
+            }
+            return true;
+        };
+
+        try {
+            if (mode === 'invoke') return await tryInvoke();
+            if (mode === 'http') return await tryHttp();
+            try { return await tryInvoke(); }
+            catch (e) { console.warn('Delete invoke failed, trying HTTP:', e?.message || e); return await tryHttp(); }
+        } catch (err) {
+            console.error('Failed to delete auth user:', err);
+            return false;
+        }
+    }
     
     if (deletePatientBtn) {
         deletePatientBtn.addEventListener('click', function() {
@@ -347,9 +393,15 @@ document.addEventListener('DOMContentLoaded', function() {
             toastEl.appendChild(buttonContainer);
             yesButton.onclick = async function() {
                 toast.hideToast();
+                const authUserId = deletePatientBtn?.dataset?.authUserId || '';
                 const result = await fetchApi(`${API_BASE_URL}/api/patients/${patientId}`, { method: 'DELETE' });
                 if (result) {
+                    let authRemoved = false;
+                    if (authUserId) authRemoved = await deleteAuthUser(authUserId);
                     Toastify({...toastConfig, text: "Patient deleted.", style: { background: "var(--red-accent)" }}).showToast();
+                    if (authUserId && !authRemoved) {
+                        Toastify({ ...toastConfig, text: "Auth user could not be removed. Please retry in Supabase.", style: { background: "var(--red-accent)" } }).showToast();
+                    }
                     patientModal.style.display = 'none';
                     fetchAndRenderPatients();
                 }

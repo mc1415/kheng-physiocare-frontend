@@ -28,8 +28,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
             if (error) throw error;
 
-            // Do not set display name from Supabase metadata.
-            // The portal will fetch the real name from patients table via Edge Function.
+            // Persist token for portal API calls
+            const accessToken = data?.session?.access_token;
+            if (accessToken) {
+                localStorage.setItem('patientToken', accessToken);
+                localStorage.setItem('patientEmail', email);
+            }
+
             window.location.href = 'patient-portal.html';
         } catch (error) {
             console.error('Login error:', error);

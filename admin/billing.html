@@ -122,6 +122,20 @@
                             <input type="text" id="invoice-discount-note" name="discountNote" placeholder="e.g. Loyalty, promo">
                         </div>
                     </div>
+                    <div class="form-grid discount-row">
+                        <div class="form-group">
+                            <label for="invoice-subtotal">Subtotal ($)</label>
+                            <input type="text" id="invoice-subtotal" readonly value="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="invoice-discount-amount">Discount Amount ($)</label>
+                            <input type="text" id="invoice-discount-amount" readonly value="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="invoice-total">Total ($)</label>
+                            <input type="text" id="invoice-total" readonly value="0.00">
+                        </div>
+                    </div>
                     <div class="modal-footer" style="margin-top: 20px;"><button type="submit" class="btn-primary-action">Generate Invoice</button></div>
                 </form>
             </div>

@@ -140,10 +140,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         const container = document.getElementById('billing');
         if (invoices.length === 0) { container.innerHTML = '<div class="card"><div class="card-body"><p>No invoices found for this patient.</p></div></div>'; return; }
         const tableRows = invoices.map(inv => {
-            const amount = typeof inv.amount === 'number' ? inv.amount : parseFloat(inv.amount || 0);
+            const derivedTotal = (inv.subtotal || inv.discount_amount) ? (parseFloat(inv.subtotal || 0) - parseFloat(inv.discount_amount || 0)) : 0;
+            const rawAmount = (inv.total_amount ?? inv.amount ?? derivedTotal ?? 0);
+            const amount = Number.isFinite(parseFloat(rawAmount)) ? parseFloat(rawAmount) : 0;
             const status = inv.status || 'N/A';
             const rawId = inv.raw_id || inv.id;
-            return `<tr><td>${inv.id}</td><td>${inv.date}</td><td>$${amount.toFixed(2)}</td><td><span class="status-chip ${status.toLowerCase()}">${status}</span></td><td><button class="btn-action print" data-invoice-id="${rawId}"><i class="fa-solid fa-print"></i></button></td></tr>`;
+            const cleanedId = String(rawId || '').replace('#INV-', '').replace(/[^0-9]/g, '') || rawId;
+            return `<tr><td>${inv.id}</td><td>${inv.date}</td><td>$${amount.toFixed(2)}</td><td><span class="status-chip ${status.toLowerCase()}">${status}</span></td><td><button class="btn-action print" data-invoice-id="${cleanedId}"><i class="fa-solid fa-print"></i></button></td></tr>`;
         }).join('');
         container.innerHTML = `<div class="card"><div class="card-header"><h3>Invoice History</h3></div><div class="card-body"><table class="data-table"><thead><tr><th>ID</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
     }
@@ -243,6 +246,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (deleteBtn && confirm('Un-assign this exercise from the patient?')) {
                 const result = await fetchApi(`${API_BASE_URL}/api/assigned-exercises/${deleteBtn.dataset.assignmentId}`, { method: 'DELETE' });
                 if (result) { Toastify({ ...toastConfig, text: "Exercise unassigned.", style: { background: "var(--red-accent)" } }).showToast(); loadAllPatientData(); }
+            }
+        });
+
+        // Billing print actions
+        document.getElementById('billing').addEventListener('click', (e) => {
+            const printBtn = e.target.closest('.btn-action.print');
+            if (printBtn) {
+                const invoiceId = printBtn.dataset.invoiceId;
+                if (invoiceId) window.open(`../kheng-physiocare-receipt.html?receipt-id=${invoiceId}`, '_blank');
             }
         });
 

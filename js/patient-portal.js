@@ -3,13 +3,19 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // Prefer Supabase Auth session
     let hasSession = false;
+    let sessionToken = null;
     try {
         if (window.supabaseClient) {
             const { data: { session } } = await window.supabaseClient.auth.getSession();
-            hasSession = !!session;
+            if (session) {
+                hasSession = true;
+                sessionToken = session.access_token;
+                localStorage.setItem('patientToken', sessionToken);
+                if (session.user?.email) localStorage.setItem('patientEmail', session.user.email);
+            }
         }
     } catch {}
-    const token = localStorage.getItem('patientToken'); // legacy fallback
+    const token = sessionToken || localStorage.getItem('patientToken'); // legacy fallback
     if (!hasSession && !token) { window.location.href = 'patient-login.html'; return; }
 
     portalSplashEl = document.getElementById('portal-splash');
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function fetchApi(endpoint, token, options = {}) {
     const headers = { ...(options.headers || {}) };
-    if (token) headers['Authorization'] = `Bearer ${token}`; // legacy backend fallback only
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     const method = options.method || 'GET';
     const body = options.body ? options.body : undefined;
 
@@ -141,15 +147,17 @@ async function fetchApi(endpoint, token, options = {}) {
 
     const tryInvoke = async () => {
         if (!window.supabaseClient || !fnName) throw new Error('Supabase client or function name missing');
-        const { data, error } = await window.supabaseClient.functions.invoke(fnName, { body: payload });
+        const { data, error } = await window.supabaseClient.functions.invoke(fnName, { body: payload, headers });
         if (error) throw error;
         return data;
     };
     const tryHttp = async () => {
         if (!fnUrl || !window.SUPABASE_ANON_KEY) throw new Error('Function URL or anon key missing');
+        const httpHeaders = { 'Content-Type': 'application/json', 'apikey': window.SUPABASE_ANON_KEY, ...headers };
+        if (!httpHeaders.Authorization) httpHeaders.Authorization = `Bearer ${window.SUPABASE_ANON_KEY}`;
         const res = await fetch(fnUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'apikey': window.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}` },
+            headers: httpHeaders,
             body: JSON.stringify(payload)
         });
         if (!res.ok) {
@@ -443,6 +451,8 @@ function renderInvoices(invoices, mobile = false) {
         const formattedDate = inv.created_at ? new Date(inv.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
         const appointment = inv.appointment?.start_time ? new Date(inv.appointment.start_time).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
         const statusClass = (inv.status || 'pending').toLowerCase();
+        const rawId = inv.raw_id ?? inv.id;
+        const cleanedId = String(rawId || '').replace('#INV-', '').replace(/[^0-9]/g, '') || rawId;
         return `
             <div class="invoice-row">
                 <div class="invoice-row-header">
@@ -457,8 +467,8 @@ function renderInvoices(invoices, mobile = false) {
                 </div>
                 ${appointment ? `<p class="invoice-date"><i class="fas fa-calendar-check"></i> ${appointment}</p>` : ''}
                 <div class="invoice-actions">
-                    <button type="button" class="btn btn-secondary download-invoice" data-invoice-id="${inv.id}">
-                        <i class="fas fa-file-download"></i> <span data-i18n="downloadInvoice">Download PDF</span>
+                    <button type="button" class="btn btn-secondary download-invoice" data-invoice-id="${cleanedId}">
+                        <i class="fas fa-file-download"></i> <span data-i18n="downloadInvoice">Print / Download</span>
                     </button>
                 </div>
             </div>
@@ -572,34 +582,15 @@ document.addEventListener('click', (event) => {
 });
 
 function downloadInvoice(invoice) {
-    const patient = window.portalPatientProfile || {};
-    const patientName = patient.full_name || localStorage.getItem('patientName') || t('patientFallback');
-    const patientAge = patient.date_of_birth ? calculateAge(patient.date_of_birth) : null;
-    const patientSex = patient.gender || 'N/A';
-    const items = (invoice.invoice_items || []).map((item) => ({
-        service: item.service_name || item.service || 'Service',
-        qty: item.quantity || 1,
-        price: Number(item.unit_price ?? item.price ?? 0),
-        disc: 0
-    }));
-    if (!items.length) {
-        items.push({
-            service: invoice.diagnostic || 'Consultation',
-            qty: 1,
-            price: Number(invoice.total_amount ?? 0),
-            disc: 0
-        });
+    const rawId = invoice?.raw_id ?? invoice?.id;
+    const cleanedId = String(rawId || '').replace('#INV-', '').replace(/[^0-9]/g, '') || rawId;
+    if (!cleanedId) {
+        alert('No invoice id available for this record.');
+        return;
     }
-    const receiptData = {
-        patientName,
-        patientAge: patientAge ?? 'N/A',
-        patientSex,
-        billDate: invoice.created_at ? new Date(invoice.created_at).toISOString().split('T')[0] : '',
-        diagnostic: invoice.diagnostic || 'As per consultation',
-        items
-    };
-    localStorage.setItem('currentInvoiceData', JSON.stringify(receiptData));
-    window.open('kheng-physiocare-receipt.html', '_blank');
+    // Open the patient-facing receipt page; include both param names for compatibility
+    const url = `kheng-physiocare-receipt-portal.html?receipt-id=${cleanedId}&invoiceId=${cleanedId}`;
+    window.open(url, '_blank');
 }
 
 function toggleMobilePasswordModal(show) {

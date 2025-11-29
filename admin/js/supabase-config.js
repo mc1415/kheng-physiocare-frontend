@@ -24,6 +24,12 @@ window.SUPABASE_FUNCTION_CREATE_PATIENT = SUPABASE_FUNCTION_CREATE_PATIENT;
 window.SUPABASE_FUNCTION_URL = SUPABASE_FUNCTION_URL;
 window.SUPABASE_FUNCTION_MODE = SUPABASE_FUNCTION_MODE;
 
+// Edge Function to delete an Auth user when a patient is deleted (name/url optional but recommended)
+const SUPABASE_FUNCTION_DELETE_PATIENT = 'delete-patient-user';
+const SUPABASE_FUNCTION_DELETE_URL = 'https://trvwjmgcfdflxmrwjwnf.supabase.co/functions/v1/delete-patient-user';
+window.SUPABASE_FUNCTION_DELETE_PATIENT = SUPABASE_FUNCTION_DELETE_PATIENT;
+window.SUPABASE_FUNCTION_DELETE_URL = SUPABASE_FUNCTION_DELETE_URL;
+
 // Temporary password used for new patient accounts (must match Edge Function)
 window.TEMP_PATIENT_PASSWORD = 'KPC@2025';
 
