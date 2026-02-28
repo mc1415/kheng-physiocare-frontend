@@ -1,6 +1,8 @@
 // admin/js/dashboard.js (Final Version with Dynamic Trends)
 
 document.addEventListener('DOMContentLoaded', function() {
+    const translate = (key) => (typeof window.t === 'function' ? window.t(key) : key);
+    const getLocale = () => ((localStorage.getItem('lang') || 'en') === 'km' ? 'km-KH' : 'en-US');
 
     // --- Helper function to update a single stat card with its trend ---
     function updateStatCard(elementId, value, trendData, isCurrency = false, isPercentage = false) {
@@ -42,21 +44,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         scheduleBody.innerHTML = '';
         if (schedule.length === 0) {
-            scheduleBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No appointments scheduled for today.</td></tr>';
+            scheduleBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">${translate('noAppointmentsScheduledToday')}</td></tr>`;
             return;
         }
 
         schedule.forEach(app => {
             const row = document.createElement('tr');
-            const startTime = new Date(app.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+            const startTime = new Date(app.start_time).toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
             const statusClass = (app.status || '').toLowerCase();
             const [patientName, service] = (app.title || '').split(' - ');
 
             row.innerHTML = `
                 <td>${startTime}</td>
-                <td>${patientName || app.title || 'N/A'}</td>
-                <td>${app.staff ? app.staff.full_name : 'Unassigned'}</td>
-                <td>${service || 'N/A'}</td>
+                <td>${patientName || app.title || translate('notAvailable')}</td>
+                <td>${app.staff ? app.staff.full_name : translate('unassigned')}</td>
+                <td>${service || translate('notAvailable')}</td>
                 <td><span class="status-chip ${statusClass}">${app.status}</span></td>
             `;
             scheduleBody.appendChild(row);
@@ -65,13 +67,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Chart.js Initialization ---
     function initializeCharts(ageDataFromApi = [0, 0, 0, 0], weeklyAppointments = []) {
-        const weeklyLabels = weeklyAppointments.map(d => new Date(d.appointment_date).toLocaleDateString('en-US', { weekday: 'short' }));
+        const weeklyLabels = weeklyAppointments.map(d => new Date(d.appointment_date).toLocaleDateString(getLocale(), { weekday: 'short' }));
         const weeklyCounts = weeklyAppointments.map(d => d.appointment_count);
 
         const appointmentsChartData = {
             labels: weeklyLabels,
             datasets: [{
-                label: 'Appointments',
+                label: translate('appointments'),
                 data: weeklyCounts,
                 backgroundColor: 'rgba(56, 189, 248, 0.5)',
                 borderColor: 'rgba(56, 189, 248, 1)',
@@ -92,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const ageData = {
             labels: ['< 18', '18-30', '31-50', '50+'],
             datasets: [{
-                label: 'Patients by Age',
+                label: translate('patientsByAge'),
                 data: ageDataFromApi,
                 backgroundColor: ['rgba(52, 211, 153, 0.8)', 'rgba(56, 189, 248, 0.8)', 'rgba(248, 113, 113, 0.8)', 'rgba(168, 85, 247, 0.8)'],
                 borderColor: 'var(--card-bg)', borderWidth: 2
@@ -141,4 +143,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Initial Page Load ---
     loadDashboard();
+    document.addEventListener('languagechange', loadDashboard);
 });

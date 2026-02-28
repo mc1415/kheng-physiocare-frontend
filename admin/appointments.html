@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,7 @@
             <div class="sidebar-header"><img src="../images/LOGOWHITE.png" alt="Logo" class="sidebar-logo"></div>
             <ul class="sidebar-menu">
                 <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></a></li>
+                <li class="menu-item"><a href="pos.html"><i class="fa-solid fa-cash-register"></i><span data-i18n="pos">POS</span></a></li>
                 <li class="menu-item active"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span data-i18n="appointments">Appointments</span></a></li>
                 <li class="menu-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span data-i18n="patients">Patients</span></a></li>
                 <li class="menu-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span data-i18n="billing">Billing</span></a></li>
@@ -38,10 +39,10 @@
                 <div class="top-bar-right">
                     <div class="language-toggle">
                         <i class="fa-solid fa-earth-asia"></i>
-                        <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                            <option value="en">EN</option>
-                            <option value="km">KM</option>
-                        </select>
+                        <div class="language-pill-group" aria-label="Language Switch">
+                            <button type="button" class="lang-pill" data-lang="en">EN</button>
+                            <button type="button" class="lang-pill" data-lang="km">KM</button>
+                        </div>
                     </div>
                     <button id="newAppointmentBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> <span data-i18n="newAppointment">New Appointment</span></button>
                 </div>
@@ -55,17 +56,17 @@
     </div>
     <div id="appointmentModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2 id="modalTitle" data-i18n="newAppointment">New Appointment</h2><button id="closeAppointmentModalBtn" class="close-button">×</button></div>
+            <div class="modal-header"><h2 id="modalTitle" data-i18n="newAppointment">New Appointment</h2><button id="closeAppointmentModalBtn" class="close-button" aria-label="Close">&times;</button></div>
             <div class="modal-body">
                 <form id="appointment-form">
                     <input type="hidden" id="eventId" name="eventId">
                     <div class="form-grid">
-                        <div class="form-group"><label for="appointment-patient">Patient</label><select id="appointment-patient" name="patient_id" required><option value="">-- Loading --</option></select></div>
-                        <div class="form-group span-2"><label for="appointment-title">Title / Service</label><input type="text" id="appointment-title" name="title" required></div>
-                        <div class="form-group"><label for="start-time">Start Time</label><input type="datetime-local" id="start-time" name="start" required></div>
-                        <div class="form-group"><label for="end-time">End Time</label><input type="datetime-local" id="end-time" name="end" required></div>
-                        <div class="form-group"><label for="therapist">Assign Therapist</label><select id="therapist" name="therapist_id" required><option value="">-- Loading --</option></select></div>
-                        <div class="form-group"><label for="status">Status</label><select id="status" name="status" required><option value="Confirmed">Confirmed</option><option value="Pending">Pending</option><option value="Cancelled">Cancelled</option></select></div>
+                        <div class="form-group"><label for="appointment-patient" data-i18n="patient">Patient</label><select id="appointment-patient" name="patient_id" required><option value="" data-i18n="loadingOption">-- Loading --</option></select></div>
+                        <div class="form-group span-2"><label for="appointment-title" data-i18n="titleService">Title / Service</label><input type="text" id="appointment-title" name="title" required></div>
+                        <div class="form-group"><label for="start-time" data-i18n="startTime">Start Time</label><input type="datetime-local" id="start-time" name="start" required></div>
+                        <div class="form-group"><label for="end-time" data-i18n="endTime">End Time</label><input type="datetime-local" id="end-time" name="end" required></div>
+                        <div class="form-group"><label for="therapist" data-i18n="assignTherapist">Assign Therapist</label><select id="therapist" name="therapist_id" required><option value="" data-i18n="loadingOption">-- Loading --</option></select></div>
+                        <div class="form-group"><label for="status" data-i18n="statusLabel">Status</label><select id="status" name="status" required><option value="Confirmed" data-i18n="confirmed">Confirmed</option><option value="Pending" data-i18n="pending">Pending</option><option value="Cancelled" data-i18n="cancelled">Cancelled</option></select></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" id="deleteEventBtn" class="btn-danger" style="display: none;" data-i18n="delete">Delete</button>
@@ -81,3 +82,4 @@
 
 </body>
 </html>
+

@@ -35,6 +35,7 @@ window.TEMP_PATIENT_PASSWORD = 'KPC@2025';
 
 // Supabase Storage bucket to store patient avatars
 window.AVATARS_BUCKET = 'avatars';
+window.PRODUCT_IMAGES_BUCKET = 'product-images';
 
 // Portal API Edge Function (for patient-portal.js)
 // The function should accept a JSON body: { path, method, headers, body }

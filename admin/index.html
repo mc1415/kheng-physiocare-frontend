@@ -6,6 +6,7 @@
     <title>Admin Login - Kheng PhysioCare</title>
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body class="login-body">
 
@@ -16,10 +17,10 @@
             <p data-i18n="signInPrompt">Please sign in to continue</p>
             <div class="language-toggle">
                 <i class="fa-solid fa-earth-asia"></i>
-                <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                    <option value="en">EN</option>
-                    <option value="km">KM</option>
-                </select>
+                <div class="language-pill-group" aria-label="Language Switch">
+                            <button type="button" class="lang-pill" data-lang="en">EN</button>
+                            <button type="button" class="lang-pill" data-lang="km">KM</button>
+                        </div>
             </div>
         </div>
 

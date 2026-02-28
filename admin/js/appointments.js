@@ -1,6 +1,8 @@
 // admin/js/appointments.js (Final Verified Code)
 
 document.addEventListener('DOMContentLoaded', function() {
+    const t = (key) => (typeof window.t === 'function' ? window.t(key) : key);
+    const getLang = () => (localStorage.getItem('lang') === 'km' ? 'km' : 'en');
     // --- Page Elements ---
     const calendarEl = document.getElementById('calendar');
     if (!calendarEl) return;
@@ -20,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Dropdown Population & Helpers ---
-    async function populateTherapistDropdown() { if (!therapistSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/staff`); if (result && result.success) { therapistSelect.innerHTML = '<option value="">-- Select Therapist --</option>'; result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); }); } else { therapistSelect.innerHTML = '<option value="">Could not load</option>'; } }
-    async function populatePatientDropdown() { if (!patientSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/patients`); if (result && result.success) { patientSelect.innerHTML = '<option value="">-- Select Patient --</option>'; result.data.forEach(patient => { const option = document.createElement('option'); option.value = patient.raw_id; option.textContent = `${patient.fullName} (${patient.display_id})`; patientSelect.appendChild(option); }); } else { patientSelect.innerHTML = '<option value="">Could not load</option>'; } }
+    async function populateTherapistDropdown() { if (!therapistSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/staff`); if (result && result.success) { therapistSelect.innerHTML = `<option value="">-- ${t('selectTherapist')} --</option>`; result.data.forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.full_name; therapistSelect.appendChild(option); }); } else { therapistSelect.innerHTML = `<option value="">${t('couldNotLoad')}</option>`; } }
+    async function populatePatientDropdown() { if (!patientSelect) return; const result = await fetchApi(`${API_BASE_URL}/api/patients`); if (result && result.success) { patientSelect.innerHTML = `<option value="">-- ${t('selectPatient')} --</option>`; result.data.forEach(patient => { const option = document.createElement('option'); option.value = patient.raw_id; option.textContent = `${patient.fullName} (${patient.display_id})`; patientSelect.appendChild(option); }); } else { patientSelect.innerHTML = `<option value="">${t('couldNotLoad')}</option>`; } }
     function getEventColor(status) { switch (status) { case 'Confirmed': return '#34d399'; case 'Pending': return '#fbbF24'; case 'Cancelled': return '#f87171'; default: return '#38bdf8'; } }
     
     // Helpers for GMT+7 UX
@@ -46,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FullCalendar Initialization ---
     const calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: getLang(),
         // Use UTC display and manually shift events by +7h so times render as GMT+7 on any machine
         timeZone: 'UTC',
         eventTimeFormat: {
@@ -96,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         select: function(info) {
             appointmentForm.reset();
-            appointmentModalTitle.innerText = 'New Appointment';
+            appointmentModalTitle.innerText = t('newAppointment');
             deleteEventBtn.style.display = 'none';
             document.getElementById('eventId').value = '';
             // Use UTC fields (calendar shows shifted +7h) so picker matches the visible slots
@@ -109,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         eventClick: async function(info) {
             appointmentForm.reset();
-            appointmentModalTitle.innerText = 'Edit Appointment';
+            appointmentModalTitle.innerText = t('editAppointment');
             deleteEventBtn.style.display = 'block';
             document.getElementById('eventId').value = info.event.id;
             document.getElementById('appointment-title').value = info.event.title;
@@ -151,9 +154,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     calendar.render();
+    document.addEventListener('languagechange', () => {
+        calendar.setOption('locale', getLang());
+    });
 
     // --- Modal & Form Event Listeners ---
-    if (newAppointmentBtn) { newAppointmentBtn.addEventListener('click', () => { appointmentForm.reset(); appointmentModalTitle.innerText = 'New Appointment'; deleteEventBtn.style.display = 'none'; document.getElementById('eventId').value = ''; populateTherapistDropdown(); populatePatientDropdown(); appointmentModal.style.display = 'flex'; }); }
+    if (newAppointmentBtn) { newAppointmentBtn.addEventListener('click', () => { appointmentForm.reset(); appointmentModalTitle.innerText = t('newAppointment'); deleteEventBtn.style.display = 'none'; document.getElementById('eventId').value = ''; populateTherapistDropdown(); populatePatientDropdown(); appointmentModal.style.display = 'flex'; }); }
     if (closeAppointmentModalBtn) { closeAppointmentModalBtn.addEventListener('click', () => { appointmentModal.style.display = 'none'; }); }
     window.addEventListener('click', (event) => { if (event.target == appointmentModal) appointmentModal.style.display = 'none'; });
     if (appointmentForm) { appointmentForm.addEventListener('submit', async function(event) { event.preventDefault(); const eventId = document.getElementById('eventId').value; const isEditing = !!eventId; const appointmentData = { patient_id: document.getElementById('appointment-patient').value, title: document.getElementById('appointment-title').value, start: inputGmt7ToUtcIso(document.getElementById('start-time').value), end: inputGmt7ToUtcIso(document.getElementById('end-time').value), therapist_id: document.getElementById('therapist').value, status: document.getElementById('status').value }; const url = isEditing ? `${API_BASE_URL}/api/appointments/${eventId}` : `${API_BASE_URL}/api/appointments`; const method = isEditing ? 'PATCH' : 'POST'; const result = await fetchApi(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appointmentData) }); if (result) { Toastify({...toastConfig, text: isEditing ? "Appointment updated!" : "Appointment created!", style: { background: "var(--primary-accent)" }}).showToast(); appointmentModal.style.display = 'none'; calendar.refetchEvents(); } }); }

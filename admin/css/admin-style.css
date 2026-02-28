@@ -1321,16 +1321,33 @@ html[lang="km"] body {
 .language-toggle {
     display: inline-grid;
     grid-auto-flow: column;
-    grid-gap: 8px;
+    grid-gap: 10px;
     align-items: center;
-    padding: 4px 10px;
+    padding: 4px 12px 4px 6px;
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    background: var(--admin-bg);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), var(--admin-bg);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 6px 14px rgba(0,0,0,0.18);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.language-toggle:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 18px rgba(0,0,0,0.2);
+}
+.language-toggle:focus-within {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2), 0 8px 18px rgba(0,0,0,0.25);
 }
 .language-toggle i {
-    color: var(--primary-accent);
-    width: 18px;
+    color: #0f172a;
+    background: linear-gradient(180deg, #67d2ff, #38bdf8);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(56, 189, 248, 0.45);
     text-align: center;
 }
 
@@ -1338,13 +1355,254 @@ html[lang="km"] body {
     border: none;
     background: transparent !important;
     background-image: none !important;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
     cursor: pointer;
     color: var(--text-primary);
     padding-left: 0;
+    padding-right: 14px;
+    min-width: 42px;
     appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 .language-select:focus {
     outline: none;
+}
+
+.language-toggle {
+    position: relative;
+}
+
+.language-toggle::after {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin-top: -2px;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--text-secondary);
+    pointer-events: none;
+}
+
+.language-pill-group {
+    display: inline-flex;
+    gap: 4px;
+    padding-right: 6px;
+}
+
+.lang-pill {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lang-pill:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.lang-pill.active {
+    color: #0f172a;
+    background: linear-gradient(180deg, #67d2ff, #38bdf8);
+    box-shadow: 0 3px 10px rgba(56, 189, 248, 0.35);
+}
+
+/* POS Page */
+.pos-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+}
+
+.pos-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.pos-product-card {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px;
+    background: var(--admin-bg);
+}
+
+.pos-product-card h4 {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+}
+
+.pos-product-card .meta {
+    margin: 0 0 12px 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.pos-product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.pos-add-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.pos-cart-wrap {
+    max-height: 340px;
+    overflow-y: auto;
+    margin-top: 12px;
+}
+
+.pos-cart-table th,
+.pos-cart-table td {
+    padding: 10px 8px;
+}
+
+.pos-qty-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pos-qty-controls button {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--admin-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.pos-totals {
+    margin-top: 16px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    display: grid;
+    gap: 8px;
+}
+
+.pos-totals div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pos-totals .grand {
+    font-size: 1.1rem;
+}
+
+.pos-custom-row {
+    margin-top: 8px;
+}
+
+@media (max-width: 1200px) {
+    .pos-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+body.pos-fullscreen-active .sidebar,
+body.pos-fullscreen-active .sidebar-overlay {
+    display: none !important;
+}
+
+body.pos-fullscreen-active .main-content {
+    padding: 16px;
+}
+
+body.pos-fullscreen-active .top-bar {
+    margin-bottom: 16px;
+}
+
+/* Inventory image uploader */
+.image-uploader-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.image-drop-zone {
+    position: relative;
+    width: 100%;
+    min-height: 180px;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    background: rgba(11, 31, 58, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.image-drop-zone:hover {
+    border-color: var(--primary-accent);
+    background: rgba(56, 189, 248, 0.06);
+}
+
+.image-drop-zone.drag-over {
+    border-color: var(--primary-accent);
+    background: rgba(56, 189, 248, 0.12);
+}
+
+.image-drop-zone img {
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.drop-zone-prompt {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    text-align: center;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.drop-zone-prompt i {
+    font-size: 24px;
+    color: var(--primary-accent);
+}
+
+.image-drop-zone.has-image .drop-zone-prompt {
+    display: none;
+}
+
+.image-upload-note {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.image-drop-zone.is-uploading {
+    opacity: 0.75;
+    pointer-events: none;
 }

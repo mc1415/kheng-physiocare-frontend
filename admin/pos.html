@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS - Kheng PhysioCare Admin</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header"><img src="../images/LOGOWHITE.png" alt="Logo" class="sidebar-logo"></div>
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></a></li>
+                <li class="menu-item active"><a href="pos.html"><i class="fa-solid fa-cash-register"></i><span data-i18n="pos">POS</span></a></li>
+                <li class="menu-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span data-i18n="appointments">Appointments</span></a></li>
+                <li class="menu-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span data-i18n="patients">Patients</span></a></li>
+                <li class="menu-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span data-i18n="billing">Billing</span></a></li>
+                <li class="menu-item"><a href="exercises.html"><i class="fa-solid fa-person-running"></i><span data-i18n="exercises">Exercises</span></a></li>
+                <li class="menu-item"><a href="inventory.html"><i class="fa-solid fa-pills"></i><span data-i18n="inventory">Inventory</span></a></li>
+                <li class="menu-item"><a href="staff.html"><i class="fa-solid fa-user-doctor"></i><span data-i18n="staff">Staff</span></a></li>
+                <hr class="sidebar-divider">
+                <li class="menu-item"><a href="settings.html"><i class="fa-solid fa-gear"></i><span data-i18n="settings">Settings</span></a></li>
+                <li class="menu-item"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i><span data-i18n="logout">Logout</span></a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-overlay"></div>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
+                    <h1 class="page-title" data-i18n="pos">POS</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="language-toggle">
+                        <i class="fa-solid fa-earth-asia"></i>
+                        <div class="language-pill-group" aria-label="Language Switch">
+                            <button type="button" class="lang-pill" data-lang="en">EN</button>
+                            <button type="button" class="lang-pill" data-lang="km">KM</button>
+                        </div>
+                    </div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="posSearchInput" type="text" data-i18n-placeholder="posSearchProducts" placeholder="Search products...">
+                    </div>
+                    <button id="posFullscreenBtn" class="filter-btn" type="button" title="Toggle Fullscreen">
+                        <i class="fa-solid fa-expand"></i> <span data-i18n="fullscreen">Fullscreen</span>
+                    </button>
+                    <div class="user-profile" id="user-profile-container"></div>
+                </div>
+            </header>
+
+            <div class="pos-layout">
+                <section class="card">
+                    <div class="card-header">
+                        <h3 data-i18n="products">Products</h3>
+                        <span id="posProductCount">0 items</span>
+                    </div>
+                    <div id="posProductGrid" class="pos-product-grid"></div>
+                </section>
+
+                <aside class="card">
+                    <div class="card-header">
+                        <h3 data-i18n="cart">Cart</h3>
+                        <button id="clearCartBtn" class="filter-btn"><i class="fa-solid fa-trash"></i> <span data-i18n="clear">Clear</span></button>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="posPatient" data-i18n="patient">Patient</label>
+                            <select id="posPatient">
+                                <option value="" data-i18n="walkInNoPatient">Walk-in / no patient</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="posStatus" data-i18n="paymentStatus">Payment Status</label>
+                            <select id="posStatus">
+                                <option value="Paid" data-i18n="paid">Paid</option>
+                                <option value="Unpaid" data-i18n="unpaid">Unpaid</option>
+                            </select>
+                        </div>
+                        <div class="form-group span-2">
+                            <label for="posDiagnostic" data-i18n="noteDiagnostic">Note / Diagnostic</label>
+                            <textarea id="posDiagnostic" rows="2" data-i18n-placeholder="optional" placeholder="Optional"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-grid pos-custom-row">
+                        <div class="form-group">
+                            <label for="customItemName" data-i18n="customItem">Custom Item</label>
+                            <input id="customItemName" type="text" data-i18n-placeholder="customItemPlaceholder" placeholder="e.g. Consultation Fee">
+                        </div>
+                        <div class="form-group">
+                            <label for="customItemPrice" data-i18n="priceDollar">Price ($)</label>
+                            <input id="customItemPrice" type="number" step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="customItemQty" data-i18n="qty">Qty</label>
+                            <input id="customItemQty" type="number" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button id="addCustomItemBtn" class="btn-secondary-action" type="button"><i class="fa-solid fa-plus"></i> <span data-i18n="add">Add</span></button>
+                        </div>
+                    </div>
+
+                    <div class="pos-cart-wrap">
+                        <table class="data-table pos-cart-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="item">Item</th>
+                                    <th data-i18n="qty">Qty</th>
+                                    <th data-i18n="price">Price</th>
+                                    <th data-i18n="total">Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="posCartBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-grid discount-row">
+                        <div class="form-group">
+                            <label for="posDiscountType" data-i18n="discountType">Discount Type</label>
+                            <select id="posDiscountType">
+                                <option value="none" data-i18n="none">None</option>
+                                <option value="flat" data-i18n="usdAmount">USD Amount</option>
+                                <option value="percent" data-i18n="percent">Percent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="posDiscountValue" data-i18n="discountValue">Discount Value</label>
+                            <input id="posDiscountValue" type="number" min="0" step="0.01" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="pos-totals">
+                        <div><span data-i18n="subtotal">Subtotal</span><strong id="posSubtotal">$0.00</strong></div>
+                        <div><span data-i18n="discount">Discount</span><strong id="posDiscountAmount">$0.00</strong></div>
+                        <div class="grand"><span data-i18n="total">Total</span><strong id="posTotal">$0.00</strong></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="checkoutBtn" class="btn-primary-action"><i class="fa-solid fa-receipt"></i> <span data-i18n="checkout">Checkout</span></button>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/global.js"></script>
+    <script src="js/pos.js"></script>
+    <script src="../js/language.js"></script>
+</body>
+</html>

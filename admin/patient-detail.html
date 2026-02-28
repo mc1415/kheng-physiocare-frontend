@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,7 @@
             <div class="sidebar-header"><img src="../images/LOGOWHITE.png" alt="Logo" class="sidebar-logo"></div>
             <ul class="sidebar-menu">
                 <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></a></li>
+                <li class="menu-item"><a href="pos.html"><i class="fa-solid fa-cash-register"></i><span data-i18n="pos">POS</span></a></li>
                 <li class="menu-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span data-i18n="appointments">Appointments</span></a></li>
                 <li class="menu-item active"><a href="patients.html"><i class="fa-solid fa-users"></i><span data-i18n="patients">Patients</span></a></li>
                 <li class="menu-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span data-i18n="billing">Billing</span></a></li>
@@ -39,10 +40,10 @@
                 <div class="top-bar-right">
                     <div class="language-toggle">
                         <i class="fa-solid fa-earth-asia"></i>
-                        <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                            <option value="en">EN</option>
-                            <option value="km">KM</option>
-                        </select>
+                        <div class="language-pill-group" aria-label="Language Switch">
+                            <button type="button" class="lang-pill" data-lang="en">EN</button>
+                            <button type="button" class="lang-pill" data-lang="km">KM</button>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -75,14 +76,14 @@
     <!-- MODALS -->
     <div id="assignExerciseModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>Assign Exercise to Patient</h2><button class="close-button" data-modal-id="assignExerciseModal">×</button></div>
+            <div class="modal-header"><h2>Assign Exercise to Patient</h2><button class="close-button" data-modal-id="assignExerciseModal">&times;</button></div>
             <div class="modal-body"><form id="assign-exercise-form"><div class="form-group"><label for="exercise-select">Exercise</label><select id="exercise-select" name="exercise_id" required><option value="">-- Loading --</option></select></div><div class="form-group"><label for="exercise-frequency">Frequency (per week)</label><input type="number" id="exercise-frequency" name="frequency_per_week" value="3" min="1"></div><div class="form-group"><label for="exercise-notes">Additional Notes</label><textarea id="exercise-notes" name="notes" rows="3"></textarea></div><div class="modal-footer"><button type="submit" class="btn-primary-action">Assign</button></div></form></div>
         </div>
     </div>
     
     <div id="addNoteModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h2>Add New Clinical Note</h2><button class="close-button" data-modal-id="addNoteModal">×</button></div>
+            <div class="modal-header"><h2>Add New Clinical Note</h2><button class="close-button" data-modal-id="addNoteModal">&times;</button></div>
             <div class="modal-body"><form id="add-note-form"><div class="form-group"><label for="note-date">Date of Note</label><input type="date" id="note-date" name="note_date" required></div><hr class="form-divider"><div class="form-group"><label for="note-subjective">S - Subjective</label><p class="form-hint">Patient's report (pain level, feelings, progress).</p><textarea id="note-subjective" name="subjective" rows="4"></textarea></div><div class="form-group"><label for="note-objective">O - Objective</label><p class="form-hint">Therapist's observations (range of motion, tests).</p><textarea id="note-objective" name="objective" rows="4"></textarea></div><div class="form-group"><label for="note-assessment">A - Assessment</label><p class="form-hint">Therapist's professional assessment.</p><textarea id="note-assessment" name="assessment" rows="3"></textarea></div><div class="form-group"><label for="note-plan">P - Plan</label><p class="form-hint">Plan for the next session.</p><textarea id="note-plan" name="plan" rows="3"></textarea></div><div class="modal-footer"><button type="submit" class="btn-primary-action">Save Note</button></div></form></div>
         </div>
     </div>
@@ -92,3 +93,5 @@
     <script src="../js/language.js"></script>
 </body>
 </html>
+
+

@@ -350,3 +350,46 @@ body {
 .language-select:focus {
   outline: none;
 }
+
+.sticky-contact-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  max-width: 90%;
+  border-radius: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #0088cc;
+  color: white;
+  padding: 12px 15px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.sticky-contact-banner:hover {
+  background-color: #0099e6;
+}
+
+.sticky-contact-banner .banner-text {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.sticky-contact-banner img {
+  width: 28px;
+  height: 28px;
+}
+
+@media (max-width: 768px) {
+  .sticky-contact-banner .banner-text {
+    font-size: 1rem;
+  }
+}

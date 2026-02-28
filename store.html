@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Kheng PhysioCare Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/store.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <main class="store-page">
+        <div class="store-shell">
+            <header class="store-header">
+                <div class="store-brand">
+                    <img src="images/logo.jpg" alt="Kheng PhysioCare" class="store-logo">
+                    <div>
+                        <h1>Kheng PhysioCare Store</h1>
+                    </div>
+                </div>
+                <a class="store-cta" href="contact.html">Book Consultation</a>
+            </header>
+
+            <section class="store-toolbar">
+                <div class="store-toolbar-top">
+                    <div class="store-search-wrap">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="menuSearch" type="text" placeholder="Search products or services..." aria-label="Search products or services">
+                    </div>
+                    <label class="store-sort">
+                        <span>Sort</span>
+                        <select id="menuSort" aria-label="Sort items">
+                            <option value="featured">Featured</option>
+                            <option value="name-asc">Name A-Z</option>
+                            <option value="name-desc">Name Z-A</option>
+                            <option value="price-asc">Price Low-High</option>
+                            <option value="price-desc">Price High-Low</option>
+                        </select>
+                    </label>
+                </div>
+                <div id="menuCategoryTabs" class="store-categories" aria-label="Filter categories"></div>
+                <div id="menuCount" class="store-count">0 items</div>
+            </section>
+
+            <section class="store-content">
+                <div id="menuState" class="store-state">Loading store...</div>
+                <div id="menuGrid" class="store-grid" aria-live="polite"></div>
+            </section>
+
+            <footer class="store-footer">
+                <p>Powered by</p>
+                <div class="store-footer-logo-wrap">
+                    <img src="images/logo.jpg" alt="Kheng PhysioCare" class="store-footer-logo">
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/store.js"></script>
+</body>
+</html>

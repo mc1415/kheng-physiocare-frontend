@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,6 +20,7 @@
             </div>
             <ul class="sidebar-menu">
                 <li class="menu-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></a></li>
+                <li class="menu-item"><a href="pos.html"><i class="fa-solid fa-cash-register"></i><span data-i18n="pos">POS</span></a></li>
                 <li class="menu-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span data-i18n="appointments">Appointments</span></a></li>
                 <li class="menu-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span data-i18n="patients">Patients</span></a></li>
                 <li class="menu-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span data-i18n="billing">Billing</span></a></li>
@@ -43,10 +44,10 @@
                 <div class="top-bar-right">
                     <div class="language-toggle">
                         <i class="fa-solid fa-earth-asia"></i>
-                        <select id="language-select" onchange="setLanguage(this.value)" class="language-select">
-                            <option value="en">EN</option>
-                            <option value="km">KM</option>
-                        </select>
+                        <div class="language-pill-group" aria-label="Language Switch">
+                            <button type="button" class="lang-pill" data-lang="en">EN</button>
+                            <button type="button" class="lang-pill" data-lang="km">KM</button>
+                        </div>
                     </div>
                     <button id="addStaffBtn" class="btn-primary-action"><i class="fa-solid fa-plus"></i> <span data-i18n="addStaff">Add New Staff</span></button>
                 </div>
@@ -80,7 +81,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="staffModalTitle">Add New Staff Member</h2>
-            <button id="closeStaffModalBtn" class="close-button">×</button>
+            <button id="closeStaffModalBtn" class="close-button">&times;</button>
         </div>
         <div class="modal-body">
             <form id="add-staff-form">
@@ -127,3 +128,5 @@
     <script src="../js/language.js"></script>
 </body>
 </html>
+
+

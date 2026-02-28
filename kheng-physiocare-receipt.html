@@ -141,7 +141,7 @@ async function loadReceipt() {
         const inv = result.data;
         const patient = inv.patients || inv.patient || {};
         const patientName = patient.full_name || inv.patientName || 'Unknown';
-        const patientGender = patient.gender || 'N/A';
+        const patientGender = (patient.gender || '').toString().trim() || 'N/A';
         const patientDob = patient.date_of_birth;
         const patientAge = patientDob ? new Date().getFullYear() - new Date(patientDob).getFullYear() : 'N/A';
         const billDate = inv.created_at ? inv.created_at.split('T')[0] : (inv.date || '');
